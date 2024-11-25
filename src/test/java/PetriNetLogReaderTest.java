@@ -8,11 +8,13 @@ public class PetriNetLogReaderTest {
   @Test
   void testLogValidation() {
     String logFilePath = "/tmp/petriNetResults.txt";
-    PetriNetLogReader reader = new PetriNetLogReader();
     PetriNetConf petriNetConf = new PetriNetConf();
 
+    // Check if file exists
+    assertTrue(PetriNetLogReader.fileExists(logFilePath));
+
     try {
-      reader.validateLogFile(logFilePath, petriNetConf);
+      PetriNetLogReader.validateLogFile(logFilePath, petriNetConf);
       System.out.println("Log validation passed.");
     } catch (IOException e) {
       fail("Error reading log file: " + e.getMessage());

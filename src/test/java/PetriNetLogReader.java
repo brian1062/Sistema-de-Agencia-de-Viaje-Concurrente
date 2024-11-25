@@ -163,4 +163,10 @@ public class PetriNetLogReader {
 
     return true;
   }
+
+  // Check if the file exists
+  public static boolean fileExists(String filePath) {
+    File file = new File(filePath);
+    return file.exists();
+  }
 }
