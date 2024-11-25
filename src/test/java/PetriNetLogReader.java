@@ -7,31 +7,38 @@ public class PetriNetLogReader {
         String logFilePath = "/tmp/petriNetResults.txt";
 
         try {
-            List<LogEntry> logEntries = readLogFile(logFilePath);
             PetriNetConf petriNetConf = new PetriNetConf();
-            int[] marking = petriNetConf.getInitialMarking();
-            int [] previousMarking;
+            validateLogFile(logFilePath, petriNetConf);
+            System.out.println("Log file validation passed successfully.");
+        } catch (Exception e) {
+            System.err.println("[ERROR] " + e.getMessage());
+            System.exit(1);
+        }
+    }
 
-            // Ejemplo: Imprimir cada entrada
-            for (LogEntry entry : logEntries) {
-                boolean isTransitionEnabled = isTransitionEnabled(entry.transition, marking, petriNetConf);
-                if (!isTransitionEnabled) {
-                    System.err.println("[ERROR] In line " + (logEntries.indexOf(entry) + 1) + ": Transition " + entry.transition + " is not enabled with marking " + Arrays.toString(marking));
-                    System.exit(1);
-                }
+    public static void validateLogFile(String logFilePath, PetriNetConf petriNetConf) throws IOException {
+        List<LogEntry> logEntries = readLogFile(logFilePath);
+        int[] marking = petriNetConf.getInitialMarking();
+        int[] previousMarking;
 
-                previousMarking = marking;
-                marking = entry.marking;
-
-                boolean isMarkingCorrect = isMarkingCorrect(entry.transition, previousMarking, marking, petriNetConf);
-                if (!isMarkingCorrect) {
-                    System.err.println("[ERROR] In line " + (logEntries.indexOf(entry) + 1) + ": Marking " + Arrays.toString(marking) + " is not correct after transition " + entry.transition);
-                    System.err.println("Previous marking: " + Arrays.toString(previousMarking) + " Marking: " + Arrays.toString(marking));
-                    System.exit(1);
-                }
+        for (LogEntry entry : logEntries) {
+            boolean isTransitionEnabled = isTransitionEnabled(entry.transition, marking, petriNetConf);
+            if (!isTransitionEnabled) {
+                throw new IllegalStateException(
+                    "In line " + (logEntries.indexOf(entry) + 1) + ": Transition " 
+                    + entry.transition + " is not enabled with marking " + Arrays.toString(marking));
             }
-        } catch (IOException e) {
-            System.err.println("Error reading log file: " + e.getMessage());
+
+            previousMarking = marking;
+            marking = entry.marking;
+
+            boolean isMarkingCorrect = isMarkingCorrect(entry.transition, previousMarking, marking, petriNetConf);
+            if (!isMarkingCorrect) {
+                throw new IllegalStateException(
+                    "In line " + (logEntries.indexOf(entry) + 1) + ": Marking " + Arrays.toString(marking) 
+                    + " is not correct after transition " + entry.transition + ". Previous marking: " 
+                    + Arrays.toString(previousMarking));
+            }
         }
     }
 
