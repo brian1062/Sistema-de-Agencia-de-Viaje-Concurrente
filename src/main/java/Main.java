@@ -15,6 +15,7 @@ public class Main {
             rdPConf.getPlaces(),
             rdPConf.getIncidenceMatrixOut(),
             rdPConf.getIncidenceMatrixIn(),
+            rdPConf.getPlacesInvariants(),
             rdPConf.getInitialMarking(),
             TARGET_INVARIANTS);
 

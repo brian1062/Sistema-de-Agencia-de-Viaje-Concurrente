@@ -1,6 +1,5 @@
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +17,7 @@ public class PetriNetTest {
             conf.getPlaces(),
             conf.getIncidenceMatrixOut(),
             conf.getIncidenceMatrixIn(),
+            conf.getPlacesInvariants(),
             conf.getInitialMarking(),
             186);
   }

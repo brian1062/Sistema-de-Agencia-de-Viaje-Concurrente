@@ -43,6 +43,15 @@ public class PetriNetConf {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1} // P14
   };
 
+  private static final int[][] INVARIANTS_P_MATRIX = {
+    {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},  //M(P1) + M(P2) = 1
+    {0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5},  //M(P2) + M(P3) + M(P4) = 5 
+    {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1},  //M(P5) + M(P6) = 1
+    {0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1},  //M(P7) + M(P8) = 1
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1},  //M(P10) + M(P11) + M(P12) + M(P13) = 1 
+    {1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 5}   //M(P0)+M(P2)+M(P3)+M(P5)+M(P8)+M(P9)+M(P11)+M(P12)+M(P13)+M(P14)=5 
+  };
+
   private static final int[][] TIME_TRANSITION_MATRIX = {
     {0, MAX_TIME}, // T0
     {30, MAX_TIME}, // T1
@@ -97,6 +106,10 @@ public class PetriNetConf {
 
   public int[][] getIncidenceMatrixIn() {
     return INCIDENCE_MATRIX_IN.clone();
+  }
+
+  public int[][] getPlacesInvariants() {
+    return INVARIANTS_P_MATRIX.clone();
   }
 
   public List<Place> getPlaces() {

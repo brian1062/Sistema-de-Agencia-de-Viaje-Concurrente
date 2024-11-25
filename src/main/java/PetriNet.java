@@ -14,6 +14,7 @@ public class PetriNet {
   private final int invariantsCountTarget;
   private int[][] incidenceMatrixOut;
   private int[][] incidenceMatrixIn;
+  private int[][] placesInvariants;
   private int[] marking;
   private final int placesLength;
   private final int LAST_TRANSITION = 11;
@@ -36,12 +37,14 @@ public class PetriNet {
       List<Place> places,
       int[][] incidenceMatrixOut,
       int[][] incidenceMatrixIn,
+      int[][] placesInvariants,
       int[] marking,
       int invariantsCountTarget) {
     this.transitions = transitions;
     this.places = places;
     this.incidenceMatrixOut = incidenceMatrixOut;
     this.incidenceMatrixIn = incidenceMatrixIn;
+    this.placesInvariants = placesInvariants;
     this.marking = marking;
     this.placesLength = places.size();
     this.invariantsCountTarget = invariantsCountTarget;
@@ -81,6 +84,12 @@ public class PetriNet {
               }
             });
 
+    try {
+      checkPlacesInvariants();
+    } catch (Exception e){
+      throw new RuntimeException(e.getMessage());
+    }
+
     // Write the transition number to the log file
     writeLog(LOG_PATH, transitionIndex);
 
@@ -103,7 +112,8 @@ public class PetriNet {
         IntStream.range(0, marking.length)
             .mapToObj(
                 placeIndex -> {
-                  String message = "P" + placeIndex + ": " + marking[placeIndex];
+                  // String message = "P" + placeIndex + ": " + marking[placeIndex];
+                  String message = ""+marking[placeIndex];
                   if (placeIndex != marking.length - 1) {
                     message += ",";
                   }
@@ -147,6 +157,20 @@ public class PetriNet {
       }
     } catch (IOException e) {
       System.err.println("An error occurred while writing to the file: " + e.getMessage());
+    }
+  }
+
+  public void checkPlacesInvariants() throws Exception{
+    for(int row = 0; row < placesInvariants.length; row++){
+      int sum = 0;
+      for(int column = 0; column < placesLength; column++){
+        sum += marking[column] * placesInvariants[row][column];
+      }
+      if(sum == placesInvariants[row][placesLength]){
+        continue;
+      }
+      String msgEx = "Fail place invariant " + row +" in Marking: "+getStringMarking();
+      throw new Exception(msgEx);
     }
   }
 
