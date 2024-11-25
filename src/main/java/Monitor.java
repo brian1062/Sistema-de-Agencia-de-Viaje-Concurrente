@@ -1,4 +1,8 @@
 import java.util.concurrent.Semaphore;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 /**
  * Monitor class for managing synchronized interactions with a Petri Net. Ensures only one instance
@@ -10,6 +14,7 @@ class Monitor implements MonitorInterface {
   private static Monitor monitor = null;
   boolean isFireSuccessful = false;
   PetriNet petriNet; // The associated Petri Net instance
+  private final String LOG_PATH = "/tmp/petriNetResults.txt";
 
   private final Semaphore mutex; // Mutex to ensure thread safety
 
@@ -61,6 +66,8 @@ class Monitor implements MonitorInterface {
                 + petriNet.getStringMarking()
                 + "}";
         System.out.println(outputMessage);
+        String timestamp = LocalDateTime.now().toString();
+        writeLog(timestamp + ": " + outputMessage);
       }
     }
     mutex.release();
@@ -74,6 +81,21 @@ class Monitor implements MonitorInterface {
    */
   public boolean petriNetHasFinished() {
     return petriNet.invariantsTargetAchieved();
+  }
+
+  /**
+   * Writes a message to the log file.
+   *
+   * @param message the message to write to the log file.
+   */
+  private void writeLog(String message) {
+    try {
+      FileWriter writer = new FileWriter(LOG_PATH, true);
+      writer.write(message + "\n");
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
 
