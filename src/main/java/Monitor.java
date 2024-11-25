@@ -1,6 +1,6 @@
-import java.util.concurrent.Semaphore;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
 
 /**
  * Monitor class for managing synchronized interactions with a Petri Net. Ensures only one instance
@@ -56,7 +56,13 @@ class Monitor implements MonitorInterface {
     while (isFireSuccessful) {
       isFireSuccessful = petriNet.tryFireTransition(transitionIndex);
       if (isFireSuccessful) {
-        String outputMessage = "Transition fired: {T" + transitionIndex + "}" + " Marking: {" + petriNet.getStringMarking() + "}";
+        String outputMessage =
+            "Transition fired: {T"
+                + transitionIndex
+                + "}"
+                + " Marking: {"
+                + petriNet.getStringMarking()
+                + "}";
         System.out.println(outputMessage);
         writeLog(outputMessage);
       }

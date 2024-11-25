@@ -101,14 +101,15 @@ public class PetriNet {
   public String getStringMarking() {
     String markingString =
         IntStream.range(0, marking.length)
-                  .mapToObj(placeIndex -> {
-                      String message = "P" + placeIndex + ": " + marking[placeIndex];
-                      if (placeIndex != marking.length - 1) {
-                          message += ",";
-                      }
-                      return message;
-                    })
-                    .collect(Collectors.joining(" "));
+            .mapToObj(
+                placeIndex -> {
+                  String message = "P" + placeIndex + ": " + marking[placeIndex];
+                  if (placeIndex != marking.length - 1) {
+                    message += ",";
+                  }
+                  return message;
+                })
+            .collect(Collectors.joining(" "));
 
     return markingString;
   }
