@@ -1,8 +1,7 @@
-import java.util.concurrent.Semaphore;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalTime;
 import java.time.LocalDateTime;
+import java.util.concurrent.Semaphore;
 
 /**
  * Monitor class for managing synchronized interactions with a Petri Net. Ensures only one instance
