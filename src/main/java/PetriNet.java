@@ -19,6 +19,9 @@ public class PetriNet {
   private final int LAST_TRANSITION = 11;
   private final String LOG_PATH = "/tmp/petriNetLog.txt";
 
+  // PolicyFactory policyFactory = new PolicyFactory(new PolicyBalancedType());
+  // PetriNet petriNet;
+
   /**
    * Constructor for the PetriNet class.
    *
@@ -64,17 +67,17 @@ public class PetriNet {
             placeIndex -> {
               // If there is an input arc from the place to the transition
               if (incidenceMatrixIn[placeIndex][transitionIndex] > 0) {
-                marking[placeIndex] =
-                    marking[placeIndex]
-                        - incidenceMatrixIn[placeIndex][
-                            transitionIndex]; // Remove tokens from the input places
+              marking[placeIndex] =
+                  marking[placeIndex]
+                      - incidenceMatrixIn[placeIndex][
+                          transitionIndex]; // Remove tokens from the input places
               }
               // If there is an output arc from the transition to the place
               if (incidenceMatrixOut[placeIndex][transitionIndex] > 0) {
-                marking[placeIndex] =
-                    marking[placeIndex]
-                        + incidenceMatrixOut[placeIndex][
-                            transitionIndex]; // Add tokens to the output places
+              marking[placeIndex] =
+                  marking[placeIndex]
+                      + incidenceMatrixOut[placeIndex][
+                          transitionIndex]; // Add tokens to the output places
               }
             });
 
@@ -140,7 +143,7 @@ public class PetriNet {
     }
   }
 
-  // Getters
+  /* Getters */
   public int[] getMarking() {
     return marking;
   }
