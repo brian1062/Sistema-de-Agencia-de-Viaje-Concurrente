@@ -86,7 +86,7 @@ public class PetriNet {
 
     try {
       checkPlacesInvariants();
-    } catch (Exception e){
+    } catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }
 
@@ -113,7 +113,7 @@ public class PetriNet {
             .mapToObj(
                 placeIndex -> {
                   // String message = "P" + placeIndex + ": " + marking[placeIndex];
-                  String message = ""+marking[placeIndex];
+                  String message = "" + marking[placeIndex];
                   if (placeIndex != marking.length - 1) {
                     message += ",";
                   }
@@ -160,16 +160,16 @@ public class PetriNet {
     }
   }
 
-  public void checkPlacesInvariants() throws Exception{
-    for(int row = 0; row < placesInvariants.length; row++){
+  public void checkPlacesInvariants() throws Exception {
+    for (int row = 0; row < placesInvariants.length; row++) {
       int sum = 0;
-      for(int column = 0; column < placesLength; column++){
+      for (int column = 0; column < placesLength; column++) {
         sum += marking[column] * placesInvariants[row][column];
       }
-      if(sum == placesInvariants[row][placesLength]){
+      if (sum == placesInvariants[row][placesLength]) {
         continue;
       }
-      String msgEx = "Fail place invariant " + row +" in Marking: "+getStringMarking();
+      String msgEx = "Fail place invariant " + row + " in Marking: " + getStringMarking();
       throw new Exception(msgEx);
     }
   }
