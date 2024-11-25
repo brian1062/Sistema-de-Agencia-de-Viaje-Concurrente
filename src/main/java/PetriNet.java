@@ -67,17 +67,17 @@ public class PetriNet {
             placeIndex -> {
               // If there is an input arc from the place to the transition
               if (incidenceMatrixIn[placeIndex][transitionIndex] > 0) {
-              marking[placeIndex] =
-                  marking[placeIndex]
-                      - incidenceMatrixIn[placeIndex][
-                          transitionIndex]; // Remove tokens from the input places
+                marking[placeIndex] =
+                    marking[placeIndex]
+                        - incidenceMatrixIn[placeIndex][
+                            transitionIndex]; // Remove tokens from the input places
               }
               // If there is an output arc from the transition to the place
               if (incidenceMatrixOut[placeIndex][transitionIndex] > 0) {
-              marking[placeIndex] =
-                  marking[placeIndex]
-                      + incidenceMatrixOut[placeIndex][
-                          transitionIndex]; // Add tokens to the output places
+                marking[placeIndex] =
+                    marking[placeIndex]
+                        + incidenceMatrixOut[placeIndex][
+                            transitionIndex]; // Add tokens to the output places
               }
             });
 
