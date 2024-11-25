@@ -65,9 +65,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      #- name: Run main program
-      #  run: java -cp build/classes/java/main Main
-      #
+      - name: Run main program
+        run: java -cp build/classes/java/main Main && echo -e "tmp files:" && ls /tmp
+      
       #- name: Verify log file
       #  run: |
       #    if [ ! -f /tmp/petriNetResults.txt ]; then
