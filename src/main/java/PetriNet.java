@@ -18,7 +18,7 @@ public class PetriNet {
   private int[] marking;
   private final int placesLength;
   private final int LAST_TRANSITION = 11;
-  private final String LOG_PATH = "/tmp/petriNetLog.txt";
+  private final String LOG_PATH = "/tmp/transitionsSequence.txt";
 
   // PolicyFactory policyFactory = new PolicyFactory(new PolicyBalancedType());
   // PetriNet petriNet;
@@ -95,7 +95,6 @@ public class PetriNet {
 
     if (transitionIndex == LAST_TRANSITION) {
       invariantsCount++;
-      writeLog(LOG_PATH, -1); // Writes a new line to the file, ending the sequence
       if (invariantsCount >= invariantsCountTarget) {
         invariantsTargetAchieved = true;
       }
@@ -149,12 +148,8 @@ public class PetriNet {
 
   public static void writeLog(String filePath, int transition) {
     try (FileWriter writer = new FileWriter(filePath, true)) {
-      if (transition < 0) {
-        writer.write(System.lineSeparator()); // Adds a new line
-      } else {
-        writer.write(
-            String.valueOf("T" + transition + " ")); // Writes the transition number to the file
-      }
+	writer.write(
+		String.valueOf("T" + transition)); // Writes the transition number to the file
     } catch (IOException e) {
       System.err.println("An error occurred while writing to the file: " + e.getMessage());
     }
