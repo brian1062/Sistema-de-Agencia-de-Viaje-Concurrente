@@ -1,3 +1,4 @@
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ public class PetriNet {
   private List<Transition> enabledTransitions = new ArrayList<>();
   private int invariantsCount = 0;
   private boolean invariantsTargetAchieved = false;
+  private BufferedWriter logWriter;
   private final int invariantsCountTarget;
   private int[][] incidenceMatrixOut;
   private int[][] incidenceMatrixIn;
@@ -49,6 +51,12 @@ public class PetriNet {
     this.placesLength = places.size();
     this.invariantsCountTarget = invariantsCountTarget;
     updateEnabledTransitions(); // Initialize the enabled transitions
+
+    try {
+        this.logWriter = new BufferedWriter(new FileWriter(LOG_PATH, true));
+    } catch (IOException e) {
+        throw new RuntimeException("Failed to initialize log writer: " + e.getMessage());
+    }
   }
 
   /**
@@ -91,11 +99,12 @@ public class PetriNet {
     }
 
     // Write the transition number to the log file
-    writeLog(LOG_PATH, transitionIndex);
+    writeLog(transitionIndex);
 
     if (transitionIndex == LAST_TRANSITION) {
       invariantsCount++;
       if (invariantsCount >= invariantsCountTarget) {
+        closeLogWriter();
         invariantsTargetAchieved = true;
       }
     }
@@ -146,11 +155,22 @@ public class PetriNet {
     enabledTransitions.stream().map(Transition::getName).forEach(System.out::println);
   }
 
-  public static void writeLog(String filePath, int transition) {
-    try (FileWriter writer = new FileWriter(filePath, true)) {
-      writer.write(String.valueOf("T" + transition)); // Writes the transition number to the file
+  public void writeLog(int transition) {
+    try {
+        logWriter.write("T" + transition);
+        logWriter.flush();
     } catch (IOException e) {
-      System.err.println("An error occurred while writing to the file: " + e.getMessage());
+        System.err.println("An error occurred while writing to the log: " + e.getMessage());
+    }
+  }
+
+  public void closeLogWriter() {
+    try {
+        if (logWriter != null) {
+            logWriter.close();
+        }
+    } catch (IOException e) {
+        System.err.println("Failed to close log writer: " + e.getMessage());
     }
   }
 
