@@ -53,9 +53,9 @@ public class PetriNet {
     updateEnabledTransitions(); // Initialize the enabled transitions
 
     try {
-        this.logWriter = new BufferedWriter(new FileWriter(LOG_PATH, true));
+      this.logWriter = new BufferedWriter(new FileWriter(LOG_PATH, true));
     } catch (IOException e) {
-        throw new RuntimeException("Failed to initialize log writer: " + e.getMessage());
+      throw new RuntimeException("Failed to initialize log writer: " + e.getMessage());
     }
   }
 
@@ -157,20 +157,20 @@ public class PetriNet {
 
   public void writeLog(int transition) {
     try {
-        logWriter.write("T" + transition);
-        logWriter.flush();
+      logWriter.write("T" + transition);
+      logWriter.flush();
     } catch (IOException e) {
-        System.err.println("An error occurred while writing to the log: " + e.getMessage());
+      System.err.println("An error occurred while writing to the log: " + e.getMessage());
     }
   }
 
   public void closeLogWriter() {
     try {
-        if (logWriter != null) {
-            logWriter.close();
-        }
+      if (logWriter != null) {
+        logWriter.close();
+      }
     } catch (IOException e) {
-        System.err.println("Failed to close log writer: " + e.getMessage());
+      System.err.println("Failed to close log writer: " + e.getMessage());
     }
   }
 
