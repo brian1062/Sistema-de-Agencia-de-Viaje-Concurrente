@@ -148,8 +148,7 @@ public class PetriNet {
 
   public static void writeLog(String filePath, int transition) {
     try (FileWriter writer = new FileWriter(filePath, true)) {
-	writer.write(
-		String.valueOf("T" + transition)); // Writes the transition number to the file
+      writer.write(String.valueOf("T" + transition)); // Writes the transition number to the file
     } catch (IOException e) {
       System.err.println("An error occurred while writing to the file: " + e.getMessage());
     }
