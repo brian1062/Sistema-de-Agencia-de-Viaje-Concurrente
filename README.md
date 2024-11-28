@@ -100,7 +100,10 @@ donde $I^T$ es la transpuesta de la matriz de incidencia y $x$ un vector caracte
 
 ### Análisis de invariantes:
 #### Invariantes de Plaza
-![combined_incidence_matrix](/images/invariantes_plazas.png)
+
+<p align="center">
+  <img src="/images/invariantes_plazas.png">
+</p
 
 Un uno en una posición indica que esa plaza es parte de la invariante y un cero indica lo contrario.
 

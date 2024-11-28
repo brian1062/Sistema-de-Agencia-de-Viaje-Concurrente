@@ -88,10 +88,8 @@ class Monitor implements MonitorInterface {
    * @param message the message to write to the log file.
    */
   private void writeLog(String message) {
-    try {
-      FileWriter writer = new FileWriter(LOG_PATH, true);
+    try (FileWriter writer = new FileWriter(LOG_PATH, true)) {
       writer.write(message + "\n");
-      writer.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
