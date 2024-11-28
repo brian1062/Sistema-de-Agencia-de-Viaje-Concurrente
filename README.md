@@ -124,7 +124,7 @@ Un uno en una posición indica que esa transición es parte de la invariante y u
 Se busco la expresion regular que se adapte a nuestra red de petri la cual fue la siguiente:
 
 ```
-(T0)(.*?)(T1)(.*?)((T2)(.*?)(T5)|(T3)(.*?)(T4))(.*?)((T6)(.*?)(T9)(.*?)(T10)|(T7)(.*?)(T8))(.*?)(T11)(.*?)
+(T0)(.*?)(T1)(.*?)((T2)(.*?)(T5)|(T3)(.*?)(T4))(.*?)((T6)(.*?)(T9)(.*?)(T10)|(T7)(.*?)(T8))(.*?)(T11)
 ```
 
 Por medio de la herramienta para analizar expresiones regulares [Debuggex](https://www.debuggex.com/) se obtuvo la siguiene diagrama:
