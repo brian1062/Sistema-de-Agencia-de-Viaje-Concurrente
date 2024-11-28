@@ -116,3 +116,17 @@ $$M(P1)+M(P2)=1$$$$M(P5)+M(P6)=1$$$$M(P7)+M(P8)=1$$$$M(P2)+M(P3)+M(P4)=5$$$$M(P1
 
 Un uno en una posición indica que esa transición es parte de la invariante y un cero indica lo contrario.
 
+
+## Análisis de invariantes de transicion
+Se busco la expresion regular que se adapte a nuestra red de petri la cual fue la siguiente:
+
+```
+(T0)(.*?)(T1)(.*?)((T2)(.*?)(T5)|(T3)(.*?)(T4))(.*?)((T6)(.*?)(T9)(.*?)(T10)|(T7)(.*?)(T8))(.*?)(T11)(.*?)
+```
+
+Por medio de la herramienta para analizar expresiones regulares [Debuggex](https://www.debuggex.com/) se obtuvo la siguiene diagrama:
+
+
+<p align="center">
+  <img src="/images/debuggex.png">
+</p>
