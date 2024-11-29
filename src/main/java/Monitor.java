@@ -68,7 +68,6 @@ class Monitor implements MonitorInterface {
         System.out.println(outputMessage);
         String timestamp = LocalDateTime.now().toString();
         writeLog(timestamp + ": " + outputMessage);
-        
       }
     }
     mutex.release();
