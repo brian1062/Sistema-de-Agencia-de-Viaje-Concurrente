@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class PetriNet {
+public class PetriNet implements AutoCloseable {
   private List<Transition> transitions;
   private List<Place> places;
   private List<Transition> enabledTransitions = new ArrayList<>();
@@ -32,7 +32,9 @@ public class PetriNet {
    * @param places
    * @param incidenceMatrixOut
    * @param incidenceMatrixIn
+   * @param placesInvariants
    * @param marking
+   * @param invariantsCountTarget
    */
   public PetriNet(
       List<Transition> transitions,
@@ -59,11 +61,17 @@ public class PetriNet {
     }
   }
 
-  /**
-   * Fires a transition in the Petri net.
-   *
-   * @param transitionIndex The index of the transition to fire in the input incidence matrix
-   */
+  @Override
+  public void close() {
+    try {
+      if (logWriter != null) {
+        logWriter.close();
+      }
+    } catch (IOException e) {
+      System.err.println("Failed to close log writer: " + e.getMessage());
+    }
+  }
+
   public boolean tryFireTransition(int transitionIndex) {
     Transition transitionFromIndex = transitions.get(transitionIndex);
 
@@ -99,11 +107,13 @@ public class PetriNet {
     }
 
     // Write the transition number to the log file
-    writeLog(transitionIndex);
+    if (invariantsCount != invariantsCountTarget){
+      writeLog(transitionIndex);
+    }
 
     if (transitionIndex == LAST_TRANSITION) {
       invariantsCount++;
-      if (invariantsCount >= invariantsCountTarget) {
+      if (invariantsCount == invariantsCountTarget) {
         closeLogWriter();
         invariantsTargetAchieved = true;
       }

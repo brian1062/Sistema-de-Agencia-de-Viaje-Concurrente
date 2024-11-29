@@ -4,9 +4,6 @@ public class Main {
 
   public static void main(String[] args) {
 
-    // Variables
-    final int TARGET_INVARIANTS = 186; // Number of invariants to reach
-
     PetriNetConf rdPConf = new PetriNetConf(); // Load configuration
 
     PetriNet petriNet =
@@ -17,7 +14,7 @@ public class Main {
             rdPConf.getIncidenceMatrixIn(),
             rdPConf.getPlacesInvariants(),
             rdPConf.getInitialMarking(),
-            TARGET_INVARIANTS);
+            rdPConf.getTargetInvariants());
 
     // Initialize threads array
     Thread[] threads =

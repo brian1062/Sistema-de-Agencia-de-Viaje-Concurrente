@@ -14,7 +14,7 @@ pattern = r"(T0)(.*?)(T1)(.*?)((T2)(.*?)(T5)|(T3)(.*?)(T4))(.*?)((T6)(.*?)(T9)(.
 sub = r'\g<2>\g<4>\g<7>\g<10>\g<12>\g<15>\g<17>\g<20>\g<22>'
 
 # Path to .txt file
-file_path = "transitions.txt"
+file_path = "/tmp/transitionsSequence.txt"
 
 def read_file(file_path):
     try:
