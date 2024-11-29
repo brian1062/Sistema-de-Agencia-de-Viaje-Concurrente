@@ -107,7 +107,7 @@ public class PetriNet implements AutoCloseable {
     }
 
     // Write the transition number to the log file
-    if (invariantsCount != invariantsCountTarget){
+    if (invariantsCount != invariantsCountTarget) {
       writeLog(transitionIndex);
     }
 
