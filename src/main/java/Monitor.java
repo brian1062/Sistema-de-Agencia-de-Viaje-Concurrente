@@ -57,6 +57,7 @@ class Monitor implements MonitorInterface {
     while (isFireSuccessful) {
       isFireSuccessful = petriNet.tryFireTransition(transitionIndex);
       if (isFireSuccessful) {
+        // Print Transition fire and log it!!
         String outputMessage =
             "Transition fired: {T"
                 + transitionIndex
@@ -67,6 +68,7 @@ class Monitor implements MonitorInterface {
         System.out.println(outputMessage);
         String timestamp = LocalDateTime.now().toString();
         writeLog(timestamp + ": " + outputMessage);
+        
       }
     }
     mutex.release();
