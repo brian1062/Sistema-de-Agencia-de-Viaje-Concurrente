@@ -93,6 +93,39 @@ def analyze_transitions(file_path):
     for invariant, count in invariants.items():
         print(f"{invariant}: {count} times")
 
+def calculate_percentage_from_invariants(invariants):
+    counts = {"T2": 0, "T3": 0, "T6": 0, "T7": 0}
+
+    for invariant, frec in invariants.items():
+        if "T2" in invariant:
+            counts["T2"] += frec
+        if "T3" in invariant:
+            counts["T3"] += frec
+        if "T6" in invariant:
+            counts["T6"] += frec
+        if "T7" in invariant:
+            counts["T7"] += frec
+
+    total_T2_T3 = counts["T2"] + counts["T3"]
+    total_T6_T7 = counts["T6"] + counts["T7"]
+
+    if total_T2_T3 > 0:
+        T2_percentage = (counts["T2"] / total_T2_T3) * 100
+        T3_percentage = (counts["T3"] / total_T2_T3) * 100
+    else:
+        T2_percentage = T3_percentage = 0
+
+    if total_T6_T7 > 0:
+        T6_percentage = (counts["T6"] / total_T6_T7) * 100
+        T7_percentage = (counts["T7"] / total_T6_T7) * 100
+    else:
+        T6_percentage = T7_percentage = 0
+
+    print("Percentages calculated from invariants:")
+    print(f"T2: {T2_percentage:.2f}%↑       T6: {T6_percentage:.2f}%↑")
+    print(f"T3: {T3_percentage:.2f}%↓       T7: {T7_percentage:.2f}%↓")   
+   
 
 # RUN PROGRAM
 analyze_transitions(file_path)
+calculate_percentage_from_invariants(invariants)
