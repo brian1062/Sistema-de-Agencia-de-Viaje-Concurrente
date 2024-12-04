@@ -69,6 +69,22 @@ class Monitor implements MonitorInterface {
         String timestamp = LocalDateTime.now().toString();
         writeLog(timestamp + ": " + outputMessage);
       }
+
+      //if alpha > 0 so transitions is timed else is immediate
+      Transition t = petriNet.getTransitionPerIndex(transitionIndex); 
+      if(t.getTime()>0){
+        mutex.release();
+        try{
+          Thread.sleep(t.getTime());
+        }catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        try {
+          mutex.acquire();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+      }
     }
     mutex.release();
     return false;

@@ -210,4 +210,8 @@ public class PetriNet implements AutoCloseable {
   public boolean invariantsTargetAchieved() {
     return invariantsTargetAchieved;
   }
+
+  public Transition getTransitionPerIndex(int nTransition){
+    return transitions.get(nTransition);
+  }
 }
