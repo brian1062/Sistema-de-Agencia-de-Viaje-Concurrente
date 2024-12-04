@@ -10,7 +10,7 @@ public class Transition {
   private final long maxTime; // Maximum time allowed for the transition to fire (beta).
   private long runningTime =
       0; // Time when the transition was activated (with tokens in places), used to calculate
-         // remaining time.
+  // remaining time.
   private boolean isSensitizeInTime; // Indicates whether the transition is sensitized in time.
   private boolean isImmediate; // Indicates if the transition is immediate (no delay).
 

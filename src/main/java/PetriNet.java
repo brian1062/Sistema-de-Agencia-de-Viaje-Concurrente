@@ -211,7 +211,7 @@ public class PetriNet implements AutoCloseable {
     return invariantsTargetAchieved;
   }
 
-  public Transition getTransitionPerIndex(int nTransition){
+  public Transition getTransitionPerIndex(int nTransition) {
     return transitions.get(nTransition);
   }
 }
