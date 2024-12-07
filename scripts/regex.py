@@ -27,13 +27,12 @@ def read_file(file_path):
         print(f"❌ File {file_path} not found.")
         # Exit program with error
         sys.exit(1)
-        
     
 def get_removed_transitions(match, sub):
     """get transitions matches to delete"""
     removed_transitions = []
     for i in range(1, len(match.groups()) + 1):
-        # verify if group i = None
+        # Check if group != None
         if f"\\g<{i}>" not in sub and match.group(i) is not None and i != 5 and i != 13:
             removed_transitions.append(match.group(i))
     
@@ -50,8 +49,8 @@ def process_matchs(content, pattern, sub):
     """ process all transition invariants found in log file"""
     match_num= 1
     while True:
+        found_match = False
         matches = re.finditer(pattern, content)
-        found_match = False  
 
         for m in matches:
             found_match = True
@@ -59,16 +58,18 @@ def process_matchs(content, pattern, sub):
 
             # Print transitions deleted
             if removed_transitions:
-                print(f"Match {match_num}: {' '.join(removed_transitions)}")
                 transition_string = ' '.join(removed_transitions)
                 update_invariants(transition_string)
             
             # Update old content
             content = re.sub(pattern, sub, content, count=1)
+
             # Print remaining transitions if content is not empty
             if content.strip():
                 print(f"Remaining transitions: {content.strip()}\n")
             match_num += 1
+            
+            break
         
         if not found_match:
             break
@@ -132,4 +133,4 @@ analyze_transitions(file_path)
 calculate_percentage_from_invariants(invariants)
 
 # Delete transitions file
-os.remove(file_path)
+#os.remove(file_path)
