@@ -151,4 +151,4 @@ analyze_transitions(file_path)
 calculate_percentage_from_invariants(invariants)
 
 # Delete transitions file
-os.remove(file_path)
+# os.remove(file_path)
