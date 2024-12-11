@@ -77,6 +77,7 @@ public class PetriNet implements AutoCloseable {
 
     // If not enabled, return false
     if (!enabledTransitions.contains(transitionFromIndex)) {
+      System.out.println("Transition not enabled: {T" + transitionIndex + "}");
       return false;
     }
 

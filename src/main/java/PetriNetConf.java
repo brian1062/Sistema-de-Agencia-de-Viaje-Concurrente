@@ -7,7 +7,7 @@ public class PetriNetConf {
   private static final int[] INITIAL_MARKING = {5, 1, 0, 0, 5, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0};
   private final List<Place> places = new ArrayList<>();
   private final List<Transition> transitions = new ArrayList<>();
-  private final int TARGET_INVARIANTS = 186; // Number of invariants to reach
+  private final int TARGET_INVARIANTS = 10; // was 186 // Number of invariants to reach
 
   private static final int[][] INCIDENCE_MATRIX_OUT = { // I+
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, // P0
