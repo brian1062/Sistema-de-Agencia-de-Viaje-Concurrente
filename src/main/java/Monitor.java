@@ -57,11 +57,11 @@ class Monitor implements MonitorInterface {
     }
 
     // if alpha > 0 then the transition is timed, else is immediate
-    //Transition t = petriNet.getTransitionPerIndex(transitionIndex);
-    //if (t.getTime() > 0) {
+    // Transition t = petriNet.getTransitionPerIndex(transitionIndex);
+    // if (t.getTime() > 0) {
     //  // Release the mutex and sleep for the time of the transition
     //  mutex.release();
-    //  
+    //
     //  try {
     //    System.out.println("Sleeping for " + t.getTime() + "ms");
     //    Thread.sleep(t.getTime());
@@ -79,31 +79,31 @@ class Monitor implements MonitorInterface {
     //    e.printStackTrace();
     //    return false;
     //  }
-    //}
+    // }
 
     // isFireSuccessful = true;
-    //while (isFireSuccessful){
-    //while (true) {
-      //isFireSuccessful = petriNet.tryFireTransition(transitionIndex);
-      //if (isFireSuccessful) {
-      if (petriNet.tryFireTransition(transitionIndex)){
-        // Print message and log it the fired transition
-        String outputMessage =
-            "Transition fired: {T"
-                + transitionIndex
-                + "}"
-                + " Marking: {"
-                + petriNet.getStringMarking()
-                + "}";
-        System.out.println(outputMessage);
-        String timestamp = LocalDateTime.now().toString();
-        writeLog(timestamp + ": " + outputMessage);
+    // while (isFireSuccessful){
+    // while (true) {
+    // isFireSuccessful = petriNet.tryFireTransition(transitionIndex);
+    // if (isFireSuccessful) {
+    if (petriNet.tryFireTransition(transitionIndex)) {
+      // Print message and log it the fired transition
+      String outputMessage =
+          "Transition fired: {T"
+              + transitionIndex
+              + "}"
+              + " Marking: {"
+              + petriNet.getStringMarking()
+              + "}";
+      System.out.println(outputMessage);
+      String timestamp = LocalDateTime.now().toString();
+      writeLog(timestamp + ": " + outputMessage);
 
-        // Release the mutex and return true
-        mutex.release();
-        return true;
-      }
-    //}
+      // Release the mutex and return true
+      mutex.release();
+      return true;
+    }
+    // }
 
     mutex.release();
     return false;
