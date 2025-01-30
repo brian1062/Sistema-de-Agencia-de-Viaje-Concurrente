@@ -53,7 +53,7 @@ class Monitor implements MonitorInterface {
    */
   @Override
   public boolean fireTransition(int transitionIndex) {
-  public boolean fireTransition(Transition transition) { // por que retornamos boolean si despues no lo usamos? por que no retornar void?
+  //public boolean fireTransition(Transition transition) { // por que retornamos boolean si despues no lo usamos? por que no retornar void?
     try {
       mutex.acquire();
     } catch (Exception e) {
