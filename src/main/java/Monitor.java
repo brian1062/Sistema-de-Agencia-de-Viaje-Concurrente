@@ -25,6 +25,11 @@ class Monitor implements MonitorInterface {
   private Monitor(PetriNet petriNet) {
     this.mutex = new Semaphore(1, true);
     this.petriNet = petriNet;
+    //this.transitionsMap = new HashMap<>();
+    //for (Transition transition : petriNet.getTransitionList()) {
+    //  // Initialize a semaphore for each transition
+    //  this.transitionsMap.put(transition, new Semaphore(0));
+    //}
   }
 
   /**
@@ -48,6 +53,7 @@ class Monitor implements MonitorInterface {
    */
   @Override
   public boolean fireTransition(int transitionIndex) {
+  public boolean fireTransition(Transition transition) { // por que retornamos boolean si despues no lo usamos? por que no retornar void?
     try {
       mutex.acquire();
     } catch (Exception e) {
@@ -82,22 +88,65 @@ class Monitor implements MonitorInterface {
     // }
 
     // isFireSuccessful = true;
-    // while (isFireSuccessful){
-    // while (true) {
-    // isFireSuccessful = petriNet.tryFireTransition(transitionIndex);
-    // if (isFireSuccessful) {
-    if (petriNet.tryFireTransition(transitionIndex)) {
-      // Print message and log it the fired transition
-      String outputMessage =
-          "Transition fired: {T"
-              + transitionIndex
-              + "}"
-              + " Marking: {"
-              + petriNet.getStringMarking()
-              + "}";
-      System.out.println(outputMessage);
-      String timestamp = LocalDateTime.now().toString();
-      writeLog(timestamp + ": " + outputMessage);
+    //while (isFireSuccessful){
+    //while (true) {
+      //isFireSuccessful = petriNet.tryFireTransition(transitionIndex);
+      //if (isFireSuccessful) {
+      if (petriNet.tryFireTransition(transitionIndex)){
+        // Print message and log it the fired transition
+      if (petriNetHasFinished() || end) {
+        // Si adquiri el mutex y la red de petri finalizo su ejecución, para que seguir trabajando con semaforos?
+        // No convendria simplement hacer un System.exit(0); ?
+        mutex.release();
+        transitionsMap.get(transition).acquire();
+      }
+
+      while (true) {
+        // Check if the transition is enabled by the Petri Net's current marking
+        if (!petriNet.getEnabledTransitions().contains(transition)) {
+          // System.out.println("transition not ready: " + transition.getName());
+          mutex.release(); // libero el mutex
+          transitionsMap.get(transition).acquire(); // entro en la cola del semaforo de esa transicion
+          continue; //por que continue? // salto a la proxima iteracion del while
+          //return false;
+        }
+        if (transition.getTime() > 0) {
+          if (waitSem.availablePermits() == 1) {
+            waitSem.acquire();
+
+            mutex.release();
+            
+            if (transition.getRunningTime() == 0) {
+              // System.out.println("transition here: " + transition.getName());
+              transition.sensitizeTime();
+            }
+            // isFireSuccessful = petriNet.tryFireTransition(transition.getNumber());
+            Thread.sleep(transition.getTime());
+            mutex.acquire();
+            waitSem.release();
+            if (transition.getRemainingTime() <= 0) {
+              break;
+            }
+          }
+
+        } else {
+          break;
+        } // can fire transition
+      }
+
+      isFireSuccessful = petriNet.tryFireTransition(transition.getNumber());
+      if (isFireSuccessful) {
+        // Print Transition fire and log it!!
+        String outputMessage =
+            "Transition fired: {T"
+                + transitionIndex
+                + "}"
+                + " Marking: {"
+                + petriNet.getStringMarking()
+                + "}";
+        System.out.println(outputMessage);
+        String timestamp = LocalDateTime.now().toString();
+        writeLog(timestamp + ": " + outputMessage);
 
       // Release the mutex and return true
       mutex.release();
