@@ -25,6 +25,11 @@ class Monitor implements MonitorInterface {
   private Monitor(PetriNet petriNet) {
     this.mutex = new Semaphore(1, true);
     this.petriNet = petriNet;
+    //this.transitionsMap = new HashMap<>();
+    //for (Transition transition : petriNet.getTransitionList()) {
+    //  // Initialize a semaphore for each transition
+    //  this.transitionsMap.put(transition, new Semaphore(0));
+    //}
   }
 
   /**
@@ -47,66 +52,30 @@ class Monitor implements MonitorInterface {
    * @return true if the transition was successfully fired at least once, false otherwise.
    */
   @Override
-  public boolean fireTransition(int transitionIndex) {
+  public void fireTransition(int transitionIndex) {
     try {
       mutex.acquire();
     } catch (Exception e) {
       System.err.println("[ERROR] While acquiring mutex\n");
       e.printStackTrace();
-      return false;
+      return;
     }
 
-    // if alpha > 0 then the transition is timed, else is immediate
-    // Transition t = petriNet.getTransitionPerIndex(transitionIndex);
-    // if (t.getTime() > 0) {
-    //  // Release the mutex and sleep for the time of the transition
-    //  mutex.release();
-    //
-    //  try {
-    //    System.out.println("Sleeping for " + t.getTime() + "ms");
-    //    Thread.sleep(t.getTime());
-    //  } catch (InterruptedException e) {
-    //    System.err.println("[ERROR] While sleeping\n");
-    //    e.printStackTrace();
-    //    return false;
+    //isFireSuccessful = true;
+    //while (isFireSuccessful) {
+    //  isFireSuccessful = petriNet.tryFireTransition(transitionIndex);
+    //  if (isFireSuccessful) {
+    //    System.out.println(
+    //        "Transition fired: " + transitionIndex + " Marking: " + petriNet.getStringMarking());
     //  }
-    //
-    //  // Acquire the mutex again
-    //  try {
-    //    mutex.acquire();
-    //  } catch (Exception e) {
-    //    System.err.println("[ERROR] While acquiring mutex\n");
-    //    e.printStackTrace();
-    //    return false;
-    //  }
-    // }
-
-    // isFireSuccessful = true;
-    // while (isFireSuccessful){
-    // while (true) {
-    // isFireSuccessful = petriNet.tryFireTransition(transitionIndex);
-    // if (isFireSuccessful) {
+    //}
+    
     if (petriNet.tryFireTransition(transitionIndex)) {
-      // Print message and log it the fired transition
-      String outputMessage =
-          "Transition fired: {T"
-              + transitionIndex
-              + "}"
-              + " Marking: {"
-              + petriNet.getStringMarking()
-              + "}";
-      System.out.println(outputMessage);
-      String timestamp = LocalDateTime.now().toString();
-      writeLog(timestamp + ": " + outputMessage);
-
-      // Release the mutex and return true
-      mutex.release();
-      return true;
+      System.out.println(
+        "Transition fired: " + transitionIndex + " Marking: " + petriNet.getStringMarking());
     }
-    // }
-
+    
     mutex.release();
-    return false;
   }
 
   /**
@@ -134,5 +103,5 @@ class Monitor implements MonitorInterface {
 
 /** Interface for Monitor functionality. */
 interface MonitorInterface {
-  boolean fireTransition(int transition);
+  void fireTransition(int transition); // TODO: entiendo que necesitamos que sea bool por el enunciado pero no lo estamos usando
 }

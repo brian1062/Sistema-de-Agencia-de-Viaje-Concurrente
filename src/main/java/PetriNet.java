@@ -73,13 +73,12 @@ public class PetriNet implements AutoCloseable {
   }
 
   public boolean tryFireTransition(int transitionIndex) {
-    Transition transitionFromIndex = transitions.get(transitionIndex);
+    // Transition transitionFromIndex = transitions.get(transitionIndex);
 
     // If not enabled, return false
-    if (!enabledTransitions.contains(transitionFromIndex)) {
-      System.out.println("Transition not enabled: {T" + transitionIndex + "}");
-      return false;
-    }
+    //if (!enabledTransitions.contains(transitionFromIndex)) { // TODO: lo borre porque ya se chequea en fireTransition de Monitor.java
+    //  return false;
+    //}
 
     // Iterate over all places in the Petri net
     IntStream.range(0, places.size())
@@ -102,6 +101,7 @@ public class PetriNet implements AutoCloseable {
             });
 
     try {
+      // Make sure the Petri net is still in a valid state after firing the transition
       checkPlacesInvariants();
     } catch (Exception e) {
       throw new RuntimeException(e.getMessage());
