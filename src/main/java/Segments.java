@@ -1,5 +1,4 @@
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Segments implements Runnable {
   private final List<Transition> sequence;
@@ -12,17 +11,12 @@ public class Segments implements Runnable {
 
   @Override
   public void run() {
-    AtomicBoolean isRunning = new AtomicBoolean(true);
 
-    while (isRunning.get()) {
+    while (!monitor.petriNetHasFinished()) {
       for (Transition t : sequence) {
         monitor.fireTransition(t.getNumber());
-
-        if (monitor.petriNetHasFinished()) {
-          isRunning.set(false);
-          break;
-        }
       }
     }
+    System.out.println("[SUCCESS] Checking invariants target achieved. The Petri net has finished!");
   }
 }
