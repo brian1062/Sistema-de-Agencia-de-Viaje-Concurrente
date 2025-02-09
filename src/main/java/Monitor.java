@@ -1,6 +1,5 @@
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -25,11 +24,11 @@ class Monitor implements MonitorInterface {
   private Monitor(PetriNet petriNet) {
     this.mutex = new Semaphore(1, true);
     this.petriNet = petriNet;
-    //this.transitionsMap = new HashMap<>();
-    //for (Transition transition : petriNet.getTransitionList()) {
+    // this.transitionsMap = new HashMap<>();
+    // for (Transition transition : petriNet.getTransitionList()) {
     //  // Initialize a semaphore for each transition
     //  this.transitionsMap.put(transition, new Semaphore(0));
-    //}
+    // }
   }
 
   /**
@@ -61,18 +60,18 @@ class Monitor implements MonitorInterface {
       return;
     }
 
-    //isFireSuccessful = true;
-    //while (isFireSuccessful) {
+    // isFireSuccessful = true;
+    // while (isFireSuccessful) {
     //  isFireSuccessful = petriNet.tryFireTransition(transitionIndex);
     //  if (isFireSuccessful) {
     //    System.out.println(
     //        "Transition fired: " + transitionIndex + " Marking: " + petriNet.getStringMarking());
     //  }
-    //}
-    
+    // }
+
     if (petriNet.tryFireTransition(transitionIndex)) {
       System.out.println(
-        "Transition fired: " + transitionIndex + " Marking: " + petriNet.getStringMarking());
+          "Transition fired: " + transitionIndex + " Marking: " + petriNet.getStringMarking());
     }
 
     mutex.release();
@@ -103,5 +102,8 @@ class Monitor implements MonitorInterface {
 
 /** Interface for Monitor functionality. */
 interface MonitorInterface {
-  void fireTransition(int transition); // TODO: entiendo que necesitamos que sea bool por el enunciado pero no lo estamos usando
+  void fireTransition(
+      int
+          transition); // TODO: entiendo que necesitamos que sea bool por el enunciado pero no lo
+                       // estamos usando
 }

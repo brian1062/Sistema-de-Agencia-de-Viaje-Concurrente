@@ -18,6 +18,6 @@ public class Segments implements Runnable {
       }
     }
     System.out.println(
-      "[SUCCESS] Checking invariants target achieved. The Petri net has finished!");
+        "[SUCCESS] Checking invariants target achieved. The Petri net has finished!");
   }
 }

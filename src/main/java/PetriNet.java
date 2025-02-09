@@ -76,9 +76,10 @@ public class PetriNet implements AutoCloseable {
     // Transition transitionFromIndex = transitions.get(transitionIndex);
 
     // If not enabled, return false
-    //if (!enabledTransitions.contains(transitionFromIndex)) { // TODO: lo borre porque ya se chequea en fireTransition de Monitor.java
+    // if (!enabledTransitions.contains(transitionFromIndex)) { // TODO: lo borre porque ya se
+    // chequea en fireTransition de Monitor.java
     //  return false;
-    //}
+    // }
 
     // Iterate over all places in the Petri net
     IntStream.range(0, places.size())
