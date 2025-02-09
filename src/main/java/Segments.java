@@ -11,7 +11,7 @@ public class Segments implements Runnable {
 
   @Override
   public void run() {
-    
+
     while (!monitor.petriNetHasFinished()) {
       for (Transition t : sequence) {
         monitor.fireTransition(t.getNumber());
@@ -19,7 +19,7 @@ public class Segments implements Runnable {
       // If the Petri net has finished, we stop the execution immediately
       if (monitor.petriNetHasFinished()) {
         return;
-    }
+      }
     }
   }
 }
