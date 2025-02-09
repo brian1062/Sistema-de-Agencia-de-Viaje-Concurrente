@@ -207,11 +207,14 @@ public class PetriNet implements AutoCloseable {
     return enabledTransitions;
   }
 
-  public boolean invariantsTargetAchieved() {
+  public boolean petriNetHasFinished() {
     return invariantsTargetAchieved;
   }
 
-  public Transition getTransitionPerIndex(int nTransition) {
-    return transitions.get(nTransition);
+  public Transition getTransitionFromIndex(int transitionIndex) {
+    if (transitionIndex < 0 || transitionIndex >= transitions.size()) {
+      throw new IllegalArgumentException("Invalid transition index: " + transitionIndex);
+    }
+    return transitions.get(transitionIndex);
   }
 }
