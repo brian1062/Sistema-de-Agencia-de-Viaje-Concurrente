@@ -82,7 +82,7 @@ jobs:
           node-version: '18'
 
       - name: Install Dependencies
-        run: npm install xml2js # glob
+        run: npm install xml2js
 
       - name: Publish JUnit test results
         uses: dorny/test-reporter@v1
