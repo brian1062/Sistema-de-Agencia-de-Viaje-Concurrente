@@ -42,8 +42,8 @@ class Monitor implements MonitorInterface {
   }
 
   /**
-   * Attempts to fire a transition in the associated Petri Net.
-   * If interrupted, restores the interrupt flag and continues execution.
+   * Attempts to fire a transition in the associated Petri Net. If interrupted, restores the
+   * interrupt flag and continues execution.
    *
    * @param transitionIndex the index of the transition to fire
    * @return true if the transition was successfully fired, false otherwise
@@ -68,10 +68,12 @@ class Monitor implements MonitorInterface {
 
     try {
       if (petriNet.tryFireTransition(transitionIndex)) {
-        String message = String.format("Transition fired: {T%d} Marking: {%s}",
-            transitionIndex, petriNet.getStringMarking());
+        String message =
+            String.format(
+                "Transition fired: {T%d} Marking: {%s}",
+                transitionIndex, petriNet.getStringMarking());
         logger.info(message);
-        
+
         // Handle timed transitions
         if (transition.getTime() > 0) {
           mutex.release();
@@ -92,9 +94,9 @@ class Monitor implements MonitorInterface {
 
   /**
    * Checks if the Petri Net has achieved its invariants target.
-    *
-    * @return true if the invariants target is achieved, false otherwise.
-    */
+   *
+   * @return true if the invariants target is achieved, false otherwise.
+   */
   public boolean petriNetHasFinished() {
     return petriNet.petriNetHasFinished();
   }
@@ -104,5 +106,3 @@ class Monitor implements MonitorInterface {
 interface MonitorInterface {
   boolean fireTransition(int transition);
 }
-
-
