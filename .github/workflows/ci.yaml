@@ -82,7 +82,7 @@ jobs:
           node-version: '18'
 
       - name: Install Dependencies
-        run: npm install xml2js glob
+        run: npm install xml2js
 
       - name: Publish JUnit test results
         uses: dorny/test-reporter@v1
@@ -197,7 +197,7 @@ jobs:
 
       - name: Upload Artifacts On Failure
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: build/reports/tests
