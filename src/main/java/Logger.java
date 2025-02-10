@@ -12,7 +12,7 @@ public class Logger {
 
   private Logger() {} // Private constructor to enforce singleton pattern
 
-  public static Logger getLogger() {
+  public static synchronized Logger getLogger() {
     if (logger == null) {
       logger = new Logger();
     }
