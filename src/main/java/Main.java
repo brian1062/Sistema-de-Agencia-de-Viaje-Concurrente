@@ -21,6 +21,7 @@ public class Main {
         new Thread[rdPConf.getNumberOfSequences()]; // We'll have one thread per sequence
 
     Monitor monitor = Monitor.getMonitor(petriNet);
+    // TODO: create logger instance
 
     // Create and start threads
     Arrays.setAll(

@@ -27,7 +27,7 @@ class Monitor implements MonitorInterface {
    * @param petriNet the PetriNet instance to associate with the Monitor.
    * @return the Monitor instance.
    */
-  public static synchronized Monitor getMonitor(PetriNet petriNet) {
+  public static Monitor getMonitor(PetriNet petriNet) {
     if (monitor == null) {
       monitor = new Monitor(petriNet);
     }
@@ -91,7 +91,15 @@ class Monitor implements MonitorInterface {
   private boolean handleTimedTransition(Transition transition) {
     if (transition.getTime() > 0 && petriNet.isTransitionEnabled(transition.getNumber())) {
       try {
+        mutex.release();
         Thread.sleep(transition.getTime());
+        try {
+          mutex.acquire();
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          logger.error("Thread interrupted while acquiring mutex: " + transition.getNumber());
+          return false;
+        }
         return true;
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
