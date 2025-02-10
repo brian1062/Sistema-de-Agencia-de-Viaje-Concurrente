@@ -76,7 +76,7 @@ public class PetriNet implements AutoCloseable {
     Transition transitionFromIndex = transitions.get(transitionIndex);
 
     // If not enabled, return false
-    if (!enabledTransitions.contains(transitionFromIndex)) {
+    if (!isTransitionEnabled(transitionIndex)) {
       return false;
     }
 
@@ -198,6 +198,20 @@ public class PetriNet implements AutoCloseable {
     }
   }
 
+  /* Check if the transition is enabled */
+  private boolean isTransitionEnabled(int transitionIndex) {
+    validateTransitionIndex(transitionIndex);
+
+    return enabledTransitions.contains(transitions.get(transitionIndex));
+  }
+
+  /* Validate the transition index */
+  private void validateTransitionIndex(int transitionIndex) {
+    if (transitionIndex < 0 || transitionIndex >= transitions.size()) {
+      throw new IllegalArgumentException("Invalid transition index: " + transitionIndex);
+    }
+  }
+
   /* Getters */
   public int[] getMarking() {
     return marking;
@@ -212,9 +226,8 @@ public class PetriNet implements AutoCloseable {
   }
 
   public Transition getTransitionFromIndex(int transitionIndex) {
-    if (transitionIndex < 0 || transitionIndex >= transitions.size()) {
-      throw new IllegalArgumentException("Invalid transition index: " + transitionIndex);
-    }
+    validateTransitionIndex(transitionIndex);
+    
     return transitions.get(transitionIndex);
   }
 }
