@@ -227,7 +227,7 @@ public class PetriNet implements AutoCloseable {
 
   public Transition getTransitionFromIndex(int transitionIndex) {
     validateTransitionIndex(transitionIndex);
-    
+
     return transitions.get(transitionIndex);
   }
 }
