@@ -73,8 +73,6 @@ public class PetriNet implements AutoCloseable {
   }
 
   public boolean tryFireTransition(int transitionIndex) {
-    Transition transitionFromIndex = transitions.get(transitionIndex);
-
     // If not enabled, return false
     if (!isTransitionEnabled(transitionIndex)) {
       return false;
@@ -199,7 +197,7 @@ public class PetriNet implements AutoCloseable {
   }
 
   /* Check if the transition is enabled */
-  private boolean isTransitionEnabled(int transitionIndex) {
+  public boolean isTransitionEnabled(int transitionIndex) {
     validateTransitionIndex(transitionIndex);
 
     return enabledTransitions.contains(transitions.get(transitionIndex));

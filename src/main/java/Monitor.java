@@ -27,7 +27,7 @@ class Monitor implements MonitorInterface {
    * @param petriNet the PetriNet instance to associate with the Monitor.
    * @return the Monitor instance.
    */
-  public static Monitor getMonitor(PetriNet petriNet) {
+  public static synchronized Monitor getMonitor(PetriNet petriNet) {
     if (monitor == null) {
       monitor = new Monitor(petriNet);
     }
@@ -51,19 +51,9 @@ class Monitor implements MonitorInterface {
       return false;
     }
 
-    // Handle timed transitions
-    if (transition.getTime() > 0) {
-      try {
-        Thread.sleep(transition.getTime());
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        logger.error("Thread interrupted during timed transition: " + transitionIndex);
-        return false;
-      }
-    }
-
     try {
       mutex.acquire();
+      if (!handleTimedTransition(transition)) return false;
       return executeTransition(transitionIndex);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
@@ -91,6 +81,25 @@ class Monitor implements MonitorInterface {
       logger.error(e.getMessage());
       return false;
     }
+  }
+
+  /**
+   * Handles timed transition
+   *
+   * @param transition Transition to handle
+   */
+  private boolean handleTimedTransition(Transition transition) {
+    if (transition.getTime() > 0 && petriNet.isTransitionEnabled(transition.getNumber())) {
+      try {
+        Thread.sleep(transition.getTime());
+        return true;
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        logger.error("Thread interrupted during timed transition: " + transition.getNumber());
+        return false;
+      }
+    }
+    return true;
   }
 
   private void logTransitionSuccess(int transitionIndex) {
