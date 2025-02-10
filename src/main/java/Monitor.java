@@ -51,6 +51,7 @@ class Monitor implements MonitorInterface {
   @Override
   public boolean fireTransition(int transitionIndex) {
     Transition transition;
+
     try {
       transition = petriNet.getTransitionFromIndex(transitionIndex);
     } catch (IllegalArgumentException e) {
@@ -58,38 +59,38 @@ class Monitor implements MonitorInterface {
       return false;
     }
 
+    // Handle timed transitions
+    if (transition.getTime() > 0) {
+      try {
+        Thread.sleep(transition.getTime());
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        logger.error("Thread interrupted during timed transition: " + transitionIndex);
+      }
+    }
+
     try {
       acquireMutex();
+        try {
+          if (petriNet.tryFireTransition(transitionIndex)) {
+            String message =
+              String.format(
+                "Transition fired: {T%d} Marking: {%s}",
+                transitionIndex, petriNet.getStringMarking());
+            logger.info(message);
+            return true;
+          }
+          return false;
+        } catch (Exception e) {
+          logger.error(e.getMessage());
+        } finally {
+          mutex.release();
+        }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       logger.error("Thread interrupted while acquiring mutex for transition: " + transitionIndex);
-      return false;
     }
-
-    try {
-      if (petriNet.tryFireTransition(transitionIndex)) {
-        String message =
-            String.format(
-                "Transition fired: {T%d} Marking: {%s}",
-                transitionIndex, petriNet.getStringMarking());
-        logger.info(message);
-
-        // Handle timed transitions
-        if (transition.getTime() > 0) {
-          mutex.release();
-          try {
-            Thread.sleep(transition.getTime());
-          } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            logger.error("Thread interrupted during timed transition: " + transitionIndex);
-          }
-        }
-        return true;
-      }
-      return false;
-    } finally {
-      mutex.release();
-    }
+    return false;
   }
 
   /**
