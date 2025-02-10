@@ -1,8 +1,8 @@
 import java.util.concurrent.Semaphore;
 
 /**
- * Monitor class for managing synchronized interactions with a Petri Net. Ensures only one instance
- * of Monitor is created using the Singleton pattern.
+ * Monitor class that implements thread-safe operations on a Petri Net.
+ * Uses the Singleton pattern to ensure only one monitor instance exists.
  */
 class Monitor implements MonitorInterface {
   private static Monitor monitor = null;
@@ -20,13 +20,13 @@ class Monitor implements MonitorInterface {
     this.petriNet = petriNet;
     this.logger = Logger.getLogger();
   }
-
+  
   /**
    * Returns the singleton instance of the Monitor.
    *
    * @param petriNet the PetriNet instance to associate with the Monitor.
    * @return the Monitor instance.
-   */
+   */    
   public static Monitor getMonitor(PetriNet petriNet) {
     if (monitor == null) {
       monitor = new Monitor(petriNet);
@@ -34,24 +34,15 @@ class Monitor implements MonitorInterface {
     return monitor;
   }
 
-  /*
-   * Acquires the mutex to ensure thread safety.
-   */
-  private void acquireMutex() throws InterruptedException {
-    mutex.acquire();
-  }
-
   /**
-   * Attempts to fire a transition in the associated Petri Net. If interrupted, restores the
-   * interrupt flag and continues execution.
-   *
-   * @param transitionIndex the index of the transition to fire
-   * @return true if the transition was successfully fired, false otherwise
+   * Attempts to fire a transition in the Petri Net.
+   * Handles both immediate and timed transitions with proper synchronization.
+   * @param transitionIndex Index of the transition to fire
+   * @return true if transition fired successfully, false otherwise
    */
   @Override
   public boolean fireTransition(int transitionIndex) {
     Transition transition;
-
     try {
       transition = petriNet.getTransitionFromIndex(transitionIndex);
     } catch (IllegalArgumentException e) {
@@ -66,37 +57,52 @@ class Monitor implements MonitorInterface {
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         logger.error("Thread interrupted during timed transition: " + transitionIndex);
+        return false;
       }
     }
 
     try {
-      acquireMutex();
-        try {
-          if (petriNet.tryFireTransition(transitionIndex)) {
-            String message =
-              String.format(
-                "Transition fired: {T%d} Marking: {%s}",
-                transitionIndex, petriNet.getStringMarking());
-            logger.info(message);
-            return true;
-          }
-          return false;
-        } catch (Exception e) {
-          logger.error(e.getMessage());
-        } finally {
-          mutex.release();
-        }
+      mutex.acquire();
+      return executeTransition(transitionIndex);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      logger.error("Thread interrupted while acquiring mutex for transition: " + transitionIndex);
+      logger.error("Thread interrupted while acquiring mutex: " + transitionIndex);
+      return false;
+    } finally {
+      mutex.release();
     }
-    return false;
   }
 
   /**
-   * Checks if the Petri Net has achieved its invariants target.
-   *
-   * @return true if the invariants target is achieved, false otherwise.
+   * Executes the transition while holding the mutex.
+   * @param transitionIndex Index of transition to execute
+   * @return true if successful, false otherwise
+   */
+  private boolean executeTransition(int transitionIndex) {
+    try {
+      if (petriNet.tryFireTransition(transitionIndex)) {
+        logTransitionSuccess(transitionIndex);
+        return true;
+      }
+      return false;
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      return false;
+    }
+  }
+
+  private void logTransitionSuccess(int transitionIndex) {
+    String message = String.format(
+      "Transition fired: {T%d} Marking: {%s}",
+      transitionIndex, 
+      petriNet.getStringMarking()
+    );
+    logger.info(message);
+  }
+
+  /**
+   * Checks if the Petri Net has reached its target number of invariants.
+   * @return true if target invariants achieved, false otherwise
    */
   public boolean petriNetHasFinished() {
     return petriNet.petriNetHasFinished();
