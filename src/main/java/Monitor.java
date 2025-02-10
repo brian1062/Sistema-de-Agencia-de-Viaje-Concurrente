@@ -6,9 +6,9 @@ import java.util.concurrent.Semaphore;
  */
 class Monitor implements MonitorInterface {
   private static Monitor monitor = null;
+  private static Logger logger = Logger.getLogger();
   private final PetriNet petriNet;
   private final Semaphore mutex;
-  private final Logger logger;
 
   /**
    * Private constructor to enforce Singleton pattern.
@@ -18,7 +18,6 @@ class Monitor implements MonitorInterface {
   private Monitor(PetriNet petriNet) {
     this.mutex = new Semaphore(1, true);
     this.petriNet = petriNet;
-    this.logger = Logger.getLogger();
   }
 
   /**
