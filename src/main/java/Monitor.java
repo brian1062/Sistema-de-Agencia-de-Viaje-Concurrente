@@ -1,8 +1,8 @@
 import java.util.concurrent.Semaphore;
 
 /**
- * Monitor class that implements thread-safe operations on a Petri Net.
- * Uses the Singleton pattern to ensure only one monitor instance exists.
+ * Monitor class that implements thread-safe operations on a Petri Net. Uses the Singleton pattern
+ * to ensure only one monitor instance exists.
  */
 class Monitor implements MonitorInterface {
   private static Monitor monitor = null;
@@ -20,13 +20,13 @@ class Monitor implements MonitorInterface {
     this.petriNet = petriNet;
     this.logger = Logger.getLogger();
   }
-  
+
   /**
    * Returns the singleton instance of the Monitor.
    *
    * @param petriNet the PetriNet instance to associate with the Monitor.
    * @return the Monitor instance.
-   */    
+   */
   public static Monitor getMonitor(PetriNet petriNet) {
     if (monitor == null) {
       monitor = new Monitor(petriNet);
@@ -35,8 +35,9 @@ class Monitor implements MonitorInterface {
   }
 
   /**
-   * Attempts to fire a transition in the Petri Net.
-   * Handles both immediate and timed transitions with proper synchronization.
+   * Attempts to fire a transition in the Petri Net. Handles both immediate and timed transitions
+   * with proper synchronization.
+   *
    * @param transitionIndex Index of the transition to fire
    * @return true if transition fired successfully, false otherwise
    */
@@ -75,6 +76,7 @@ class Monitor implements MonitorInterface {
 
   /**
    * Executes the transition while holding the mutex.
+   *
    * @param transitionIndex Index of transition to execute
    * @return true if successful, false otherwise
    */
@@ -92,16 +94,15 @@ class Monitor implements MonitorInterface {
   }
 
   private void logTransitionSuccess(int transitionIndex) {
-    String message = String.format(
-      "Transition fired: {T%d} Marking: {%s}",
-      transitionIndex, 
-      petriNet.getStringMarking()
-    );
+    String message =
+        String.format(
+            "Transition fired: {T%d} Marking: {%s}", transitionIndex, petriNet.getStringMarking());
     logger.info(message);
   }
 
   /**
    * Checks if the Petri Net has reached its target number of invariants.
+   *
    * @return true if target invariants achieved, false otherwise
    */
   public boolean petriNetHasFinished() {
