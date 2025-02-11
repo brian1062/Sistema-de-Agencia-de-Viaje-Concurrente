@@ -123,8 +123,8 @@ class Monitor implements MonitorInterface {
 
   private void logTransitionSuccess(int transitionIndex) {
     String message =
-      String.format(
-        "Transition fired: {T%d} Marking: {%s}", transitionIndex, petriNet.getStringMarking());
+        String.format(
+            "Transition fired: {T%d} Marking: {%s}", transitionIndex, petriNet.getStringMarking());
     logger.info(message);
   }
 
