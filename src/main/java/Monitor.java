@@ -9,6 +9,7 @@ class Monitor implements MonitorInterface {
   private static Logger logger = Logger.getLogger();
   private final PetriNet petriNet;
   private final Semaphore mutex;
+  private final BalancedPolicy policy;
 
   /**
    * Private constructor to enforce Singleton pattern.
@@ -18,6 +19,7 @@ class Monitor implements MonitorInterface {
   private Monitor(PetriNet petriNet) {
     this.mutex = new Semaphore(1, true);
     this.petriNet = petriNet;
+    this.policy = new BalancedPolicy();
   }
 
   /**
@@ -42,6 +44,9 @@ class Monitor implements MonitorInterface {
    */
   @Override
   public boolean fireTransition(int transitionIndex) {
+    // Check if the transition can fire according to the policy
+    if (!policy.canFireTransition(transitionIndex)) return false;
+
     Transition transition;
     try {
       transition = petriNet.getTransitionFromIndex(transitionIndex);
@@ -53,7 +58,14 @@ class Monitor implements MonitorInterface {
     try {
       mutex.acquire();
       if (!handleTimedTransition(transition)) return false;
-      return executeTransition(transitionIndex);
+
+      // If the transition fires successfully, update the policy
+      if (executeTransition(transitionIndex)) {
+        policy.transitionFired(transitionIndex);
+        return true;
+      }
+      return false;
+
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       logger.error("Thread interrupted while acquiring mutex: " + transitionIndex);

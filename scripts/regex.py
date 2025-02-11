@@ -145,5 +145,8 @@ analyze_transitions(file_path)
 calculate_number_of_matches_for_each_invariant(invariants)
 calculate_percentage_from_invariants(invariants)
 
-# Delete transitions file
-os.remove(file_path)
+# Delete file after running the program
+try:
+    os.remove(file_path)
+except FileNotFoundError:
+    pass

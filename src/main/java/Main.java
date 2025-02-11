@@ -18,7 +18,8 @@ public class Main {
 
     // Initialize threads array
     Thread[] threads =
-        new Thread[rdPConf.getNumberOfSequences()]; // We'll have one thread per sequence
+        new Thread
+            [rdPConf.getNumberOfSequences()]; // We'll have one thread per sequence of transitions
 
     Monitor monitor = Monitor.getMonitor(petriNet);
 
