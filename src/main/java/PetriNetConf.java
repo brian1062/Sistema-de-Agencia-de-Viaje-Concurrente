@@ -93,8 +93,7 @@ public class PetriNetConf {
 
     // Initialize transitions list
     IntStream.range(0, INCIDENCE_MATRIX_IN[0].length)
-        .mapToObj(
-            i -> new Transition(i, TIME_TRANSITION_MATRIX[i][0]))
+        .mapToObj(i -> new Transition(i, TIME_TRANSITION_MATRIX[i][0]))
         .forEach(transitions::add);
   }
 

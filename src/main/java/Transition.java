@@ -6,7 +6,7 @@
 public class Transition {
   private final String name; // Name of the transition, automatically generated as "T<number>".
   private final int number;
-   private final long delayTime;
+  private final long delayTime;
 
   /**
    * Constructor for the Transition class.
