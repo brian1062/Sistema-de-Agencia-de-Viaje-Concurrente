@@ -13,7 +13,10 @@ public class BalancedPolicy extends Policy {
       policyMutex.acquire();
 
       // If not T2 or T3, allow firing
-      if (transitionIndex != 2 && transitionIndex != 3 && transitionIndex != 6 && transitionIndex != 7) {
+      if (transitionIndex != 2
+          && transitionIndex != 3
+          && transitionIndex != 6
+          && transitionIndex != 7) {
         policyMutex.release();
         return true;
       }
