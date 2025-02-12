@@ -29,23 +29,23 @@ public class PetriNet {
    * @param invariantsCountTarget
    */
   public PetriNet(
-    List<Transition> transitions,
-    List<Place> places,
-    int[][] incidenceMatrixOut,
-    int[][] incidenceMatrixIn,
-    int[][] placesInvariants,
-    int[] marking,
-    int invariantsCountTarget) {
-      this.transitions = transitions;
-      this.places = places;
-      this.incidenceMatrixOut = incidenceMatrixOut;
-      this.incidenceMatrixIn = incidenceMatrixIn;
-      this.placesInvariants = placesInvariants;
-      this.marking = marking;
-      this.placesLength = places.size();
-      this.invariantsCountTarget = invariantsCountTarget;
-      updateEnabledTransitions(); // Initialize the enabled transitions
-    }
+      List<Transition> transitions,
+      List<Place> places,
+      int[][] incidenceMatrixOut,
+      int[][] incidenceMatrixIn,
+      int[][] placesInvariants,
+      int[] marking,
+      int invariantsCountTarget) {
+    this.transitions = transitions;
+    this.places = places;
+    this.incidenceMatrixOut = incidenceMatrixOut;
+    this.incidenceMatrixIn = incidenceMatrixIn;
+    this.placesInvariants = placesInvariants;
+    this.marking = marking;
+    this.placesLength = places.size();
+    this.invariantsCountTarget = invariantsCountTarget;
+    updateEnabledTransitions(); // Initialize the enabled transitions
+  }
 
   public boolean tryFireTransition(int transitionIndex) {
     if (!isTransitionEnabled(transitionIndex)) {
@@ -90,9 +90,7 @@ public class PetriNet {
     return true;
   }
 
-  /**
-   * Returns the current marking of the Petri net.
-  */
+  /** Returns the current marking of the Petri net. */
   public String getStringMarking() {
     String markingString =
         IntStream.range(0, marking.length)
@@ -110,9 +108,7 @@ public class PetriNet {
     return markingString;
   }
 
-  /**
-   * Updates the list of enabled transitions in the Petri net.
-   */
+  /** Updates the list of enabled transitions in the Petri net. */
   private void updateEnabledTransitions() {
     // Clear the enabledTransitions list to remove any previously stored transitions
     enabledTransitions.clear();
@@ -129,9 +125,7 @@ public class PetriNet {
         .forEach(enabledTransitions::add);
   }
 
-  /**
-   * Prints the names of the currently enabled transitions in the Petri net.
-   */
+  /** Prints the names of the currently enabled transitions in the Petri net. */
   public void printEnabledTransitions() {
     // Iterate over the enabledTransitions list and print each transition's name
     enabledTransitions.stream().map(Transition::getName).forEach(System.out::println);
@@ -153,6 +147,7 @@ public class PetriNet {
 
   /**
    * Check if the transition is enabled
+   *
    * @param transitionIndex
    * @return true if the transition is enabled, false otherwise
    */
@@ -164,6 +159,7 @@ public class PetriNet {
 
   /**
    * Validates the transition index
+   *
    * @param transitionIndex
    */
   private void validateTransitionIndex(int transitionIndex) {
