@@ -1,8 +1,8 @@
 plugins {
   java
   jacoco
-  application
   id("org.jetbrains.dokka") version "1.9.10"
+  application
 }
 
 group = "org.petrinet"
@@ -10,10 +10,6 @@ version = "1.0-SNAPSHOT"
 
 repositories {
   mavenCentral()
-}
-
-application {
-  mainClass.set("Main")
 }
 
 dependencies {
@@ -27,10 +23,18 @@ dependencies {
   testImplementation("org.assertj:assertj-core:3.24.2")
 }
 
+application {
+  mainClass.set("Main")
+}
+
 tasks.jar {
   manifest {
     attributes["Main-Class"] = "Main"
   }
+}
+
+tasks.named<JavaExec>("run") {
+  standardInput = System.`in`
 }
 
 tasks.test {
@@ -40,7 +44,6 @@ tasks.test {
 
 tasks.jacocoTestReport {
   dependsOn(tasks.test)
-
   reports {
     html.required.set(true)
     xml.required.set(true)

@@ -2,19 +2,26 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-/**
- * Utility class for logging application messages and errors. Implements a singleton pattern to
- * ensure a single logging instance across the application.
- */
+/** Utility class for logging application messages and errors. */
 public class Logger {
   private static Logger logger = null;
   private static final String LOG_PATH = "/tmp/petriNetResults.txt";
+  private static final String TRANSITIONS_LOG_PATH = "/tmp/transitionsSequence.txt";
+  private final FileWriter writer;
+  private final FileWriter transitionsWriter;
 
-  private Logger() {} // Private constructor to enforce singleton pattern
+  private Logger() throws IOException {
+    this.writer = new FileWriter(LOG_PATH, true);
+    this.transitionsWriter = new FileWriter(TRANSITIONS_LOG_PATH, true);
+  }
 
-  public static synchronized Logger getLogger() {
+  public static Logger getLogger() {
     if (logger == null) {
-      logger = new Logger();
+      try {
+        logger = new Logger();
+      } catch (IOException e) {
+        throw new RuntimeException("Failed to initialize logger: " + e.getMessage());
+      }
     }
     return logger;
   }
@@ -25,9 +32,9 @@ public class Logger {
    * @param message The error message to log
    */
   public void error(String message) {
-    String errorMessage = LocalDateTime.now() + " ERROR: " + message;
-    System.err.println(errorMessage);
-    writeToFile(errorMessage);
+    String formattedMessage = LocalDateTime.now() + " ERROR: " + message;
+    System.err.println(formattedMessage);
+    writeToFile(formattedMessage);
   }
 
   /**
@@ -36,21 +43,44 @@ public class Logger {
    * @param message The info message to log
    */
   public void info(String message) {
-    String infoMessage = LocalDateTime.now() + " INFO: " + message;
-    System.out.println(infoMessage);
-    writeToFile(infoMessage);
+    String formattedMessage = LocalDateTime.now() + " INFO: " + message;
+    System.out.println(formattedMessage);
+    writeToFile(formattedMessage);
   }
 
   /**
-   * Writes a message to the log file with proper resource handling.
+   * Logs a transition to the transitions log file.
    *
-   * @param message The message to write to the file
+   * @param transitionIndex Index of transition to log
    */
-  private void writeToFile(String message) {
-    try (FileWriter writer = new FileWriter(LOG_PATH, true)) {
-      writer.write(message + "\n");
+  public void logTransition(int transitionIndex) {
+    try {
+      transitionsWriter.write("T" + transitionIndex);
+      transitionsWriter.flush();
+    } catch (IOException e) {
+      error("Failed to write transition to log: " + e.getMessage());
+    }
+  }
+
+  private synchronized void writeToFile(String message) {
+    try {
+      writer.write(message);
+      writer.write(System.lineSeparator());
     } catch (IOException e) {
       System.err.println("Failed to write to log file: " + e.getMessage());
+    }
+  }
+
+  public void close() {
+    try {
+      if (writer != null) {
+        writer.close();
+      }
+      if (transitionsWriter != null) {
+        transitionsWriter.close();
+      }
+    } catch (IOException e) {
+      System.err.println("Failed to close logger: " + e.getMessage());
     }
   }
 }
