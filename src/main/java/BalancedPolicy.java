@@ -11,8 +11,8 @@ public class BalancedPolicy extends Policy {
 
   // Define transition pairs that need to be balanced
   private static final int[][] BALANCED_PAIRS = {
-    {2, 3},  // First pair to balance
-    {6, 7}   // Second pair to balance
+    {2, 3}, // First pair to balance
+    {6, 7} // Second pair to balance
   };
 
   public BalancedPolicy() {
@@ -76,6 +76,6 @@ public class BalancedPolicy extends Policy {
         return otherCount >= currentCount;
       }
     }
-    return false;  // Should never reach here if isTrackedTransition was true
+    return false; // Should never reach here if isTrackedTransition was true
   }
 }
