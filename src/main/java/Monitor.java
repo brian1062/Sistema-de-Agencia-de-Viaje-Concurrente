@@ -100,10 +100,10 @@ class Monitor implements MonitorInterface {
    * @param transition Transition to handle
    */
   private boolean handleTimedTransition(Transition transition) {
-    if (transition.getTime() > 0 && petriNet.isTransitionEnabled(transition.getNumber())) {
+    if (transition.getDelayTime() > 0 && petriNet.isTransitionEnabled(transition.getNumber())) {
       try {
         mutex.release();
-        Thread.sleep(transition.getTime());
+        Thread.sleep(transition.getDelayTime());
         try {
           mutex.acquire();
         } catch (InterruptedException e) {
