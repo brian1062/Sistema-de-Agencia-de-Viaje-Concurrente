@@ -22,9 +22,6 @@ public class PetriNet implements AutoCloseable {
   private final int LAST_TRANSITION = 11;
   private final String LOG_PATH = "/tmp/transitionsSequence.txt";
 
-  // PolicyFactory policyFactory = new PolicyFactory(new PolicyBalancedType());
-  // PetriNet petriNet;
-
   /**
    * Constructor for the PetriNet class.
    *

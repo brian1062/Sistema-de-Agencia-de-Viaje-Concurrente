@@ -2,33 +2,64 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
+  private static final Logger logger = Logger.getLogger();
+
   public static void main(String[] args) {
-    Scanner scanner = new Scanner(System.in);
-    Policy policy = selectPolicy(scanner);
-    scanner.close();
+    // Register shutdown hook for logger
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+      try {
+        logger.info("Application shutting down...");
+        logger.close();
+      } catch (Exception e) {
+        System.err.println("Error closing logger: " + e.getMessage());
+      }
+    }));
 
-    PetriNetConf rdPConf = new PetriNetConf();
+    logger.info("Application starting...");
 
-    PetriNet petriNet =
-        new PetriNet(
-            rdPConf.getTransitions(),
-            rdPConf.getPlaces(),
-            rdPConf.getIncidenceMatrixOut(),
-            rdPConf.getIncidenceMatrixIn(),
-            rdPConf.getPlacesInvariants(),
-            rdPConf.getInitialMarking(),
-            rdPConf.getTargetInvariants());
+    try {
+      Scanner scanner = new Scanner(System.in);
+      Policy policy = selectPolicy(scanner);
+      scanner.close();
 
-    // Initialize monitor with the chosen policy
-    Monitor monitor = Monitor.getMonitor(petriNet, policy);
+      PetriNetConf rdPConf = new PetriNetConf();
 
-    // Initialize threads array
-    Thread[] threads = new Thread[rdPConf.getNumberOfSequences()];
+      PetriNet petriNet = new PetriNet(
+        rdPConf.getTransitions(),
+        rdPConf.getPlaces(),
+        rdPConf.getIncidenceMatrixOut(),
+        rdPConf.getIncidenceMatrixIn(),
+        rdPConf.getPlacesInvariants(),
+        rdPConf.getInitialMarking(),
+        rdPConf.getTargetInvariants()
+      );
 
-    // Create and start threads
-    Arrays.setAll(
-        threads, i -> new Thread(new Segments(rdPConf.getTransitionSequence(i), monitor)));
-    Arrays.stream(threads).forEach(Thread::start);
+      // Initialize monitor with the chosen policy
+      Monitor monitor = Monitor.getMonitor(petriNet, policy);
+
+      // Initialize threads array
+      Thread[] threads = new Thread[rdPConf.getNumberOfSequences()];
+
+      // Create and start threads
+      Arrays.setAll(
+        threads,
+        i -> new Thread(new Segments(rdPConf.getTransitionSequence(i), monitor))
+      );
+
+      logger.info("Starting Petri net execution...");
+      Arrays.stream(threads).forEach(Thread::start);
+
+      // Wait for all threads to complete
+      for (Thread thread : threads) {
+        thread.join();
+      }
+
+      logger.info("Petri net execution completed successfully");
+
+    } catch (Exception e) {
+      logger.error("Fatal error in application: " + e.getMessage());
+      System.exit(1);
+    }
   }
 
   private static Policy selectPolicy(Scanner scanner) {
@@ -42,20 +73,20 @@ public class Main {
         String input = scanner.nextLine();
         return switch (input) {
           case "1" -> {
-            System.out.println("Selected: Balanced Policy");
+            logger.info("Selected: Balanced Policy");
             yield new BalancedPolicy();
           }
           case "2" -> {
-            System.out.println("Selected: Prioritized Policy");
+            logger.info("Selected: Prioritized Policy");
             yield new PrioritizedPolicy();
           }
           default -> {
-            System.out.println("Invalid choice. Please enter 1 or 2.");
+            logger.error("Invalid policy selection: " + input);
             yield selectPolicy(scanner);
           }
         };
       } catch (Exception e) {
-        System.out.println("Error reading input. Please try again.");
+        logger.error("Error reading policy selection: " + e.getMessage());
       }
     }
   }
