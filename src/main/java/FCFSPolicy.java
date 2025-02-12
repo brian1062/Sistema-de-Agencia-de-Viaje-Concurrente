@@ -11,9 +11,10 @@ public class FCFSPolicy extends Policy {
    * @return true.
    */
   @Override
-  public boolean canFireTransition(int transitionIndex) { return true; }
+  public boolean canFireTransition(int transitionIndex) {
+    return true;
+  }
 
   @Override
   public void transitionFired(int transitionIndex) {} // No-op
-  
 }
