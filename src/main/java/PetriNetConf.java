@@ -3,7 +3,6 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class PetriNetConf {
-  private static final int MAX_TIME = 600000000;
   private static final int[] INITIAL_MARKING = {5, 1, 0, 0, 5, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0};
   private final List<Place> places = new ArrayList<>();
   private final List<Transition> transitions = new ArrayList<>();
