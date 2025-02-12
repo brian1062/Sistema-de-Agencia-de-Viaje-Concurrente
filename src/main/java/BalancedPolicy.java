@@ -25,15 +25,13 @@ public class BalancedPolicy extends Policy {
 
   @Override
   public boolean canFireTransition(int transitionIndex) {
+    // If not a tracked transition, allow firing
+    if (!isTrackedTransition(transitionIndex)) {
+      return true;
+    }
+
     try {
       policyMutex.acquire();
-
-      // If not a tracked transition, allow firing
-      if (!isTrackedTransition(transitionIndex)) {
-        policyMutex.release();
-        return true;
-      }
-
       boolean canFire = canFireBalancedTransition(transitionIndex);
       policyMutex.release();
       return canFire;
