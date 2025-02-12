@@ -6,14 +6,17 @@ public class Main {
 
   public static void main(String[] args) {
     // Register shutdown hook for logger
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      try {
-        logger.info("Application shutting down...");
-        logger.close();
-      } catch (Exception e) {
-        System.err.println("Error closing logger: " + e.getMessage());
-      }
-    }));
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread(
+                () -> {
+                  try {
+                    logger.info("Application shutting down...");
+                    logger.close();
+                  } catch (Exception e) {
+                    System.err.println("Error closing logger: " + e.getMessage());
+                  }
+                }));
 
     logger.info("Application starting...");
 
@@ -24,15 +27,15 @@ public class Main {
 
       PetriNetConf rdPConf = new PetriNetConf();
 
-      PetriNet petriNet = new PetriNet(
-        rdPConf.getTransitions(),
-        rdPConf.getPlaces(),
-        rdPConf.getIncidenceMatrixOut(),
-        rdPConf.getIncidenceMatrixIn(),
-        rdPConf.getPlacesInvariants(),
-        rdPConf.getInitialMarking(),
-        rdPConf.getTargetInvariants()
-      );
+      PetriNet petriNet =
+          new PetriNet(
+              rdPConf.getTransitions(),
+              rdPConf.getPlaces(),
+              rdPConf.getIncidenceMatrixOut(),
+              rdPConf.getIncidenceMatrixIn(),
+              rdPConf.getPlacesInvariants(),
+              rdPConf.getInitialMarking(),
+              rdPConf.getTargetInvariants());
 
       // Initialize monitor with the chosen policy
       Monitor monitor = Monitor.getMonitor(petriNet, policy);
@@ -42,9 +45,7 @@ public class Main {
 
       // Create and start threads
       Arrays.setAll(
-        threads,
-        i -> new Thread(new Segments(rdPConf.getTransitionSequence(i), monitor))
-      );
+          threads, i -> new Thread(new Segments(rdPConf.getTransitionSequence(i), monitor)));
 
       logger.info("Starting Petri net execution...");
       Arrays.stream(threads).forEach(Thread::start);

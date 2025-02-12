@@ -2,10 +2,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-/**
- * Utility class for logging application messages and errors.
- *
- */
+/** Utility class for logging application messages and errors. */
 public class Logger {
   private static Logger logger = null;
   private static final String LOG_PATH = "/tmp/petriNetResults.txt";
@@ -30,7 +27,7 @@ public class Logger {
    * Logs an error message to both console and file.
    *
    * @param message The error message to log
-   */  
+   */
   public void error(String message) {
     String formattedMessage = LocalDateTime.now() + " ERROR: " + message;
     System.err.println(formattedMessage);
@@ -41,7 +38,7 @@ public class Logger {
    * Logs an info message to both console and file.
    *
    * @param message The info message to log
-   */  
+   */
   public void info(String message) {
     String formattedMessage = LocalDateTime.now() + " INFO: " + message;
     System.out.println(formattedMessage);
