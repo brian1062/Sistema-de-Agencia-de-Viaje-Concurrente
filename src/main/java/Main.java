@@ -34,7 +34,7 @@ public class Main {
   private static Policy selectPolicy(Scanner scanner) {
     while (true) {
       System.out.println("\nSelect the policy to use:");
-      System.out.println("1. Balanced Policy (50/50 distribution)");
+      System.out.println("1. Balanced Policy (50/50 and 50/50 distributions)");
       System.out.println("2. Prioritized Policy (75/25 and 80/20 distributions)");
       System.out.print("Enter your choice (1 or 2): ");
 
