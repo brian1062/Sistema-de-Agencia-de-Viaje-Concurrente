@@ -9,17 +9,17 @@ class Monitor implements MonitorInterface {
   private static Logger logger = Logger.getLogger();
   private final PetriNet petriNet;
   private final Semaphore mutex;
-  private final BalancedPolicy policy;
+  private final Policy policy;
 
   /**
    * Private constructor to enforce Singleton pattern.
    *
    * @param petriNet the PetriNet instance to control.
    */
-  private Monitor(PetriNet petriNet) {
+  private Monitor(PetriNet petriNet, Policy policy) {
     this.mutex = new Semaphore(1, true);
     this.petriNet = petriNet;
-    this.policy = new BalancedPolicy();
+    this.policy = policy;
   }
 
   /**
@@ -28,9 +28,9 @@ class Monitor implements MonitorInterface {
    * @param petriNet the PetriNet instance to associate with the Monitor.
    * @return the Monitor instance.
    */
-  public static Monitor getMonitor(PetriNet petriNet) {
+  public static Monitor getMonitor(PetriNet petriNet, Policy policy) {
     if (monitor == null) {
-      monitor = new Monitor(petriNet);
+      monitor = new Monitor(petriNet, policy);
     }
     return monitor;
   }
