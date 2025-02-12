@@ -6,6 +6,7 @@ import java.util.concurrent.Semaphore;
 public abstract class Policy {
   /** Semaphore to ensure mutual exclusion in transition firing policies. */
   protected final Semaphore policyMutex;
+
   protected static Logger logger = Logger.getLogger();
 
   protected Policy() {
