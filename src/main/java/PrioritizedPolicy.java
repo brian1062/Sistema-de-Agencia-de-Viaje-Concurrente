@@ -22,13 +22,13 @@ public class PrioritizedPolicy extends Policy {
         int totalT2T3 = t2Count + t3Count;
 
         if (totalT2T3 == 0) {
-          canFire = true;  // Allow first firing
+          canFire = true; // Allow first firing
         } else {
           double currentT2Percentage = (double) t2Count / totalT2T3;
 
           if (transitionIndex == 2) {
             canFire = currentT2Percentage < T2_TARGET_PERCENTAGE;
-          } else {  // T3
+          } else { // T3
             canFire = currentT2Percentage >= T2_TARGET_PERCENTAGE;
           }
         }
@@ -38,13 +38,13 @@ public class PrioritizedPolicy extends Policy {
         int totalT6T7 = t6Count + t7Count;
 
         if (totalT6T7 == 0) {
-          canFire = true;  // Allow first firing
+          canFire = true; // Allow first firing
         } else {
           double currentT6Percentage = (double) t6Count / totalT6T7;
 
           if (transitionIndex == 6) {
             canFire = currentT6Percentage < T6_TARGET_PERCENTAGE;
-          } else {  // T7
+          } else { // T7
             canFire = currentT6Percentage >= T6_TARGET_PERCENTAGE;
           }
         }

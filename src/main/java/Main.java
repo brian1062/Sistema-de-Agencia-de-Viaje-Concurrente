@@ -8,17 +8,17 @@ public class Main {
     scanner.close();
 
     PetriNetConf rdPConf = new PetriNetConf();
-    
-    PetriNet petriNet = new PetriNet(
-      rdPConf.getTransitions(),
-      rdPConf.getPlaces(),
-      rdPConf.getIncidenceMatrixOut(),
-      rdPConf.getIncidenceMatrixIn(),
-      rdPConf.getPlacesInvariants(),
-      rdPConf.getInitialMarking(),
-      rdPConf.getTargetInvariants()
-    );
-    
+
+    PetriNet petriNet =
+        new PetriNet(
+            rdPConf.getTransitions(),
+            rdPConf.getPlaces(),
+            rdPConf.getIncidenceMatrixOut(),
+            rdPConf.getIncidenceMatrixIn(),
+            rdPConf.getPlacesInvariants(),
+            rdPConf.getInitialMarking(),
+            rdPConf.getTargetInvariants());
+
     // Initialize monitor with the chosen policy
     Monitor monitor = Monitor.getMonitor(petriNet, policy);
 
@@ -27,9 +27,7 @@ public class Main {
 
     // Create and start threads
     Arrays.setAll(
-      threads, 
-      i -> new Thread(new Segments(rdPConf.getTransitionSequence(i), monitor))
-    );
+        threads, i -> new Thread(new Segments(rdPConf.getTransitionSequence(i), monitor)));
     Arrays.stream(threads).forEach(Thread::start);
   }
 
@@ -39,7 +37,7 @@ public class Main {
       System.out.println("1. Balanced Policy (50/50 distribution)");
       System.out.println("2. Prioritized Policy (75/25 and 80/20 distributions)");
       System.out.print("Enter your choice (1 or 2): ");
-      
+
       try {
         String input = scanner.nextLine();
         return switch (input) {
@@ -62,7 +60,6 @@ public class Main {
     }
   }
 }
-
 
 /*public class Main {
 

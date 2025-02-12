@@ -12,5 +12,6 @@ public abstract class Policy {
   }
 
   public abstract boolean canFireTransition(int transitionIndex);
+
   public abstract void transitionFired(int transitionIndex);
 }
