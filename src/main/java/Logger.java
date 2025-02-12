@@ -3,18 +3,25 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 /**
- * Utility class for logging application messages and errors. Implements a singleton pattern to
- * ensure a single logging instance across the application.
+ * Utility class for logging application messages and errors.
+ *
  */
 public class Logger {
   private static Logger logger = null;
   private static final String LOG_PATH = "/tmp/petriNetResults.txt";
+  private final FileWriter writer;
 
-  private Logger() {} // Private constructor to enforce singleton pattern
+  private Logger() throws IOException {
+    this.writer = new FileWriter(LOG_PATH, true);
+  }
 
-  public static synchronized Logger getLogger() {
+  public static Logger getLogger() {
     if (logger == null) {
-      logger = new Logger();
+      try {
+        logger = new Logger();
+      } catch (IOException e) {
+        throw new RuntimeException("Failed to initialize logger: " + e.getMessage());
+      }
     }
     return logger;
   }
@@ -23,34 +30,40 @@ public class Logger {
    * Logs an error message to both console and file.
    *
    * @param message The error message to log
-   */
+   */  
   public void error(String message) {
-    String errorMessage = LocalDateTime.now() + " ERROR: " + message;
-    System.err.println(errorMessage);
-    writeToFile(errorMessage);
+    String formattedMessage = LocalDateTime.now() + " ERROR: " + message;
+    System.err.println(formattedMessage);
+    writeToFile(formattedMessage);
   }
 
   /**
    * Logs an info message to both console and file.
    *
    * @param message The info message to log
-   */
+   */  
   public void info(String message) {
-    String infoMessage = LocalDateTime.now() + " INFO: " + message;
-    System.out.println(infoMessage);
-    writeToFile(infoMessage);
+    String formattedMessage = LocalDateTime.now() + " INFO: " + message;
+    System.out.println(formattedMessage);
+    writeToFile(formattedMessage);
   }
 
-  /**
-   * Writes a message to the log file with proper resource handling.
-   *
-   * @param message The message to write to the file
-   */
-  private void writeToFile(String message) {
-    try (FileWriter writer = new FileWriter(LOG_PATH, true)) {
-      writer.write(message + "\n");
+  private synchronized void writeToFile(String message) {
+    try {
+      writer.write(message);
+      writer.write(System.lineSeparator());
     } catch (IOException e) {
       System.err.println("Failed to write to log file: " + e.getMessage());
+    }
+  }
+
+  public void close() {
+    try {
+      if (writer != null) {
+        writer.close();
+      }
+    } catch (IOException e) {
+      System.err.println("Failed to close logger: " + e.getMessage());
     }
   }
 }
