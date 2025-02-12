@@ -6,10 +6,13 @@ import java.time.LocalDateTime;
 public class Logger {
   private static Logger logger = null;
   private static final String LOG_PATH = "/tmp/petriNetResults.txt";
+  private static final String TRANSITIONS_LOG_PATH = "/tmp/transitionsSequence.txt";
   private final FileWriter writer;
+  private final FileWriter transitionsWriter;
 
   private Logger() throws IOException {
     this.writer = new FileWriter(LOG_PATH, true);
+    this.transitionsWriter = new FileWriter(TRANSITIONS_LOG_PATH, true);
   }
 
   public static Logger getLogger() {
@@ -45,6 +48,20 @@ public class Logger {
     writeToFile(formattedMessage);
   }
 
+  /**
+   * Logs a transition to the transitions log file.
+   *
+   * @param transitionIndex Index of transition to log
+   */
+  public void logTransition(int transitionIndex) {
+    try {
+      transitionsWriter.write("T" + transitionIndex);
+      transitionsWriter.flush();
+    } catch (IOException e) {
+      error("Failed to write transition to log: " + e.getMessage());
+    }
+  }
+
   private synchronized void writeToFile(String message) {
     try {
       writer.write(message);
@@ -58,6 +75,9 @@ public class Logger {
     try {
       if (writer != null) {
         writer.close();
+      }
+      if (transitionsWriter != null) {
+        transitionsWriter.close();
       }
     } catch (IOException e) {
       System.err.println("Failed to close logger: " + e.getMessage());
