@@ -68,7 +68,8 @@ public class Main {
       System.out.println("\nSelect the policy to use:");
       System.out.println("1. Balanced Policy (50/50 and 50/50 distributions)");
       System.out.println("2. Prioritized Policy (75/25 and 80/20 distributions)");
-      System.out.print("Enter your choice (1 or 2): ");
+      System.out.println("3. FCFS Policy (First-Come-First-Served)");
+      System.out.print("Enter your choice (1, 2 or 3): ");
 
       try {
         String input = scanner.nextLine();
@@ -80,6 +81,10 @@ public class Main {
           case "2" -> {
             logger.info("Selected: Prioritized Policy");
             yield new PrioritizedPolicy();
+          }
+          case "3" -> {
+            logger.info("Selected: FCFS Policy");
+            yield new FCFSPolicy();
           }
           default -> {
             logger.error("Invalid policy selection: " + input);
