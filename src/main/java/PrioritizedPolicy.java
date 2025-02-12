@@ -7,13 +7,13 @@ public class PrioritizedPolicy extends Policy {
   // Define transition pairs and their target percentages
   // The first transition in each pair is prioritized
   private static final int[][] PRIORITY_PAIRS = {
-    {2, 3},  // First pair (T2/T3)
-    {6, 7}   // Second pair (T6/T7)
+    {2, 3}, // First pair (T2/T3)
+    {6, 7} // Second pair (T6/T7)
   };
 
   private static final double[] TARGET_PERCENTAGES = {
-    0.75,  // T2 should be 75% of T2+T3
-    0.80   // T6 should be 80% of T6+T7
+    0.75, // T2 should be 75% of T2+T3
+    0.80 // T6 should be 80% of T6+T7
   };
 
   public PrioritizedPolicy() {
@@ -65,7 +65,7 @@ public class PrioritizedPolicy extends Policy {
     for (int i = 0; i < PRIORITY_PAIRS.length; i++) {
       int[] pair = PRIORITY_PAIRS[i];
       if (pair[0] == transitionIndex || pair[1] == transitionIndex) {
-        int priorityTransition = pair[0];  // First transition in pair is prioritized
+        int priorityTransition = pair[0]; // First transition in pair is prioritized
         int otherTransition = pair[1];
         double targetPercentage = TARGET_PERCENTAGES[i];
 
@@ -88,6 +88,6 @@ public class PrioritizedPolicy extends Policy {
         }
       }
     }
-    return false;  // Should never reach here if isTrackedTransition was true
+    return false; // Should never reach here if isTrackedTransition was true
   }
 }
