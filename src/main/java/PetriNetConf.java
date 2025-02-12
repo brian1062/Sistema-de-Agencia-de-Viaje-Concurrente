@@ -55,19 +55,19 @@ public class PetriNetConf {
     } // M(P0)+M(P2)+M(P3)+M(P5)+M(P8)+M(P9)+M(P11)+M(P12)+M(P13)+M(P14)=5
   };
 
-  private static final int[][] TIME_TRANSITION_MATRIX = {
-    {0, MAX_TIME}, // T0
-    {30, MAX_TIME}, // T1
-    {0, MAX_TIME}, // T2
-    {0, MAX_TIME}, // T3
-    {30, MAX_TIME}, // T4
-    {30, MAX_TIME}, // T5
-    {0, MAX_TIME}, // T6
-    {0, MAX_TIME}, // T7
-    {30, MAX_TIME}, // T8
-    {30, MAX_TIME}, // T9
-    {30, MAX_TIME}, // T10
-    {0, MAX_TIME}, // T11
+  private static final int[] TIME_TRANSITION = {
+    0, // T0
+    30, // T1
+    0, // T2
+    0, // T3
+    30, // T4
+    30, // T5
+    0, // T6
+    0, // T7
+    30, // T8
+    30, // T9
+    30, // T10
+    0 // T11
   };
 
   /*
@@ -93,7 +93,8 @@ public class PetriNetConf {
 
     // Initialize transitions list
     IntStream.range(0, INCIDENCE_MATRIX_IN[0].length)
-        .mapToObj(i -> new Transition(i, TIME_TRANSITION_MATRIX[i][0]))
+        .mapToObj(
+            i -> new Transition(i, TIME_TRANSITION[i]))
         .forEach(transitions::add);
   }
 
