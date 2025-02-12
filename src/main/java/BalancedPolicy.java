@@ -15,6 +15,7 @@ public class BalancedPolicy extends Policy {
     {6, 7} // Second pair to balance
   };
 
+  /** Constructs a {@code BalancedPolicy} and initializes transition count tracking. */
   public BalancedPolicy() {
     // Initialize counters for all transitions we're tracking
     for (int[] pair : BALANCED_PAIRS) {
@@ -23,6 +24,12 @@ public class BalancedPolicy extends Policy {
     }
   }
 
+  /**
+   * Determines whether a transition is allowed to fire based on the balancing policy.
+   *
+   * @param transitionIndex The index of the transition to check.
+   * @return {@code true} if the transition can fire, {@code false} otherwise.
+   */
   @Override
   public boolean canFireTransition(int transitionIndex) {
     // If not a tracked transition, allow firing
@@ -43,6 +50,11 @@ public class BalancedPolicy extends Policy {
     }
   }
 
+  /**
+   * Updates the transition count when a transition fires.
+   *
+   * @param transitionIndex The index of the transition that has fired.
+   */
   @Override
   public void transitionFired(int transitionIndex) {
     try {
@@ -55,10 +67,24 @@ public class BalancedPolicy extends Policy {
     }
   }
 
+  /**
+   * Checks if a given transition is one of the tracked transitions.
+   *
+   * @param transitionIndex The transition index to check.
+   * @return {@code true} if the transition is tracked, {@code false} otherwise.
+   */
   private boolean isTrackedTransition(int transitionIndex) {
     return transitionCounts.containsKey(transitionIndex);
   }
 
+  /**
+   * Determines whether a balanced transition is allowed to fire based on its paired transition
+   * count.
+   *
+   * @param transitionIndex The transition index to check.
+   * @return {@code true} if the transition can fire under the defined balancing rules, {@code
+   *     false} otherwise.
+   */
   private boolean canFireBalancedTransition(int transitionIndex) {
     // Find the pair this transition belongs to
     for (int[] pair : BALANCED_PAIRS) {

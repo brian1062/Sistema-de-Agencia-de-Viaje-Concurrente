@@ -30,7 +30,7 @@ public class PetriNetTest {
 
   @Test
   public void testEnabledTransitions() {
-    Transition expectedTransition = new Transition(0, 0, 6000);
+    Transition expectedTransition = new Transition(0, 0);
     assertEquals(
         expectedTransition.getName(), petriNet.getEnabledTransitions().getFirst().getName());
   }
