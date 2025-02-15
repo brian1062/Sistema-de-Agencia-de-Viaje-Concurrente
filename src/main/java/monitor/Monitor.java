@@ -1,10 +1,16 @@
+package monitor;
 import java.util.concurrent.Semaphore;
+
+import petrinet.PetriNet;
+import petrinet.Transition;
+import policy.Policy;
+import utils.Logger;
 
 /**
  * Monitor class that implements thread-safe operations on a Petri Net. Uses the Singleton pattern
  * to ensure only one monitor instance exists.
  */
-class Monitor implements MonitorInterface {
+public class Monitor implements MonitorInterface {
   private static Monitor monitor = null;
   private static Logger logger = Logger.getLogger();
   private final PetriNet petriNet;
