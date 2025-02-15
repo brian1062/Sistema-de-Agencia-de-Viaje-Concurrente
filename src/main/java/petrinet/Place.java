@@ -1,3 +1,5 @@
+package petrinet;
+
 public class Place {
 
   private String name;

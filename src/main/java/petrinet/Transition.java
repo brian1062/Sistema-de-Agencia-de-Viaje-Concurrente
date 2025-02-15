@@ -1,3 +1,5 @@
+package petrinet;
+
 /**
  * The Transition class represents a transition in a timed Petri net. Each transition has a unique
  * identifier, associated timing values, and a state that indicates whether it is time-sensitized or

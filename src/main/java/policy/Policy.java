@@ -1,4 +1,7 @@
+package policy;
+
 import java.util.concurrent.Semaphore;
+import utils.Logger;
 
 /*
  * Abstract class that defines the structure of a policy to control the firing of transitions in a Petri Net.

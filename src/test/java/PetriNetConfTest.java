@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import petrinet.PetriNetConf;
+import petrinet.Place;
+import petrinet.Transition;
 
 class PetriNetConfTest {
   private PetriNetConf petriNetConf;

@@ -1,3 +1,5 @@
+package policy;
+
 /**
  * First-Come-First-Served (FCFS) policy. This policy allows transitions to fire in the order they
  * arrive.
