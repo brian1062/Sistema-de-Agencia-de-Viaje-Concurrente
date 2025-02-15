@@ -55,7 +55,7 @@ class PetriNetConfTest {
     assertThat(transitions.get(0).getNumber()).isEqualTo(0);
     assertThat(transitions.get(0).getDelayTime()).isEqualTo(0);
     assertThat(transitions.get(1).getNumber()).isEqualTo(1);
-    assertThat(transitions.get(1).getDelayTime()).isEqualTo(30);
+    assertThat(transitions.get(1).getDelayTime()).isEqualTo(2);
   }
 
   @Test
