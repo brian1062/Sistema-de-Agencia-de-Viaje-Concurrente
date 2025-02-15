@@ -1,6 +1,6 @@
 package petrinet;
-import java.util.List;
 
+import java.util.List;
 import monitor.Monitor;
 
 public class Segments implements Runnable {

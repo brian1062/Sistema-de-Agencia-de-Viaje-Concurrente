@@ -1,6 +1,5 @@
 import java.util.Arrays;
 import java.util.Scanner;
-
 import monitor.Monitor;
 import petrinet.PetriNet;
 import petrinet.PetriNetConf;
