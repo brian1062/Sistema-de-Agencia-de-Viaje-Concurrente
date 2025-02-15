@@ -4,7 +4,6 @@
 
 - [**Gerard Brian**](https://github.com/brian1062)
 - [**Rodríguez Emanuel**](https://github.com/Ema-Rodriguez)
-- [**Schneider Jeremias**](https://github.com/JereSch8)
 - [**Viotti Franco**](https://github.com/franco-viotti)
 
 ---

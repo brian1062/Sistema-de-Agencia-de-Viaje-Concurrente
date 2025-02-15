@@ -56,18 +56,19 @@ public class PetriNetConf {
     } // M(P0)+M(P2)+M(P3)+M(P5)+M(P8)+M(P9)+M(P11)+M(P12)+M(P13)+M(P14)=5
   };
 
+  // Millis as minutes
   private static final int[] TIME_TRANSITION = {
     0, // T0
-    30, // T1
+    2, // T1 (2 minutes getting in the agency)
     0, // T2
     0, // T3
-    30, // T4
-    30, // T5
+    15, // T4 (15 minutes making the reservation)
+    15, // T5 (15 minutes making the reservation)
     0, // T6
     0, // T7
-    30, // T8
-    30, // T9
-    30, // T10
+    5, // T8 (5 minutes receiving the cancellation)
+    5, // T9 (5 minutes receiving confirmation of the reservation)
+    15, // T10 (15 minutes paying the reservation)
     0 // T11
   };
 
