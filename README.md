@@ -139,4 +139,3 @@ Por medio de la herramienta para analizar expresiones regulares [Debuggex](https
 # Diagramas de Secuencia
 ![Diagrama de Secuencia Inicial](./images/sequence_diagram_init.svg)
 ![Diagrama de Secuencia Hilos](./images/sequence_diagram_threads.svg)
-
