@@ -35,6 +35,7 @@ tasks.jar {
 
 tasks.named<JavaExec>("run") {
   standardInput = System.`in`
+  args = project.findProperty("args")?.toString()?.split(" ") ?: emptyList()
 }
 
 tasks.test {
