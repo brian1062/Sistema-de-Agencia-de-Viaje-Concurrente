@@ -11,8 +11,8 @@ import policy.PrioritizedPolicy;
 import utils.Logger;
 
 /**
- * Main class that runs the Petri Net simulation with a specified policy.
- * Policy can be specified via command-line arguments or console input.
+ * Main class that runs the Petri Net simulation with a specified policy. Policy can be specified
+ * via command-line arguments or console input.
  */
 public class Main {
   private static final Logger logger = Logger.getLogger();
@@ -96,8 +96,8 @@ public class Main {
         logger.error("Error reading policy selection: " + e.getMessage());
       }
     }
-  }  
-  
+  }
+
   private static void printUsage() {
     System.out.println("\nAvailable policies:");
     System.out.println("1: Balanced Policy (50/50 and 50/50 distributions)");
