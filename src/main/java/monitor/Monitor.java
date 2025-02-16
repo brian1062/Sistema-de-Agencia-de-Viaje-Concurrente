@@ -140,7 +140,7 @@ public class Monitor implements MonitorInterface {
    *
    * @return true if target invariants achieved, false otherwise
    */
-  public boolean petriNetHasFinished() {
+  public synchronized boolean petriNetHasFinished() {
     return petriNet.petriNetHasFinished();
   }
 }

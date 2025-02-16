@@ -16,7 +16,7 @@ El presente informe detalla el análisis, modelado, y simulación de una red de 
 
 ---
 ## Descripción de la Red de Petri
-![Red de petri](/images/red_de_petri.png)
+![Red de petri](./images/petri_net.png)
 La red de Petri utilizada en este trabajo modela el flujo de clientes y la gestión de reservas en una agencia de viajes. Cada lugar y transición dentro de la red representa diferentes estados y eventos en el sistema. A continuación, se describen las principales plazas y transiciones:
 
 * **P0 (Idle)**: Representa el buffer de entrada de clientes a la agencia.
@@ -37,7 +37,7 @@ La estructura de esta red de Petri permite capturar de manera efectiva las inter
 Se hizo uso de la herramienta “Petrinator” para análisis de la red la cual nos dio como resultado las siguientes propiedades:
 
 <p align="center">
-  <img src="/images/petri_property.png">
+  <img src="./images/petri_property.png">
 </p>
 
 La red de Petri es **simple y extendida**, lo que significa que las transiciones reciben entradas de una sola plaza, o bien, en aquellos casos donde reciben más de una, el conjunto de una de estas últimas está contenido o es igual al de las otras. Esta característica asegura una estructura regular en la red, lo que facilita su análisis y garantiza la coherencia en el flujo de tokens a través del sistema.
@@ -88,12 +88,12 @@ donde $I^T$ es la transpuesta de la matriz de incidencia y $x$ un vector caracte
 #### Obtención de las matrices post, pre e incidencia utilizando Petrinator:
 
 
-![forward_backward_matrix](/images/forward_backward_matrix.png)
+![forward_backward_matrix](./images/forward_backward_matrix.png)
 
 ---
 
 <p align="center">
-  <img src="/images/combined_incidence_matrix.png">
+  <img src="./images/combined_incidence_matrix.png">
 </p>
 
 
@@ -101,7 +101,7 @@ donde $I^T$ es la transpuesta de la matriz de incidencia y $x$ un vector caracte
 #### Invariantes de Plaza
 
 <p align="center">
-  <img src="/images/invariantes_plazas.png">
+  <img src="./images/place_invariants.png">
 </p
 
 Un uno en una posición indica que esa plaza es parte de la invariante y un cero indica lo contrario.
@@ -113,7 +113,7 @@ $$M(P1)+M(P2)=1$$$$M(P5)+M(P6)=1$$$$M(P7)+M(P8)=1$$$$M(P2)+M(P3)+M(P4)=5$$$$M(P1
 #### Invariantes de Transición
 
 <p align="center">
-  <img src="/images/invariantes_transicion.png">
+  <img src="./images/transition_invariants.png">
 </p>
 
 Un uno en una posición indica que esa transición es parte de la invariante y un cero indica lo contrario.
@@ -130,5 +130,8 @@ Por medio de la herramienta para analizar expresiones regulares [Debuggex](https
 
 
 <p align="center">
-  <img src="/images/debuggex.png">
+  <img src="./images/debuggex.png">
 </p>
+
+# Diagrama de Clases
+![Diagrama de Clases](./images/class_diagram.svg)

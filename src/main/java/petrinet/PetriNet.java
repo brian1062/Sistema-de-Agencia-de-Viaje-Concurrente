@@ -127,12 +127,6 @@ public class PetriNet {
         .forEach(enabledTransitions::add);
   }
 
-  /** Prints the names of the currently enabled transitions in the Petri net. */
-  public void printEnabledTransitions() {
-    // Iterate over the enabledTransitions list and print each transition's name
-    enabledTransitions.stream().map(Transition::getName).forEach(System.out::println);
-  }
-
   public void checkPlacesInvariants() throws Exception {
     for (int row = 0; row < placesInvariants.length; row++) {
       int sum = 0;
