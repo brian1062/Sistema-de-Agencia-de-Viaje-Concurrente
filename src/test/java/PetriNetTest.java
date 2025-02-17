@@ -3,6 +3,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import petrinet.PetriNet;
+import petrinet.PetriNetConf;
+import petrinet.Transition;
 
 public class PetriNetTest {
 
@@ -18,8 +21,9 @@ public class PetriNetTest {
             conf.getPlaces(),
             conf.getIncidenceMatrixOut(),
             conf.getIncidenceMatrixIn(),
+            conf.getPlacesInvariants(),
             conf.getInitialMarking(),
-            186);
+            10);
   }
 
   @Test
@@ -29,7 +33,7 @@ public class PetriNetTest {
 
   @Test
   public void testEnabledTransitions() {
-    Transition expectedTransition = new Transition(0, 0, 6000);
+    Transition expectedTransition = new Transition(0, 0);
     assertEquals(
         expectedTransition.getName(), petriNet.getEnabledTransitions().getFirst().getName());
   }

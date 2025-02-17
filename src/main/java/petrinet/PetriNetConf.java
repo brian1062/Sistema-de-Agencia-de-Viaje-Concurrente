@@ -1,12 +1,14 @@
+package petrinet;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
 public class PetriNetConf {
-  private static final int MAX_TIME = 600000000;
   private static final int[] INITIAL_MARKING = {5, 1, 0, 0, 5, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0};
   private final List<Place> places = new ArrayList<>();
   private final List<Transition> transitions = new ArrayList<>();
+  private final int TARGET_INVARIANTS = 186; // Number of invariants to reach
 
   private static final int[][] INCIDENCE_MATRIX_OUT = { // I+
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, // P0
@@ -32,7 +34,7 @@ public class PetriNetConf {
     {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}, // P3
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P4
     {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}, // P5
-    {0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0}, // P6
+    {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P6
     {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}, // P7
     {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}, // P8
     {0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0}, // P9
@@ -43,19 +45,31 @@ public class PetriNetConf {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1} // P14
   };
 
-  private static final int[][] TIME_TRANSITION_MATRIX = {
-    {0, MAX_TIME}, // T0
-    {30, MAX_TIME}, // T1
-    {0, MAX_TIME}, // T2
-    {0, MAX_TIME}, // T3
-    {30, MAX_TIME}, // T4
-    {30, MAX_TIME}, // T5
-    {0, MAX_TIME}, // T6
-    {0, MAX_TIME}, // T7
-    {30, MAX_TIME}, // T8
-    {30, MAX_TIME}, // T9
-    {30, MAX_TIME}, // T10
-    {0, MAX_TIME}, // T11
+  private static final int[][] INVARIANTS_P_MATRIX = {
+    {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, // M(P1) + M(P2) = 1
+    {0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5}, // M(P2) + M(P3) + M(P4) = 5
+    {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1}, // M(P5) + M(P6) = 1
+    {0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1}, // M(P7) + M(P8) = 1
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1}, // M(P10) + M(P11) + M(P12) + M(P13) = 1
+    {
+      1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 5
+    } // M(P0)+M(P2)+M(P3)+M(P5)+M(P8)+M(P9)+M(P11)+M(P12)+M(P13)+M(P14)=5
+  };
+
+  // Millis as minutes
+  private static final int[] TIME_TRANSITION = {
+    0, // T0
+    2, // T1 (2 minutes getting in the agency)
+    0, // T2
+    0, // T3
+    15, // T4 (15 minutes making the reservation)
+    15, // T5 (15 minutes making the reservation)
+    0, // T6
+    0, // T7
+    5, // T8 (5 minutes receiving the cancellation)
+    5, // T9 (5 minutes receiving confirmation of the reservation)
+    15, // T10 (15 minutes paying the reservation)
+    0 // T11
   };
 
   /*
@@ -81,8 +95,7 @@ public class PetriNetConf {
 
     // Initialize transitions list
     IntStream.range(0, INCIDENCE_MATRIX_IN[0].length)
-        .mapToObj(
-            i -> new Transition(i, TIME_TRANSITION_MATRIX[i][0], TIME_TRANSITION_MATRIX[i][1]))
+        .mapToObj(i -> new Transition(i, TIME_TRANSITION[i]))
         .forEach(transitions::add);
   }
 
@@ -97,6 +110,10 @@ public class PetriNetConf {
 
   public int[][] getIncidenceMatrixIn() {
     return INCIDENCE_MATRIX_IN.clone();
+  }
+
+  public int[][] getPlacesInvariants() {
+    return INVARIANTS_P_MATRIX.clone();
   }
 
   public List<Place> getPlaces() {
@@ -124,5 +141,9 @@ public class PetriNetConf {
 
   public int getNumberOfSequences() {
     return TRANSITIONS_THREADS.length;
+  }
+
+  public int getTargetInvariants() {
+    return TARGET_INVARIANTS;
   }
 }

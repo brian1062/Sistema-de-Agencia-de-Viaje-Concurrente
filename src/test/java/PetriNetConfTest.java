@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import petrinet.PetriNetConf;
+import petrinet.Place;
+import petrinet.Transition;
 
 class PetriNetConfTest {
   private PetriNetConf petriNetConf;
@@ -50,11 +53,9 @@ class PetriNetConfTest {
     List<Transition> transitions = petriNetConf.getTransitions();
     assertThat(transitions).hasSize(12);
     assertThat(transitions.get(0).getNumber()).isEqualTo(0);
-    assertThat(transitions.get(0).getTime()).isEqualTo(0);
-    assertThat(transitions.get(0).getMaxTime()).isEqualTo(600000000);
+    assertThat(transitions.get(0).getDelayTime()).isEqualTo(0);
     assertThat(transitions.get(1).getNumber()).isEqualTo(1);
-    assertThat(transitions.get(1).getTime()).isEqualTo(30);
-    assertThat(transitions.get(1).getMaxTime()).isEqualTo(600000000);
+    assertThat(transitions.get(1).getDelayTime()).isEqualTo(2);
   }
 
   @Test
