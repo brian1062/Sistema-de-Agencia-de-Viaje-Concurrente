@@ -10,6 +10,10 @@ import policy.Policy;
 import policy.PrioritizedPolicy;
 import utils.Logger;
 
+/**
+ * Main class that runs the Petri Net simulation with a specified policy. Policy can be specified
+ * via command-line arguments or console input.
+ */
 public class Main {
   private static final Logger logger = Logger.getLogger();
 
@@ -30,9 +34,14 @@ public class Main {
     logger.info("Application starting...");
 
     try {
-      Scanner scanner = new Scanner(System.in);
-      Policy policy = selectPolicy(scanner);
-      scanner.close();
+      Policy policy;
+      if (args.length == 1) {
+        // If command-line argument is provided, use it
+        policy = selectPolicy(args[0]);
+      } else {
+        // If no argument is provided, ask for input through console
+        policy = getPolicyFromConsole();
+      }
 
       PetriNetConf rdPConf = new PetriNetConf();
 
@@ -72,37 +81,49 @@ public class Main {
     }
   }
 
-  private static Policy selectPolicy(Scanner scanner) {
+  private static Policy getPolicyFromConsole() {
+    Scanner scanner = new Scanner(System.in);
     while (true) {
-      System.out.println("\nSelect the policy to use:");
-      System.out.println("1. Balanced Policy (50/50 and 50/50 distributions)");
-      System.out.println("2. Prioritized Policy (75/25 and 80/20 distributions)");
-      System.out.println("3. FCFS Policy (First-Come-First-Served)");
+      printUsage();
       System.out.print("Enter your choice (1, 2 or 3): ");
 
       try {
         String input = scanner.nextLine();
-        return switch (input) {
-          case "1" -> {
-            logger.info("Selected: Balanced Policy");
-            yield new BalancedPolicy();
-          }
-          case "2" -> {
-            logger.info("Selected: Prioritized Policy");
-            yield new PrioritizedPolicy();
-          }
-          case "3" -> {
-            logger.info("Selected: FCFS Policy");
-            yield new FCFSPolicy();
-          }
-          default -> {
-            logger.error("Invalid policy selection: " + input);
-            yield selectPolicy(scanner);
-          }
-        };
+        Policy policy = selectPolicy(input);
+        scanner.close();
+        return policy;
       } catch (Exception e) {
         logger.error("Error reading policy selection: " + e.getMessage());
       }
     }
+  }
+
+  private static void printUsage() {
+    System.out.println("\nAvailable policies:");
+    System.out.println("1: Balanced Policy (50/50 and 50/50 distributions)");
+    System.out.println("2: Prioritized Policy (75/25 and 80/20 distributions)");
+    System.out.println("3: FCFS Policy (First-Come-First-Served)");
+  }
+
+  private static Policy selectPolicy(String policyArg) {
+    return switch (policyArg) {
+      case "1" -> {
+        logger.info("Selected: Balanced Policy");
+        yield new BalancedPolicy();
+      }
+      case "2" -> {
+        logger.info("Selected: Prioritized Policy");
+        yield new PrioritizedPolicy();
+      }
+      case "3" -> {
+        logger.info("Selected: FCFS Policy");
+        yield new FCFSPolicy();
+      }
+      default -> {
+        logger.error("Invalid policy selection: " + policyArg);
+        System.exit(1);
+        yield null; // This line will never be reached
+      }
+    };
   }
 }
