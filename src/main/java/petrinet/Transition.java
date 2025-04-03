@@ -1,8 +1,8 @@
 package petrinet;
 
 /**
- * Represents a transition in a timed Petri net.
- * Each transition has a unique identifier, a name, and a delay time.
+ * Represents a transition in a timed Petri net. Each transition has a unique identifier, a name,
+ * and a delay time.
  */
 public class Transition {
   private final String name; // Name of the transition, automatically generated as "T<number>".

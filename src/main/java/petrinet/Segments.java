@@ -4,8 +4,8 @@ import java.util.List;
 import monitor.Monitor;
 
 /**
- * Represents a runnable segment of transitions in a Petri Net.
- * Executes a sequence of transitions in a loop until the Petri Net reaches a final state.
+ * Represents a runnable segment of transitions in a Petri Net. Executes a sequence of transitions
+ * in a loop until the Petri Net reaches a final state.
  */
 public class Segments implements Runnable {
   private final List<Transition> sequence;
@@ -13,7 +13,7 @@ public class Segments implements Runnable {
 
   /**
    * Constructor for the Segments instance with a trnsition sequence and a monitor.
-   * 
+   *
    * @param sequence The sequence of transitions to execute.
    * @param monitor The monitor instance to control the Petri Net execution.
    */
@@ -24,7 +24,8 @@ public class Segments implements Runnable {
 
   /**
    * Executes the sequence of transitions repeatedly until the Petri Net reaches a final state.
-   * Checks for completion after each transition and exits inmediately if the Petri Net has finished.
+   * Checks for completion after each transition and exits inmediately if the Petri Net has
+   * finished.
    */
   @Override
   public void run() {

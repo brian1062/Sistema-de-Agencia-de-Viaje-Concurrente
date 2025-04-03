@@ -4,25 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Policy that balances the firing of two transition pairs.
- * For each pair, the other transition can only fire if it has fired more times or equal to the current transition.
+ * Policy that balances the firing of two transition pairs. For each pair, the other transition can
+ * only fire if it has fired more times or equal to the current transition.
  */
 public class BalancedPolicy extends Policy {
   /** Map to store transition pair counts. */
   private final Map<Integer, Integer> transitionCounts = new HashMap<>();
 
   /**
-   * Transitions pairs requiring balancing firing.
-   * Each sub-array contains two transition indices that should be balanced.
+   * Transitions pairs requiring balancing firing. Each sub-array contains two transition indices
+   * that should be balanced.
    */
   private static final int[][] BALANCED_PAIRS = {
     {2, 3}, // First pair to balance
     {6, 7} // Second pair to balance
   };
 
-  /** 
-   * Constructs a BalancedPolicy instance and initilizes tracking for balanced transitions.
-   */
+  /** Constructs a BalancedPolicy instance and initilizes tracking for balanced transitions. */
   public BalancedPolicy() {
     // Initialize counters for all transitions we're tracking
     for (int[] pair : BALANCED_PAIRS) {
@@ -85,7 +83,8 @@ public class BalancedPolicy extends Policy {
   }
 
   /**
-   * Determines whether a balanced transition is allowed to fire based on its paired transition count.
+   * Determines whether a balanced transition is allowed to fire based on its paired transition
+   * count.
    *
    * @param transitionIndex The transition index to check.
    * @return True if the transition can fire under the defined balancing rules, false otherwise.

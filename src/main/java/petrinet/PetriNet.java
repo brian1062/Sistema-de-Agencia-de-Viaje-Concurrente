@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 /**
- * Represents a Petri Net structure with places, transitions, and arcs.
- * Manages the state of the Petri Net including the marking and enabled transitions.
+ * Represents a Petri Net structure with places, transitions, and arcs. Manages the state of the
+ * Petri Net including the marking and enabled transitions.
  */
 public class PetriNet {
   private List<Transition> transitions;
@@ -102,9 +103,9 @@ public class PetriNet {
     return true;
   }
 
-  /** 
-   * Gets the current marking of the Petri net as a formatted string. 
-   * 
+  /**
+   * Gets the current marking of the Petri net as a formatted string.
+   *
    * @return String representing the current marking.
    */
   public String getStringMarking() {
@@ -124,9 +125,7 @@ public class PetriNet {
     return markingString;
   }
 
-  /**
-   * Updates the list of enabled transitions in the Petri net based on the current marking.
-   */
+  /** Updates the list of enabled transitions in the Petri net based on the current marking. */
   private void updateEnabledTransitions() {
     // Clear the enabledTransitions list to remove any previously stored transitions
     enabledTransitions.clear();

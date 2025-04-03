@@ -11,14 +11,11 @@ import policy.PrioritizedPolicy;
 import utils.Logger;
 
 /**
- * Main entry point for the Petri Net simulation application.
- * Configures and runs the simulation with a selected firing policy.
- * Supports command-line and interactive input for policy selection.
+ * Main entry point for the Petri Net simulation application. Configures and runs the simulation
+ * with a selected firing policy. Supports command-line and interactive input for policy selection.
  */
 public class Main {
-  /**
-   * Logger instance for logging application events.
-   */
+  /** Logger instance for logging application events. */
   private static final Logger logger = Logger.getLogger();
 
   /**
@@ -112,9 +109,7 @@ public class Main {
     }
   }
 
-  /**
-   * Prints the available policies to the console.
-   */
+  /** Prints the available policies to the console. */
   private static void printUsage() {
     System.out.println("\nAvailable policies:");
     System.out.println("1: Balanced Policy (50/50 and 50/50 distributions)");

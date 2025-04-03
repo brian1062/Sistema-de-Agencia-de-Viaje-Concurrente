@@ -7,8 +7,8 @@ import policy.Policy;
 import utils.Logger;
 
 /**
- * Monitor class that implements thread-safe operations on a Petri Net.
- * Uses the Singleton pattern to ensure only one monitor instance exists.
+ * Monitor class that implements thread-safe operations on a Petri Net. Uses the Singleton pattern
+ * to ensure only one monitor instance exists.
  */
 public class Monitor implements MonitorInterface {
   private static Monitor monitor = null;
@@ -19,7 +19,7 @@ public class Monitor implements MonitorInterface {
 
   /**
    * Private constructor to enforce Singleton pattern.
-   * 
+   *
    * @param petriNet the PetriNet instance to control.
    * @param policy the Policy to use for transition firing.
    */
@@ -31,7 +31,7 @@ public class Monitor implements MonitorInterface {
 
   /**
    * Returns the singleton instance of the Monitor.
-   * 
+   *
    * @param petriNet the PetriNet instance to associate with the Monitor.
    * @param policy the Policy instance to associate with the Monitor.
    * @return the singleton Monitor instance.
@@ -44,9 +44,9 @@ public class Monitor implements MonitorInterface {
   }
 
   /**
-   * Attempts to fire a transition in the Petri Net.
-   * Handles both immediate and timed transitions with proper synchronization.
-   * 
+   * Attempts to fire a transition in the Petri Net. Handles both immediate and timed transitions
+   * with proper synchronization.
+   *
    * @param transitionIndex Index of the transition to fire.
    * @return true if transition fired successfully, false otherwise.
    */
@@ -85,7 +85,7 @@ public class Monitor implements MonitorInterface {
 
   /**
    * Executes the transition while holding the mutex.
-   * 
+   *
    * @param transitionIndex Index of transition to execute.
    * @return true if successful, false otherwise.
    */
@@ -103,9 +103,9 @@ public class Monitor implements MonitorInterface {
   }
 
   /**
-   * Handles timed transition by releasing the mutex, waiting the delay time,
-   * and re-acquiring the mutex.
-   * 
+   * Handles timed transition by releasing the mutex, waiting the delay time, and re-acquiring the
+   * mutex.
+   *
    * @param transition Transition to handle.
    * @return true if successful, false otherwise.
    */
@@ -133,7 +133,7 @@ public class Monitor implements MonitorInterface {
 
   /**
    * Logs the successful firing of a transition.
-   * 
+   *
    * @param transitionIndex Index of transition that fired.
    */
   private void logTransitionSuccess(int transitionIndex) {
@@ -146,7 +146,7 @@ public class Monitor implements MonitorInterface {
 
   /**
    * Checks if the Petri Net has reached its target number of invariants.
-   * 
+   *
    * @return true if target invariants achieved, false otherwise.
    */
   public synchronized boolean petriNetHasFinished() {
@@ -154,13 +154,11 @@ public class Monitor implements MonitorInterface {
   }
 }
 
-/**
- * Interface for Monitor functionality. 
- */
+/** Interface for Monitor functionality. */
 interface MonitorInterface {
   /**
    * Attempts to fire a transition in the Petri Net.
-   * 
+   *
    * @param transition Index of the transition to fire.
    * @return true if transition fired successfully, false otherwise.
    */
