@@ -4,20 +4,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Policy that balances the firing of two transition pairs. For each pair, the other transition can
- * only fire if it has fired more times or equal to the current transition.
+ * Policy that balances the firing of two transition pairs.
+ * For each pair, the other transition can only fire if it has fired more times or equal to the current transition.
  */
 public class BalancedPolicy extends Policy {
-  // Map to store transition pair counts
+  /** Map to store transition pair counts. */
   private final Map<Integer, Integer> transitionCounts = new HashMap<>();
 
-  // Define transition pairs that need to be balanced
+  /**
+   * Transitions pairs requiring balancing firing.
+   * Each sub-array contains two transition indices that should be balanced.
+   */
   private static final int[][] BALANCED_PAIRS = {
     {2, 3}, // First pair to balance
     {6, 7} // Second pair to balance
   };
 
-  /** Constructs a {@code BalancedPolicy} and initializes transition count tracking. */
+  /** 
+   * Constructs a BalancedPolicy instance and initilizes tracking for balanced transitions.
+   */
   public BalancedPolicy() {
     // Initialize counters for all transitions we're tracking
     for (int[] pair : BALANCED_PAIRS) {
@@ -30,7 +35,7 @@ public class BalancedPolicy extends Policy {
    * Determines whether a transition is allowed to fire based on the balancing policy.
    *
    * @param transitionIndex The index of the transition to check.
-   * @return {@code true} if the transition can fire, {@code false} otherwise.
+   * @return True if the transition can fire, false otherwise.
    */
   @Override
   public boolean canFireTransition(int transitionIndex) {
@@ -73,19 +78,17 @@ public class BalancedPolicy extends Policy {
    * Checks if a given transition is one of the tracked transitions.
    *
    * @param transitionIndex The transition index to check.
-   * @return {@code true} if the transition is tracked, {@code false} otherwise.
+   * @return True if the transition is tracked, false otherwise.
    */
   private boolean isTrackedTransition(int transitionIndex) {
     return transitionCounts.containsKey(transitionIndex);
   }
 
   /**
-   * Determines whether a balanced transition is allowed to fire based on its paired transition
-   * count.
+   * Determines whether a balanced transition is allowed to fire based on its paired transition count.
    *
    * @param transitionIndex The transition index to check.
-   * @return {@code true} if the transition can fire under the defined balancing rules, {@code
-   *     false} otherwise.
+   * @return True if the transition can fire under the defined balancing rules, false otherwise.
    */
   private boolean canFireBalancedTransition(int transitionIndex) {
     // Find the pair this transition belongs to

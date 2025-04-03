@@ -4,29 +4,38 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A policy that prioritizes certain transitions in a Petri Net based on predefined target
+ * Policy that prioritizes certain transitions in a Petri Net based on predefined target
  * percentages.
- *
- * <p>This policy ensures that specific transitions fire with a target proportion relative to their
+ * This policy ensures that specific transitions fire with a target proportion relative to their
  * paired transitions. It tracks transition counts and enforces priority constraints accordingly.
  */
 public class PrioritizedPolicy extends Policy {
   /** A map storing the count of fired occurrences for each tracked transition. */
   private final Map<Integer, Integer> transitionCounts = new HashMap<>();
 
-  // Define transition pairs and their target percentages
-  // The first transition in each pair is prioritized
+  /**
+   * Transition pairs that require priority handling.
+   * Each sub-array contains two transition indices where the first transition is prioritized over
+   * the second.
+   */
   private static final int[][] PRIORITY_PAIRS = {
     {2, 3}, // First pair (T2/T3)
-    {6, 7} // Second pair (T6/T7)
+    {6, 7}  // Second pair (T6/T7)
   };
 
+  /**
+   * Target percentages for the prioritized transitions.
+   * The first value corresponds to the first pair (T2/T3) and the second to the second pair
+   * (T6/T7).
+   */
   private static final double[] TARGET_PERCENTAGES = {
     0.75, // T2 should be 75% of T2+T3
     0.80 // T6 should be 80% of T6+T7
   };
 
-  /** Constructs a {@code PrioritizedPolicy} and initializes transition count tracking. */
+  /** 
+   * Constructs a PrioritizedPolicy and initializes transition count tracking. 
+   */
   public PrioritizedPolicy() {
     // Initialize counters for all transitions we're tracking
     for (int[] pair : PRIORITY_PAIRS) {
@@ -39,7 +48,7 @@ public class PrioritizedPolicy extends Policy {
    * Determines whether a transition is allowed to fire based on the priority policy.
    *
    * @param transitionIndex The index of the transition to check.
-   * @return {@code true} if the transition can fire, {@code false} otherwise.
+   * @return true if the transition can fire, false otherwise.
    */
   @Override
   public boolean canFireTransition(int transitionIndex) {
@@ -82,7 +91,7 @@ public class PrioritizedPolicy extends Policy {
    * Checks if a given transition is one of the tracked transitions.
    *
    * @param transitionIndex The transition index to check.
-   * @return {@code true} if the transition is tracked, {@code false} otherwise.
+   * @return true if the transition is tracked, false otherwise.
    */
   private boolean isTrackedTransition(int transitionIndex) {
     return transitionCounts.containsKey(transitionIndex);
@@ -92,8 +101,7 @@ public class PrioritizedPolicy extends Policy {
    * Determines whether a prioritized transition is allowed to fire based on its current proportion.
    *
    * @param transitionIndex The transition index to check.
-   * @return {@code true} if the transition can fire under the defined priority rules, {@code false}
-   *     otherwise.
+   * @return true if the transition can fire under the defined priority rules, false otherwise.
    */
   private boolean canFirePrioritizedTransition(int transitionIndex) {
     // Find which pair this transition belongs to
