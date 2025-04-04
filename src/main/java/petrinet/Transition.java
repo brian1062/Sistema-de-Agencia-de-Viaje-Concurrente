@@ -5,9 +5,9 @@ package petrinet;
  * and a delay time.
  */
 public class Transition {
-  private final String name; 
-  private final int number; 
-  private final long delayTime; 
+  private final String name;
+  private final int number;
+  private final long delayTime;
 
   /**
    * Constructor for the Transition class.

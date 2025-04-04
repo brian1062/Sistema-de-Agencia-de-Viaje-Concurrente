@@ -17,7 +17,7 @@ public class BalancedPolicy extends Policy {
    */
   private static final int[][] BALANCED_PAIRS = {
     {2, 3}, // First pair to balance
-    {6, 7}  // Second pair to balance
+    {6, 7} // Second pair to balance
   };
 
   /** Constructs a BalancedPolicy instance and initilizes tracking for balanced transitions. */

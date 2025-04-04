@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Represents a Petri Net structure with places, transitions. 
- * Manages the state of the Petri Net including the marking and enabled transitions.
+ * Represents a Petri Net structure with places, transitions. Manages the state of the Petri Net
+ * including the marking and enabled transitions.
  */
 public class PetriNet {
   private List<Transition> transitions;

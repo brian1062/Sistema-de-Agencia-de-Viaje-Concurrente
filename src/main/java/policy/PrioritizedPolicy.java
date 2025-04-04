@@ -14,11 +14,12 @@ public class PrioritizedPolicy extends Policy {
   private final Map<Integer, Integer> transitionCounts = new HashMap<>();
 
   /**
-   * Transition pairs that require priority handling. Each sub-array contains two transition indices.
+   * Transition pairs that require priority handling. Each sub-array contains two transition
+   * indices.
    */
   private static final int[][] PRIORITY_PAIRS = {
     {2, 3}, // First pair (T2/T3)
-    {6, 7}  // Second pair (T6/T7)
+    {6, 7} // Second pair (T6/T7)
   };
 
   /**
