@@ -4,7 +4,7 @@ import java.util.concurrent.Semaphore;
 import utils.Logger;
 
 /**
- * Abstract class that defines the structure of a policy to control the firing of transitions in a
+ * Abstract class that defines the structure of a policy to control the firing of transitions in the
  * Petri Net. Provides mutual exclusion using a semaphore to ensure that only one thread can fire a
  * transition at a time.
  */

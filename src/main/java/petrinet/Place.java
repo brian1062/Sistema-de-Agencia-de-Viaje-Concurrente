@@ -23,12 +23,6 @@ public class Place {
 
   /* Setters */
 
-  /**
-   * Sets the number of tokens in the place.
-   *
-   * @param tokens The new number of tokens to set.
-   * @throws IllegalArgumentException if tokens are negative.
-   */
   public void setTokens(int tokens) {
     if (tokens < 0) {
       throw new IllegalArgumentException("Tokens cannot be negative");
@@ -38,20 +32,10 @@ public class Place {
 
   /* Getters */
 
-  /**
-   * Gets the number of tokens in the place.
-   *
-   * @return The current token count.
-   */
   public int getTokens() {
     return tokens;
   }
 
-  /**
-   * Gets the name/identifier of the place.
-   *
-   * @return The name of the place.
-   */
   public String getName() {
     return name;
   }

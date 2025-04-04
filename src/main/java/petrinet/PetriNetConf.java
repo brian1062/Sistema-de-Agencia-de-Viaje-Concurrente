@@ -9,17 +9,12 @@ import java.util.stream.IntStream;
  * for places, transitions, matrices, and sequences needed to construct the Petri Net.
  */
 public class PetriNetConf {
-  // Initial marking for all the places in the Petri net.
   private static final int[] INITIAL_MARKING = {5, 1, 0, 0, 5, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0};
   private final List<Place> places = new ArrayList<>();
   private final List<Transition> transitions = new ArrayList<>();
   // Target number of invariants to reach.
   private final int TARGET_INVARIANTS = 186;
 
-  /**
-   * Output incidence matrix (I+) representing the arcs from transitions to places. Matrix format:
-   * [places][transitions]
-   */
   private static final int[][] INCIDENCE_MATRIX_OUT = { // I+
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, // P0
     {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P1
@@ -38,10 +33,6 @@ public class PetriNetConf {
     {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0} // P14
   };
 
-  /**
-   * Input incidence matrix (I-) representing the arcs from places to transitions. Matrix format:
-   * [places][transitions]
-   */
   private static final int[][] INCIDENCE_MATRIX_IN = { // I-
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P0
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P1
@@ -122,67 +113,30 @@ public class PetriNetConf {
 
   /* Getters */
 
-  /**
-   * Gets the initial marking of the Petri net.
-   *
-   * @return A copy of the initial marking array.
-   */
   public int[] getInitialMarking() {
     return INITIAL_MARKING.clone();
   }
 
-  /**
-   * Gets the output incidence matrix (I+) of the Petri net.
-   *
-   * @return A copy of the output incidence matrix.
-   */
   public int[][] getIncidenceMatrixOut() {
     return INCIDENCE_MATRIX_OUT.clone();
   }
 
-  /**
-   * Gets the input incidence matrix (I-) of the Petri net.
-   *
-   * @return A copy of the input incidence matrix.
-   */
   public int[][] getIncidenceMatrixIn() {
     return INCIDENCE_MATRIX_IN.clone();
   }
 
-  /**
-   * Gets the place invariants matrix of the Petri net.
-   *
-   * @return A copy of the place invariants matrix.
-   */
   public int[][] getPlacesInvariants() {
     return INVARIANTS_P_MATRIX.clone();
   }
 
-  /**
-   * Get the list of places in the Petri net.
-   *
-   * @return A list of Place objects.
-   */
   public List<Place> getPlaces() {
     return places;
   }
 
-  /**
-   * Get the list of transitions in the Petri net.
-   *
-   * @return A list of Transition objects.
-   */
   public List<Transition> getTransitions() {
     return transitions;
   }
 
-  /**
-   * Get the trnasition sequence for a specific thread.
-   *
-   * @param sequenceNumber The index of the thread sequence.
-   * @return A list of transitions in the specified sequence.
-   * @throws IllegalArgumentException if the sequence number is invalid.
-   */
   public List<Transition> getTransitionSequence(int sequenceNumber) {
     if (sequenceNumber < 0 || sequenceNumber >= TRANSITIONS_THREADS.length) {
       throw new IllegalArgumentException("Index for TRANSITIONS_THREADS invalid");
@@ -198,20 +152,10 @@ public class PetriNetConf {
     return sequence;
   }
 
-  /**
-   * Get the total number of transitions sequences.
-   *
-   * @return The number of transition sequences.
-   */
   public int getNumberOfSequences() {
     return TRANSITIONS_THREADS.length;
   }
 
-  /**
-   * Get the target number of invariants to reach.
-   *
-   * @return Target invariants count.
-   */
   public int getTargetInvariants() {
     return TARGET_INVARIANTS;
   }

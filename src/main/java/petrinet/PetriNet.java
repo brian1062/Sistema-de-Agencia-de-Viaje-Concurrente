@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Represents a Petri Net structure with places, transitions, and arcs. Manages the state of the
- * Petri Net including the marking and enabled transitions.
+ * Represents a Petri Net structure with places, transitions. 
+ * Manages the state of the Petri Net including the marking and enabled transitions.
  */
 public class PetriNet {
   private List<Transition> transitions;
@@ -28,8 +28,8 @@ public class PetriNet {
    *
    * @param transitions List of transitions in the Petri net.
    * @param places List of places in the Petri net.
-   * @param incidenceMatrixOut Matrix representing the output arcs of the Petri net.
-   * @param incidenceMatrixIn Matrix representing the input arcs of the Petri net.
+   * @param incidenceMatrixOut Output incidence matrix ofthe Petri net.
+   * @param incidenceMatrixIn Input incidence matrix of the Petri net.
    * @param placesInvariants Matrix representing the invariants of the Petri net.
    * @param marking Array representing the current marking of the Petri net.
    * @param invariantsCountTarget Target count of invariants to achieve.
@@ -90,7 +90,6 @@ public class PetriNet {
       throw new RuntimeException(e.getMessage());
     }
 
-    // Special handling for the last transition
     if (transitionIndex == LAST_TRANSITION) {
       invariantsCount++;
       if (invariantsCount == invariantsCountTarget) {
@@ -143,9 +142,9 @@ public class PetriNet {
   }
 
   /**
-   * Checks the invariants of the Petri net based on the current marking.
+   * Checks the place invariants of the Petri net based on the current marking.
    *
-   * @throws Exception if the invariant check fails.
+   * @throws Exception if the place invariant check fails.
    */
   public void checkPlacesInvariants() throws Exception {
     for (int row = 0; row < placesInvariants.length; row++) {
@@ -187,39 +186,18 @@ public class PetriNet {
 
   /* Getters */
 
-  /**
-   * Gets the current marking array.
-   *
-   * @return Array representing the current marking of the Petri net.
-   */
   public int[] getMarking() {
     return marking;
   }
 
-  /**
-   * Gets the list of enabled transitions.
-   *
-   * @return List of enabled transitions in the Petri net.
-   */
   public List<Transition> getEnabledTransitions() {
     return enabledTransitions;
   }
 
-  /**
-   * Checks if the Petri Net has reached its target number of invariants.
-   *
-   * @return true if target invariants achieved, false otherwise.
-   */
   public boolean petriNetHasFinished() {
     return invariantsTargetAchieved;
   }
 
-  /**
-   * Gets the transition from the list of transitions based on the index.
-   *
-   * @param transitionIndex Index of the transition to get.
-   * @return Transition object from the list of transitions.
-   */
   public Transition getTransitionFromIndex(int transitionIndex) {
     validateTransitionIndex(transitionIndex);
     return transitions.get(transitionIndex);

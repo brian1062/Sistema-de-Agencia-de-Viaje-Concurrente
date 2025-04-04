@@ -23,7 +23,5 @@ public class FCFSPolicy extends Policy {
    * @param transitionIndex The index of the transition that was fired.
    */
   @Override
-  public void transitionFired(int transitionIndex) {
-    // Intentionally empty - no state to update
-  }
+  public void transitionFired(int transitionIndex) {}
 }

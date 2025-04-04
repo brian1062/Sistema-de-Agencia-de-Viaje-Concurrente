@@ -12,7 +12,7 @@ public class Segments implements Runnable {
   private final Monitor monitor;
 
   /**
-   * Constructor for the Segments instance with a trnsition sequence and a monitor.
+   * Constructor for the Segments instance with a trnsition sequence.
    *
    * @param sequence The sequence of transitions to execute.
    * @param monitor The monitor instance to control the Petri Net execution.
