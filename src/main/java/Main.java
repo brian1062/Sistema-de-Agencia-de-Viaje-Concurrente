@@ -11,12 +11,18 @@ import policy.PrioritizedPolicy;
 import utils.Logger;
 
 /**
- * Main class that runs the Petri Net simulation with a specified policy. Policy can be specified
- * via command-line arguments or console input.
+ * Main entry point for the Petri Net simulation application. Configures and runs the simulation
+ * with a selected firing policy. Supports command-line and interactive input for policy selection.
  */
 public class Main {
+  /** Logger instance for logging application events. */
   private static final Logger logger = Logger.getLogger();
 
+  /**
+   * Main method to start the Petri Net simulation.
+   *
+   * @param args Command-line arguments for policy selection.
+   */
   public static void main(String[] args) {
     // Register shutdown hook for logger
     Runtime.getRuntime()
@@ -81,6 +87,11 @@ public class Main {
     }
   }
 
+  /**
+   * Prompts the user to select a policy from the console.
+   *
+   * @return The selected Policy instance.
+   */
   private static Policy getPolicyFromConsole() {
     Scanner scanner = new Scanner(System.in);
     while (true) {
@@ -98,6 +109,7 @@ public class Main {
     }
   }
 
+  /** Prints the available policies to the console. */
   private static void printUsage() {
     System.out.println("\nAvailable policies:");
     System.out.println("1: Balanced Policy (50/50 and 50/50 distributions)");
@@ -105,6 +117,12 @@ public class Main {
     System.out.println("3: FCFS Policy (First-Come-First-Served)");
   }
 
+  /**
+   * Selects a policy based on the provided argument.
+   *
+   * @param policyArg The argument representing the policy choice.
+   * @return The selected Policy instance.
+   */
   private static Policy selectPolicy(String policyArg) {
     return switch (policyArg) {
       case "1" -> {

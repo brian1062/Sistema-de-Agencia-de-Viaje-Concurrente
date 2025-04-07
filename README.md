@@ -24,6 +24,7 @@ El modelo de Red de Petri incluye:
 
 - [**Gerard Brian**](https://github.com/brian1062)
 - [**Viotti Franco**](https://github.com/franco-viotti)
+- [**Rodriguez Emanuel**](https://github.com/Ema-Rodriguez)
 
 ## [Enunciado](https://github.com/brian1062/tp_final_programacion_concurrente/blob/master/assignment.pdf)
 

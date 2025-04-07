@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Represents a Petri Net structure with places, transitions. Manages the state of the Petri Net
+ * including the marking and enabled transitions.
+ */
 public class PetriNet {
   private List<Transition> transitions;
   private List<Place> places;
@@ -20,15 +24,15 @@ public class PetriNet {
   private final int LAST_TRANSITION = 11;
 
   /**
-   * Constructor for the PetriNet class.
+   * Constructor for the PetriNet class with the specified parameters.
    *
-   * @param transitions
-   * @param places
-   * @param incidenceMatrixOut
-   * @param incidenceMatrixIn
-   * @param placesInvariants
-   * @param marking
-   * @param invariantsCountTarget
+   * @param transitions List of transitions in the Petri net.
+   * @param places List of places in the Petri net.
+   * @param incidenceMatrixOut Output incidence matrix ofthe Petri net.
+   * @param incidenceMatrixIn Input incidence matrix of the Petri net.
+   * @param placesInvariants Matrix representing the invariants of the Petri net.
+   * @param marking Array representing the current marking of the Petri net.
+   * @param invariantsCountTarget Target count of invariants to achieve.
    */
   public PetriNet(
       List<Transition> transitions,
@@ -49,6 +53,12 @@ public class PetriNet {
     updateEnabledTransitions(); // Initialize the enabled transitions
   }
 
+  /**
+   * Attempts to fire a transition in the Petri Net if it is enabled.
+   *
+   * @param transitionIndex Index of the transition to fire.
+   * @return true if transition fired successfully, false otherwise.
+   */
   public boolean tryFireTransition(int transitionIndex) {
     if (!isTransitionEnabled(transitionIndex)) {
       return false;
@@ -92,7 +102,11 @@ public class PetriNet {
     return true;
   }
 
-  /** Returns the current marking of the Petri net. */
+  /**
+   * Gets the current marking of the Petri net as a formatted string.
+   *
+   * @return String representing the current marking.
+   */
   public String getStringMarking() {
     String markingString =
         IntStream.range(0, marking.length)
@@ -110,7 +124,7 @@ public class PetriNet {
     return markingString;
   }
 
-  /** Updates the list of enabled transitions in the Petri net. */
+  /** Updates the list of enabled transitions in the Petri net based on the current marking. */
   private void updateEnabledTransitions() {
     // Clear the enabledTransitions list to remove any previously stored transitions
     enabledTransitions.clear();
@@ -127,6 +141,11 @@ public class PetriNet {
         .forEach(enabledTransitions::add);
   }
 
+  /**
+   * Checks the place invariants of the Petri net based on the current marking.
+   *
+   * @throws Exception if the place invariant check fails.
+   */
   public void checkPlacesInvariants() throws Exception {
     for (int row = 0; row < placesInvariants.length; row++) {
       int sum = 0;
@@ -142,10 +161,10 @@ public class PetriNet {
   }
 
   /**
-   * Check if the transition is enabled
+   * Check if the transition is currently enabled.
    *
-   * @param transitionIndex
-   * @return true if the transition is enabled, false otherwise
+   * @param transitionIndex Index of the transition to check.
+   * @return true if the transition is enabled, false otherwise.
    */
   public boolean isTransitionEnabled(int transitionIndex) {
     validateTransitionIndex(transitionIndex);
@@ -154,9 +173,10 @@ public class PetriNet {
   }
 
   /**
-   * Validates the transition index
+   * Validates the transition index is within the bounds.
    *
-   * @param transitionIndex
+   * @param transitionIndex Index of the transition to validate.
+   * @throws IllegalArgumentException if the transition index is invalid.
    */
   private void validateTransitionIndex(int transitionIndex) {
     if (transitionIndex < 0 || transitionIndex >= transitions.size()) {
@@ -165,6 +185,7 @@ public class PetriNet {
   }
 
   /* Getters */
+
   public int[] getMarking() {
     return marking;
   }

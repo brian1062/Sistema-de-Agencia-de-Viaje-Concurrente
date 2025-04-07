@@ -21,6 +21,7 @@ public class Monitor implements MonitorInterface {
    * Private constructor to enforce Singleton pattern.
    *
    * @param petriNet the PetriNet instance to control.
+   * @param policy the Policy to use for transition firing.
    */
   private Monitor(PetriNet petriNet, Policy policy) {
     this.mutex = new Semaphore(1, true);
@@ -32,7 +33,8 @@ public class Monitor implements MonitorInterface {
    * Returns the singleton instance of the Monitor.
    *
    * @param petriNet the PetriNet instance to associate with the Monitor.
-   * @return the Monitor instance.
+   * @param policy the Policy instance to associate with the Monitor.
+   * @return the singleton Monitor instance.
    */
   public static Monitor getMonitor(PetriNet petriNet, Policy policy) {
     if (monitor == null) {
@@ -45,8 +47,8 @@ public class Monitor implements MonitorInterface {
    * Attempts to fire a transition in the Petri Net. Handles both immediate and timed transitions
    * with proper synchronization.
    *
-   * @param transitionIndex Index of the transition to fire
-   * @return true if transition fired successfully, false otherwise
+   * @param transitionIndex Index of the transition to fire.
+   * @return true if transition fired successfully, false otherwise.
    */
   @Override
   public boolean fireTransition(int transitionIndex) {
@@ -84,8 +86,8 @@ public class Monitor implements MonitorInterface {
   /**
    * Executes the transition while holding the mutex.
    *
-   * @param transitionIndex Index of transition to execute
-   * @return true if successful, false otherwise
+   * @param transitionIndex Index of transition to execute.
+   * @return true if successful, false otherwise.
    */
   private boolean executeTransition(int transitionIndex) {
     try {
@@ -101,9 +103,11 @@ public class Monitor implements MonitorInterface {
   }
 
   /**
-   * Handles timed transition
+   * Handles timed transition by releasing the mutex, waiting the delay time, and re-acquiring the
+   * mutex.
    *
-   * @param transition Transition to handle
+   * @param transition Transition to handle.
+   * @return true if successful, false otherwise.
    */
   private boolean handleTimedTransition(Transition transition) {
     if (transition.getDelayTime() > 0 && petriNet.isTransitionEnabled(transition.getNumber())) {
@@ -127,6 +131,11 @@ public class Monitor implements MonitorInterface {
     return true;
   }
 
+  /**
+   * Logs the successful firing of a transition.
+   *
+   * @param transitionIndex Index of transition that fired.
+   */
   private void logTransitionSuccess(int transitionIndex) {
     String message =
         String.format(
@@ -138,7 +147,7 @@ public class Monitor implements MonitorInterface {
   /**
    * Checks if the Petri Net has reached its target number of invariants.
    *
-   * @return true if target invariants achieved, false otherwise
+   * @return true if target invariants achieved, false otherwise.
    */
   public synchronized boolean petriNetHasFinished() {
     return petriNet.petriNetHasFinished();
@@ -147,5 +156,11 @@ public class Monitor implements MonitorInterface {
 
 /** Interface for Monitor functionality. */
 interface MonitorInterface {
+  /**
+   * Attempts to fire a transition in the Petri Net.
+   *
+   * @param transition Index of the transition to fire.
+   * @return true if transition fired successfully, false otherwise.
+   */
   boolean fireTransition(int transition);
 }
