@@ -1,5 +1,7 @@
 package policy;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +29,33 @@ public class BalancedPolicy extends Policy {
       transitionCounts.put(pair[0], 0);
       transitionCounts.put(pair[1], 0);
     }
+  }
+
+  /**
+   * Returns a list of preferred transitions based on the current policy. This method filters the
+   * enabled transitions to include only those that are tracked and can fire according to the
+   * balancing rules.
+   *
+   * @param enabledTransitions List of currently enabled transition indices.
+   * @return List of preferred transition indices.
+   */
+  @Override
+  public List<Integer> getPreferedTransitions(List<Integer> enabledTransitions) {
+      List<Integer> preferred = new ArrayList<>();
+      try {
+          policyMutex.acquire();
+          for (int t : enabledTransitions) {
+              if (isTrackedTransition(t) && canFireBalancedTransition(t)) {
+                  preferred.add(t);
+              }
+          }
+      } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          logger.error("Thread interrupted while getting preferred transitions");
+      } finally {
+          policyMutex.release();
+      }
+      return preferred;
   }
 
   /**

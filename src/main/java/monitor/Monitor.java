@@ -1,6 +1,11 @@
 package monitor;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import java.util.stream.Collectors;
+
 import petrinet.PetriNet;
 import petrinet.Transition;
 import policy.Policy;
@@ -16,6 +21,8 @@ public class Monitor implements MonitorInterface {
   private final PetriNet petriNet;
   private final Semaphore mutex;
   private final Policy policy;
+  private final Map<Integer, Integer> transitionPriorityBoost = new ConcurrentHashMap<>();
+  private static final int MAX_BOOST = 3;
 
   /**
    * Private constructor to enforce Singleton pattern.
@@ -44,43 +51,67 @@ public class Monitor implements MonitorInterface {
   }
 
   /**
-   * Attempts to fire a transition in the Petri Net. Handles both immediate and timed transitions
-   * with proper synchronization.
+   * Attempts to fire a transition in the Petri Net.
    *
    * @param transitionIndex Index of the transition to fire.
-   * @return true if transition fired successfully, false otherwise.
+   * @return true if the transition was successfully fired, false otherwise.
    */
   @Override
   public boolean fireTransition(int transitionIndex) {
-    // Check if the transition can fire according to the policy
-    if (!policy.canFireTransition(transitionIndex)) return false;
-
+    // 1. Check if transition is enabled
+    if (!petriNet.isTransitionEnabled(transitionIndex)) {
+        return false;
+    }
+    // 2. Get the transition object
     Transition transition;
     try {
-      transition = petriNet.getTransitionFromIndex(transitionIndex);
+        transition = petriNet.getTransitionFromIndex(transitionIndex);
     } catch (IllegalArgumentException e) {
-      logger.error(e.getMessage());
-      return false;
+        logger.error(e.getMessage());
+        return false;
     }
-
+  
+    // 3. Handle timed transition
     try {
-      mutex.acquire();
-      if (!handleTimedTransition(transition)) return false;
-
-      // If the transition fires successfully, update the policy
-      if (executeTransition(transitionIndex)) {
-        policy.transitionFired(transitionIndex);
-        return true;
-      }
-      return false;
-
+        mutex.acquire();
+        if (!handleTimedTransition(transition)) {
+            return false;
+        }
+      
+        // 3.1 Check if transition is still enabled
+        if (petriNet.isTransitionEnabled(transitionIndex)) {
+            List<Integer> enabled = petriNet.getEnabledTransitions()
+                .stream()
+                .map(t -> t.getNumber())
+                .collect(Collectors.toList());
+            List<Integer> preferred = policy.getPreferedTransitions(enabled);
+        
+            // 3.2 Check if transition is preferred
+            if (!preferred.isEmpty() && !preferred.contains(transitionIndex)) {
+                int boost = transitionPriorityBoost.merge(transitionIndex, 1, Integer::sum);
+                if (boost >= MAX_BOOST) {
+                    preferred.add(transitionIndex);
+                    logger.info("Aging: Transition T" + transitionIndex + " boosted");
+                } else {
+                    mutex.release();
+                    return false;
+                }
+            }
+          
+            // 3.3 Execute transition
+            if (executeTransition(transitionIndex)) {
+                policy.transitionFired(transitionIndex);
+                transitionPriorityBoost.remove(transitionIndex);
+                mutex.release();
+                return true;
+            }
+        }
+        mutex.release();
     } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      logger.error("Thread interrupted while acquiring mutex: " + transitionIndex);
-      return false;
-    } finally {
-      mutex.release();
+        Thread.currentThread().interrupt();
+        logger.error("Thread interrupted: " + transitionIndex);
     }
+    return false;
   }
 
   /**
@@ -109,7 +140,7 @@ public class Monitor implements MonitorInterface {
    * @param transition Transition to handle.
    * @return true if successful, false otherwise.
    */
-  private boolean handleTimedTransition(Transition transition) {
+  private boolean handleTimedTransition(Transition transition) throws InterruptedException {
     if (transition.getDelayTime() > 0 && petriNet.isTransitionEnabled(transition.getNumber())) {
       try {
         mutex.release();

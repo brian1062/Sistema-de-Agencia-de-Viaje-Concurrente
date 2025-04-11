@@ -1,5 +1,6 @@
 package policy;
 
+import java.util.List;
 import java.util.concurrent.Semaphore;
 import utils.Logger;
 
@@ -37,4 +38,11 @@ public abstract class Policy {
    * @param transitionIndex Index of the transition that was fired.
    */
   public abstract void transitionFired(int transitionIndex);
+
+/**
+ * Abstract class that defines the structure of a policy to control the firing of transitions.
+ * @param enabledTransitions
+ * @return
+ */
+public abstract List<Integer> getPreferedTransitions(List<Integer> enabledTransitions);
 }
