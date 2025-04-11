@@ -1,8 +1,8 @@
 package policy;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,21 +51,21 @@ public class PrioritizedPolicy extends Policy {
    */
   @Override
   public List<Integer> getPreferedTransitions(List<Integer> enabledTransitions) {
-      List<Integer> preferred = new ArrayList<>();
-      try {
-          policyMutex.acquire();
-          for (int t : enabledTransitions) {
-              if (isTrackedTransition(t) && canFirePrioritizedTransition(t)) {
-                  preferred.add(t);
-              }
-          }
-      } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          logger.error("Thread interrupted while getting preferred transitions");
-      } finally {
-          policyMutex.release();
+    List<Integer> preferred = new ArrayList<>();
+    try {
+      policyMutex.acquire();
+      for (int t : enabledTransitions) {
+        if (isTrackedTransition(t) && canFirePrioritizedTransition(t)) {
+          preferred.add(t);
+        }
       }
-      return preferred;
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      logger.error("Thread interrupted while getting preferred transitions");
+    } finally {
+      policyMutex.release();
+    }
+    return preferred;
   }
 
   /**

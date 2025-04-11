@@ -39,10 +39,11 @@ public abstract class Policy {
    */
   public abstract void transitionFired(int transitionIndex);
 
-/**
- * Abstract class that defines the structure of a policy to control the firing of transitions.
- * @param enabledTransitions
- * @return
- */
-public abstract List<Integer> getPreferedTransitions(List<Integer> enabledTransitions);
+  /**
+   * Abstract class that defines the structure of a policy to control the firing of transitions.
+   *
+   * @param enabledTransitions
+   * @return
+   */
+  public abstract List<Integer> getPreferedTransitions(List<Integer> enabledTransitions);
 }

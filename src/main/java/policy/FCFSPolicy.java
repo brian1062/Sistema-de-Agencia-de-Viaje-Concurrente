@@ -17,8 +17,9 @@ public class FCFSPolicy extends Policy {
    */
   @Override
   public List<Integer> getPreferedTransitions(List<Integer> enabledTransitions) {
-      return enabledTransitions; // Todas las transiciones habilitadas son preferidas
+    return enabledTransitions; // Todas las transiciones habilitadas son preferidas
   }
+
   /**
    * Always permits transitions to fire (FCFS behavior).
    *

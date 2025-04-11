@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
-
 import petrinet.PetriNet;
 import petrinet.Transition;
 import policy.Policy;
@@ -60,56 +59,56 @@ public class Monitor implements MonitorInterface {
   public boolean fireTransition(int transitionIndex) {
     // 1. Check if transition is enabled
     if (!petriNet.isTransitionEnabled(transitionIndex)) {
-        return false;
+      return false;
     }
     // 2. Get the transition object
     Transition transition;
     try {
-        transition = petriNet.getTransitionFromIndex(transitionIndex);
+      transition = petriNet.getTransitionFromIndex(transitionIndex);
     } catch (IllegalArgumentException e) {
-        logger.error(e.getMessage());
-        return false;
+      logger.error(e.getMessage());
+      return false;
     }
-  
+
     // 3. Handle timed transition
     try {
-        mutex.acquire();
-        if (!handleTimedTransition(transition)) {
-            return false;
-        }
-      
-        // 3.1 Check if transition is still enabled
-        if (petriNet.isTransitionEnabled(transitionIndex)) {
-            List<Integer> enabled = petriNet.getEnabledTransitions()
-                .stream()
+      mutex.acquire();
+      if (!handleTimedTransition(transition)) {
+        return false;
+      }
+
+      // 3.1 Check if transition is still enabled
+      if (petriNet.isTransitionEnabled(transitionIndex)) {
+        List<Integer> enabled =
+            petriNet.getEnabledTransitions().stream()
                 .map(t -> t.getNumber())
                 .collect(Collectors.toList());
-            List<Integer> preferred = policy.getPreferedTransitions(enabled);
-        
-            // 3.2 Check if transition is preferred
-            if (!preferred.isEmpty() && !preferred.contains(transitionIndex)) {
-                int boost = transitionPriorityBoost.merge(transitionIndex, 1, Integer::sum);
-                if (boost >= MAX_BOOST) {
-                    preferred.add(transitionIndex);
-                    logger.info("Aging: Transition T" + transitionIndex + " boosted");
-                } else {
-                    mutex.release();
-                    return false;
-                }
-            }
-          
-            // 3.3 Execute transition
-            if (executeTransition(transitionIndex)) {
-                policy.transitionFired(transitionIndex);
-                transitionPriorityBoost.remove(transitionIndex);
-                mutex.release();
-                return true;
-            }
+        List<Integer> preferred = policy.getPreferedTransitions(enabled);
+
+        // 3.2 Check if transition is preferred
+        if (!preferred.isEmpty() && !preferred.contains(transitionIndex)) {
+          int boost = transitionPriorityBoost.merge(transitionIndex, 1, Integer::sum);
+          if (boost >= MAX_BOOST) {
+            preferred.add(transitionIndex);
+            logger.info("Aging: Transition T" + transitionIndex + " boosted");
+          } else {
+            mutex.release();
+            return false;
+          }
         }
-        mutex.release();
+
+        // 3.3 Execute transition
+        if (executeTransition(transitionIndex)) {
+          policy.transitionFired(transitionIndex);
+          transitionPriorityBoost.remove(transitionIndex);
+          mutex.release();
+          return true;
+        }
+      }
+      mutex.release();
     } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        logger.error("Thread interrupted: " + transitionIndex);
+      Thread.currentThread().interrupt();
+      logger.error("Thread interrupted: " + transitionIndex);
     }
     return false;
   }
