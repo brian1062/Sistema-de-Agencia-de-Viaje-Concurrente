@@ -132,7 +132,7 @@ public class PrioritizedPolicy extends Policy {
   @Override
   public int getNextTransition(int[] enabledTransitions) {
     int randomTransition = getRandomEnabledIndex(enabledTransitions);
-    
+
     if (randomTransition == -1) {
       return -1;
     }

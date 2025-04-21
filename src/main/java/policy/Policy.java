@@ -24,13 +24,13 @@ public abstract class Policy {
   protected final Map<Integer, Integer> transitionCounts = new HashMap<>();
 
   /**
-   * Transitions pairs requiring firing. Each sub-array contains two transition indices
-   * that should be fired following the firing policy.
+   * Transitions pairs requiring firing. Each sub-array contains two transition indices that should
+   * be fired following the firing policy.
    */
   protected static final int[][] PAIRS = {
     {2, 3}, // First pair to balance
     {6, 7} // Second pair to balance
-  };  
+  };
 
   /** Shared logger instance for logging policy-related events. */
   protected static Logger logger = Logger.getLogger();
@@ -67,17 +67,17 @@ public abstract class Policy {
 
   /**
    * Returns the next transition to fire based on the policy rules.
-   * 
+   *
    * @param enabledTransitions List of currently enabled transitions.
    * @return Index of the next transition to fire.
    */
   public int getNextTransition(int[] enabledTransitions) {
     int randomTransition = getRandomEnabledIndex(enabledTransitions);
-    if (randomTransition == -1){
+    if (randomTransition == -1) {
       return -1;
     }
-    
-    if (!isTrackedTransition(randomTransition)){
+
+    if (!isTrackedTransition(randomTransition)) {
       return randomTransition;
     }
 
@@ -98,7 +98,7 @@ public abstract class Policy {
     }
     return randomTransition; // If paired transition is not enabled, fire the random one
   }
-  
+
   /**
    * Selects a random index from the array where the value is 1.
    *
@@ -107,7 +107,7 @@ public abstract class Policy {
    */
   protected int getRandomEnabledIndex(int[] bitwiseAndResult) {
     List<Integer> enabledIndices = new ArrayList<>();
-    
+
     // Collect indices where the value is 1
     for (int i = 0; i < bitwiseAndResult.length; i++) {
       if (bitwiseAndResult[i] == 1) {
@@ -133,12 +133,12 @@ public abstract class Policy {
    */
   protected int getPairedTransition(int transitionIndex) {
     for (int[] pair : PAIRS) {
-        if (pair[0] == transitionIndex) {
-            return pair[1]; // Return the other transition in the pair
-        } else if (pair[1] == transitionIndex) {
-            return pair[0]; // Return the other transition in the pair
-        }
+      if (pair[0] == transitionIndex) {
+        return pair[1]; // Return the other transition in the pair
+      } else if (pair[1] == transitionIndex) {
+        return pair[0]; // Return the other transition in the pair
+      }
     }
     return -1; // Return -1 if the transition is not part of any pair
-  }  
+  }
 }

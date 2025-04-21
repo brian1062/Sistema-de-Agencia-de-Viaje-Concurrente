@@ -1,10 +1,5 @@
 package policy;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Policy that balances the firing of two transition pairs. For each pair, the other transition can
@@ -27,8 +22,8 @@ public class BalancedPolicy extends Policy {
    * @param transitionIndex The index of the transition to check.
    * @return True if the transition can fire, false otherwise.
    */
-  //@Override
-  //public boolean canFireTransition(int transitionIndex) {
+  // @Override
+  // public boolean canFireTransition(int transitionIndex) {
   //  // If not a tracked transition, allow firing
   //  if (!isTrackedTransition(transitionIndex)) {
   //    return true;
@@ -45,7 +40,7 @@ public class BalancedPolicy extends Policy {
   //    logger.error("Thread interrupted while acquiring policy mutex");
   //    return false;
   //  }
-  //}
+  // }
 
   /**
    * Updates the transition count when a transition fires.
@@ -90,10 +85,10 @@ public class BalancedPolicy extends Policy {
   }*/
 
   @Override
-  public boolean canFireTransition(int transitionIndex){
+  public boolean canFireTransition(int transitionIndex) {
     // Find the pair of the received transition
     int pairedTransition = getPairedTransition(transitionIndex);
-    
+
     // Find the count of both transitions
     int currentCount = transitionCounts.get(transitionIndex);
     int pairedCount = transitionCounts.get(pairedTransition);

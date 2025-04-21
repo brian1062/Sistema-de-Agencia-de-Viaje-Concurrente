@@ -91,12 +91,12 @@ public class Monitor implements MonitorInterface {
   }*/
 
   @Override
-  public boolean fireTransition(int transitionIndex){
+  public boolean fireTransition(int transitionIndex) {
     try {
       mutex.acquire();
       boolean mutexAcquired = true;
-      
-      while(mutexAcquired){
+
+      while (mutexAcquired) {
         Transition transition;
         try {
           transition = petriNet.getTransitionFromIndex(transitionIndex);
@@ -106,17 +106,18 @@ public class Monitor implements MonitorInterface {
         }
 
         // Check if the transition can be fired or needs to wait a certain time
-        //handleTimedTransition(transition);
+        // handleTimedTransition(transition);
 
         mutexAcquired = executeTransition(transitionIndex);
-        
+
         if (mutexAcquired) {
           // Update the policy
           policy.transitionFired(transitionIndex);
-          
+
           // Get the enabled waiting transitions in bits
-          int[] transitionsForPolicyToChooseFrom = bitwiseAnd(petriNet.getEnabledTransitionsInBits(), getWaitingTransitions());
-          
+          int[] transitionsForPolicyToChooseFrom =
+              bitwiseAnd(petriNet.getEnabledTransitionsInBits(), getWaitingTransitions());
+
           // If no waiting transitions are enabled, release the mutex and return
           if (!containsOne(transitionsForPolicyToChooseFrom)) {
             mutex.release();
@@ -134,13 +135,11 @@ public class Monitor implements MonitorInterface {
         }
         return false;
       }
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       logger.error("Thread interrupted while acquiring mutex: " + transitionIndex);
       return false;
-    }
-    finally {
+    } finally {
       mutex.release();
     }
 
@@ -194,7 +193,7 @@ public class Monitor implements MonitorInterface {
     }
     return true;
   }*/
-  
+
   // TODO: should this method be boolean or void?
   private boolean handleTimedTransition(Transition transition) {
     if (transition.getDelayTime() > 0 && petriNet.isTransitionEnabled(transition.getNumber())) {
@@ -212,8 +211,8 @@ public class Monitor implements MonitorInterface {
   }
 
   /**
-   * Returns an array of integers indicating whether there are transitions waiting
-   * for each semaphore in the transitionsQueue.
+   * Returns an array of integers indicating whether there are transitions waiting for each
+   * semaphore in the transitionsQueue.
    *
    * @return An array of integers where 1 indicates transitions are waiting, and 0 otherwise.
    */
@@ -258,7 +257,7 @@ public class Monitor implements MonitorInterface {
       }
     }
     return false; // No 1 found
-  }  
+  }
 
   /**
    * Logs the successful firing of a transition.
