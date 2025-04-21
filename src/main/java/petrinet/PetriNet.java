@@ -202,4 +202,20 @@ public class PetriNet {
     validateTransitionIndex(transitionIndex);
     return transitions.get(transitionIndex);
   }
+
+  public int getNumberOfTransitions() {
+    return transitions.size();
+  }
+
+  public int getPlacesLength() {
+    return placesLength;
+  }
+
+  public int[] getEnabledTransitionsInBits() {
+    int[] enabledTransitionsInBits = new int[transitions.size()];
+    for (int i = 0; i < transitions.size(); i++) {
+      enabledTransitionsInBits[i] = isTransitionEnabled(i) ? 1 : 0;
+    }
+    return enabledTransitionsInBits;
+  }
 }

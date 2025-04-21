@@ -2,28 +2,20 @@ package policy;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Policy that balances the firing of two transition pairs. For each pair, the other transition can
  * only fire if it has fired more times or equal to the current transition.
  */
 public class BalancedPolicy extends Policy {
-  /** Map to store transition pair counts. */
-  private final Map<Integer, Integer> transitionCounts = new HashMap<>();
-
-  /**
-   * Transitions pairs requiring balancing firing. Each sub-array contains two transition indices
-   * that should be balanced.
-   */
-  private static final int[][] BALANCED_PAIRS = {
-    {2, 3}, // First pair to balance
-    {6, 7} // Second pair to balance
-  };
 
   /** Constructs a BalancedPolicy instance and initilizes tracking for balanced transitions. */
   public BalancedPolicy() {
     // Initialize counters for all transitions we're tracking
-    for (int[] pair : BALANCED_PAIRS) {
+    for (int[] pair : PAIRS) {
       transitionCounts.put(pair[0], 0);
       transitionCounts.put(pair[1], 0);
     }
@@ -35,25 +27,25 @@ public class BalancedPolicy extends Policy {
    * @param transitionIndex The index of the transition to check.
    * @return True if the transition can fire, false otherwise.
    */
-  @Override
-  public boolean canFireTransition(int transitionIndex) {
-    // If not a tracked transition, allow firing
-    if (!isTrackedTransition(transitionIndex)) {
-      return true;
-    }
-
-    try {
-      policyMutex.acquire();
-      boolean canFire = canFireBalancedTransition(transitionIndex);
-      policyMutex.release();
-      return canFire;
-
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      logger.error("Thread interrupted while acquiring policy mutex");
-      return false;
-    }
-  }
+  //@Override
+  //public boolean canFireTransition(int transitionIndex) {
+  //  // If not a tracked transition, allow firing
+  //  if (!isTrackedTransition(transitionIndex)) {
+  //    return true;
+  //  }
+  //
+  //  try {
+  //    policyMutex.acquire();
+  //    boolean canFire = canFireBalancedTransition(transitionIndex);
+  //    policyMutex.release();
+  //    return canFire;
+  //
+  //  } catch (InterruptedException e) {
+  //    Thread.currentThread().interrupt();
+  //    logger.error("Thread interrupted while acquiring policy mutex");
+  //    return false;
+  //  }
+  //}
 
   /**
    * Updates the transition count when a transition fires.
@@ -73,23 +65,13 @@ public class BalancedPolicy extends Policy {
   }
 
   /**
-   * Checks if a given transition is one of the tracked transitions.
-   *
-   * @param transitionIndex The transition index to check.
-   * @return True if the transition is tracked, false otherwise.
-   */
-  private boolean isTrackedTransition(int transitionIndex) {
-    return transitionCounts.containsKey(transitionIndex);
-  }
-
-  /**
    * Determines whether a balanced transition is allowed to fire based on its paired transition
    * count.
    *
    * @param transitionIndex The transition index to check.
    * @return True if the transition can fire under the defined balancing rules, false otherwise.
    */
-  private boolean canFireBalancedTransition(int transitionIndex) {
+  /*private boolean canFireBalancedTransition(int transitionIndex) {
     // Find the pair this transition belongs to
     for (int[] pair : BALANCED_PAIRS) {
       if (pair[0] == transitionIndex || pair[1] == transitionIndex) {
@@ -105,5 +87,18 @@ public class BalancedPolicy extends Policy {
       }
     }
     return false; // Should never reach here if isTrackedTransition was true
+  }*/
+
+  @Override
+  public boolean canFireTransition(int transitionIndex){
+    // Find the pair of the received transition
+    int pairedTransition = getPairedTransition(transitionIndex);
+    
+    // Find the count of both transitions
+    int currentCount = transitionCounts.get(transitionIndex);
+    int pairedCount = transitionCounts.get(pairedTransition);
+
+    // Allow firing if the paired transition has fired more times or equal
+    return pairedCount >= currentCount;
   }
 }

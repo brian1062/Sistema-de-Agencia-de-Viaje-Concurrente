@@ -128,4 +128,14 @@ public class PrioritizedPolicy extends Policy {
     }
     return false; // Should never reach here if isTrackedTransition was true
   }
+
+  @Override
+  public int getNextTransition(int[] enabledTransitions) {
+    int randomTransition = getRandomEnabledIndex(enabledTransitions);
+    
+    if (randomTransition == -1) {
+      return -1;
+    }
+    return randomTransition;
+  }
 }

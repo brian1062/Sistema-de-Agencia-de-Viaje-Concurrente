@@ -24,4 +24,14 @@ public class FCFSPolicy extends Policy {
    */
   @Override
   public void transitionFired(int transitionIndex) {}
+
+  @Override
+  public int getNextTransition(int[] enabledTransitions) {
+    int randomTransition = getRandomEnabledIndex(enabledTransitions);
+    
+    if (randomTransition == -1) {
+      return -1;
+    }
+    return randomTransition;
+  }
 }
