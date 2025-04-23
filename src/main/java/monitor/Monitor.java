@@ -146,8 +146,13 @@ public class Monitor implements MonitorInterface {
           // Release the mutex for the next transition
           // mutex.release();
           return true;
+        } else {
+          logger.info("Transition " + transitionIndex + " could not be executed.");
+          // Release the mutex if the transition could not be executed
+          mutex.release();
+          transitionsQueue[transitionIndex].acquire();
+          mutexAcquired = true;
         }
-        return false;
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
