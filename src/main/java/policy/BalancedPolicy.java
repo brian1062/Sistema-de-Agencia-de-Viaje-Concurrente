@@ -49,7 +49,9 @@ public class BalancedPolicy extends Policy {
   @Override
   public void transitionFired(int transitionIndex) {
     try {
-      policyMutex.acquire();// aca no tenemos un semaforo de mas si aca se viene desde el monitor el cual se puede acceder de un hilo a la vez
+      policyMutex
+          .acquire(); // aca no tenemos un semaforo de mas si aca se viene desde el monitor el cual
+                      // se puede acceder de un hilo a la vez
       transitionCounts.computeIfPresent(transitionIndex, (key, value) -> value + 1);
       policyMutex.release();
     } catch (InterruptedException e) {
