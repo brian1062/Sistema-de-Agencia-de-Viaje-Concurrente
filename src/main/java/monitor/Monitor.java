@@ -98,16 +98,16 @@ public class Monitor implements MonitorInterface {
       boolean mutexAcquired = true;
 
       while (mutexAcquired) {
-        // Transition transition;
-        // try {
-        //  transition = petriNet.getTransitionFromIndex(transitionIndex);
-        // } catch (IllegalArgumentException e) {
-        //  logger.error(e.getMessage());
-        //  return false;
-        // }
+        Transition transition;
+        try {
+         transition = petriNet.getTransitionFromIndex(transitionIndex);
+        } catch (IllegalArgumentException e) {
+         logger.error(e.getMessage());
+         return false;
+        }
 
         // Check if the transition can be fired or needs to wait a certain time
-        // handleTimedTransition(transition);
+        handleTimedTransition(transition);
 
         mutexAcquired = executeTransition(transitionIndex);
 
@@ -236,8 +236,14 @@ public class Monitor implements MonitorInterface {
   private boolean handleTimedTransition(Transition transition) {
     if (transition.getDelayTime() > 0 && petriNet.isTransitionEnabled(transition.getNumber())) {
       try {
+        System.out.println("transicion timeada a mimir");
         mutex.release();
         Thread.sleep(transition.getDelayTime());
+        //antes de lockearse hay que checkear si es la unica transicion que se puede ejecutar
+        if (!mutex.hasQueuedThreads()) {
+          mutex.acquire();
+          return true;
+        }
         transitionsQueue[transition.getNumber()].acquire();
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
