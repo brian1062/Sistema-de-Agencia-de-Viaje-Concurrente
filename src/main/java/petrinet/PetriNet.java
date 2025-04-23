@@ -98,7 +98,7 @@ public class PetriNet {
         System.out.println("[SUCCESS] Invariants target achieved. Terminating program.");
         Logger logger = Logger.getLogger();
         logger.logTransition(11);
-        System.exit(0);
+        System.exit(0); // TODO: Handle this more gracefully
       }
     }
 
