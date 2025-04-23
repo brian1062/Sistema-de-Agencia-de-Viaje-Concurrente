@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import utils.Logger;
 
 /**
  * Represents a Petri Net structure with places, transitions. Manages the state of the Petri Net
@@ -94,6 +95,10 @@ public class PetriNet {
       invariantsCount++;
       if (invariantsCount == invariantsCountTarget) {
         invariantsTargetAchieved = true;
+        System.out.println("[SUCCESS] Invariants target achieved. Terminating program.");
+        Logger logger = Logger.getLogger();
+        logger.logTransition(11);
+        System.exit(0);
       }
     }
 

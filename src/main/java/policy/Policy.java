@@ -120,6 +120,9 @@ public abstract class Policy {
       return -1;
     }
 
+    // Print the array list with the enabled indices
+    logger.info("Enabled indices: " + enabledIndices);
+
     // Select a random index from the list of enabled indices
     Random random = new Random();
     return enabledIndices.get(random.nextInt(enabledIndices.size()));
