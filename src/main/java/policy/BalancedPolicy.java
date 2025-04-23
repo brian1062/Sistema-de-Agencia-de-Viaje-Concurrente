@@ -1,6 +1,5 @@
 package policy;
 
-
 /**
  * Policy that balances the firing of two transition pairs. For each pair, the other transition can
  * only fire if it has fired more times or equal to the current transition.

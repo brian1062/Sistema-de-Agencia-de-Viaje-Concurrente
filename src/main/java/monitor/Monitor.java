@@ -96,15 +96,15 @@ public class Monitor implements MonitorInterface {
       // If the mutex is not available, waits for it in the mutex's queue
       mutex.acquire();
       boolean mutexAcquired = true;
-      
-      while(mutexAcquired){
-        //Transition transition;
-        //try {
+
+      while (mutexAcquired) {
+        // Transition transition;
+        // try {
         //  transition = petriNet.getTransitionFromIndex(transitionIndex);
-        //} catch (IllegalArgumentException e) {
+        // } catch (IllegalArgumentException e) {
         //  logger.error(e.getMessage());
         //  return false;
-        //}
+        // }
 
         // Check if the transition can be fired or needs to wait a certain time
         // handleTimedTransition(transition);
@@ -114,21 +114,21 @@ public class Monitor implements MonitorInterface {
         if (mutexAcquired) {
           // Update the policy
           policy.transitionFired(transitionIndex);
-                    
+
           System.out.println("Enabled transitions in the Petri net: ");
           printArray(petriNet.getEnabledTransitionsInBits());
           // Get the enabled waiting transitions in bits
           System.out.println("Waiting transitions in transitionsQueue: ");
           printArray(getWaitingTransitions());
-          int[] transitionsForPolicyToChooseFrom = bitwiseAnd(petriNet.getEnabledTransitionsInBits(), getWaitingTransitions());
+          int[] transitionsForPolicyToChooseFrom =
+              bitwiseAnd(petriNet.getEnabledTransitionsInBits(), getWaitingTransitions());
           System.out.println("AND Operation between enabled and waiting: ");
           printArray(transitionsForPolicyToChooseFrom);
-  
 
-          //transitionsForPolicyToChooseFrom = new int[transitionsForPolicyToChooseFrom.length];
-          //for (int i = 0; i < transitionsForPolicyToChooseFrom.length; i++) {
+          // transitionsForPolicyToChooseFrom = new int[transitionsForPolicyToChooseFrom.length];
+          // for (int i = 0; i < transitionsForPolicyToChooseFrom.length; i++) {
           //  transitionsForPolicyToChooseFrom[i] = transitionsQueue[i].hasQueuedThreads() ? 1 : 0;
-          //}
+          // }
 
           // If no waiting transitions are enabled, release the mutex and return
           if (!containsOne(transitionsForPolicyToChooseFrom)) {
@@ -144,7 +144,7 @@ public class Monitor implements MonitorInterface {
             transitionsQueue[nextTransition].release();
           }
           // Release the mutex for the next transition
-          //mutex.release();
+          // mutex.release();
           return true;
         }
         return false;
@@ -154,9 +154,9 @@ public class Monitor implements MonitorInterface {
       logger.error("Thread interrupted while acquiring mutex: " + transitionIndex);
       return false;
     }
-    //finally {
+    // finally {
     //  mutex.release();
-    //}
+    // }
 
     return false;
   }
@@ -170,14 +170,14 @@ public class Monitor implements MonitorInterface {
     StringBuilder sb = new StringBuilder();
     sb.append("{");
     for (int i = 0; i < array.length; i++) {
-        sb.append(array[i]);
-        if (i < array.length - 1) {
-            sb.append(", ");
-        }
+      sb.append(array[i]);
+      if (i < array.length - 1) {
+        sb.append(", ");
+      }
     }
     sb.append("}");
     System.out.println(sb.toString());
-  }  
+  }
 
   /**
    * Executes the transition while holding the mutex.
