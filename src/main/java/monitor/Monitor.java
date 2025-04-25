@@ -30,8 +30,6 @@ public class Monitor implements MonitorInterface {
     this.policy = policy;
     this.transitionsQueue = new Semaphore[petriNet.getNumberOfTransitions()];
     for (int i = 0; i < petriNet.getNumberOfTransitions(); i++) {
-      // Initialize each transition's semaphore to 0
-      // to block until it is released
       transitionsQueue[i] = new Semaphore(0, true);
     }
   }
@@ -57,39 +55,6 @@ public class Monitor implements MonitorInterface {
    * @param transitionIndex Index of the transition to fire.
    * @return true if transition fired successfully, false otherwise.
    */
-  /*@Override
-  public boolean fireTransition(int transitionIndex) {
-    // Check if the transition can fire according to the policy
-    if (!policy.canFireTransition(transitionIndex)) return false;
-
-    Transition transition;
-    try {
-      transition = petriNet.getTransitionFromIndex(transitionIndex);
-    } catch (IllegalArgumentException e) {
-      logger.error(e.getMessage());
-      return false;
-    }
-
-    try {
-      mutex.acquire();
-      if (!handleTimedTransition(transition)) return false;
-
-      // If the transition fires successfully, update the policy
-      if (executeTransition(transitionIndex)) {
-        policy.transitionFired(transitionIndex);
-        return true;
-      }
-      return false;
-
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      logger.error("Thread interrupted while acquiring mutex: " + transitionIndex);
-      return false;
-    } finally {
-      mutex.release();
-    }
-  }*/
-
   @Override
   public boolean fireTransition(int transitionIndex) {
     try {
@@ -98,16 +63,8 @@ public class Monitor implements MonitorInterface {
       boolean mutexAcquired = true;
 
       while (mutexAcquired) {
-        Transition transition;
-        try {
-          transition = petriNet.getTransitionFromIndex(transitionIndex);
-        } catch (IllegalArgumentException e) {
-          logger.error(e.getMessage());
-          return false;
-        }
-
         // Check if the transition can be fired or needs to wait a certain time
-        handleTimedTransition(transition);
+        handleTimedTransition(transitionIndex);
 
         mutexAcquired = executeTransition(transitionIndex);
 
@@ -124,11 +81,6 @@ public class Monitor implements MonitorInterface {
               bitwiseAnd(petriNet.getEnabledTransitionsInBits(), getWaitingTransitions());
           System.out.println("AND Operation between enabled and waiting: ");
           printArray(transitionsForPolicyToChooseFrom);
-
-          // transitionsForPolicyToChooseFrom = new int[transitionsForPolicyToChooseFrom.length];
-          // for (int i = 0; i < transitionsForPolicyToChooseFrom.length; i++) {
-          //  transitionsForPolicyToChooseFrom[i] = transitionsQueue[i].hasQueuedThreads() ? 1 : 0;
-          // }
 
           // If no waiting transitions are enabled, release the mutex and return
           if (!containsOne(transitionsForPolicyToChooseFrom)) {
@@ -192,11 +144,12 @@ public class Monitor implements MonitorInterface {
    */
   private boolean executeTransition(int transitionIndex) {
     try {
-      if (petriNet.tryFireTransition(transitionIndex)) {
-        logTransitionSuccess(transitionIndex);
-        return true;
-      }
-      return false;
+      //if (petriNet.tryFireTransition(transitionIndex)) {
+      //  logTransitionSuccess(transitionIndex);
+      //  return true;
+      //}
+      //return false;
+      return petriNet.tryFireTransition(transitionIndex);
     } catch (Exception e) {
       logger.error(e.getMessage());
       return false;
@@ -232,26 +185,38 @@ public class Monitor implements MonitorInterface {
     return true;
   }*/
 
-  // TODO: should this method be boolean or void?
-  private boolean handleTimedTransition(Transition transition) {
+  private void handleTimedTransition(int transitionIndex) {
+    Transition transition;
+    try {
+      transition = petriNet.getTransitionFromIndex(transitionIndex);
+    } catch (IllegalArgumentException e) {
+      logger.error(e.getMessage());
+      throw new RuntimeException("Invalid transition index: " + transitionIndex);
+    }
+
+    // Check if the transition is timed and enabled
     if (transition.getDelayTime() > 0 && petriNet.isTransitionEnabled(transition.getNumber())) {
       try {
-        System.out.println("transicion timeada a mimir");
+        logger.info("Timed transition {" + transitionIndex + "} is now sleeping...");
         mutex.release();
         Thread.sleep(transition.getDelayTime());
-        // antes de lockearse hay que checkear si es la unica transicion que se puede ejecutar
+        logger.info("Timed transition {" + transitionIndex + "} woke up!");
+
+        // Check if the mutex is being requested by other threads. If not, acquire it.
         if (!mutex.hasQueuedThreads()) {
           mutex.acquire();
-          return true;
+          return;
         }
+
+        // If the mutex is being requested by other threads, wait in the transitionsQueue to be called
+        // by another thread already holding the mutex
+        logger.info("Timed transition {" + transitionIndex + "} is waiting in the queue...");
         transitionsQueue[transition.getNumber()].acquire();
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         logger.error("Thread interrupted during timed transition: " + transition.getNumber());
-        return false;
       }
     }
-    return true;
   }
 
   /**
@@ -308,13 +273,13 @@ public class Monitor implements MonitorInterface {
    *
    * @param transitionIndex Index of transition that fired.
    */
-  private void logTransitionSuccess(int transitionIndex) {
-    String message =
-        String.format(
-            "Transition fired: {T%d} Marking: {%s}", transitionIndex, petriNet.getStringMarking());
-    logger.info(message);
-    logger.logTransition(transitionIndex);
-  }
+  //private void logTransitionSuccess(int transitionIndex) {
+  //  String message =
+  //      String.format(
+  //          "Transition fired: {T%d} Marking: {%s}", transitionIndex, petriNet.getStringMarking());
+  //  logger.info(message);
+  //  logger.logTransition(transitionIndex);
+  //}
 
   /**
    * Checks if the Petri Net has reached its target number of invariants.
