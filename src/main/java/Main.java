@@ -72,6 +72,7 @@ public class Main {
           threads, i -> new Thread(new Segments(rdPConf.getTransitionSequence(i), monitor)));
 
       logger.info("Starting Petri net execution...");
+      logger.info("Initial marking: {" + petriNet.getStringMarking() + "}");
       Arrays.stream(threads).forEach(Thread::start);
 
       // Wait for all threads to complete

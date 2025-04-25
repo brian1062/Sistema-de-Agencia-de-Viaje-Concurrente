@@ -23,6 +23,7 @@ public class PetriNet {
   private int[] marking;
   private final int placesLength;
   private final int LAST_TRANSITION = 11;
+  private static Logger logger = Logger.getLogger();
 
   /**
    * Constructor for the PetriNet class with the specified parameters.
@@ -91,13 +92,15 @@ public class PetriNet {
       throw new RuntimeException(e.getMessage());
     }
 
+    logger.logTransition(transitionIndex);
+    logger.logCurrentMarking(
+        transitionIndex, getStringMarking());
+
     if (transitionIndex == LAST_TRANSITION) {
       invariantsCount++;
       if (invariantsCount == invariantsCountTarget) {
         invariantsTargetAchieved = true;
         System.out.println("[SUCCESS] Invariants target achieved. Terminating program.");
-        Logger logger = Logger.getLogger();
-        logger.logTransition(11);
         System.exit(0); // TODO: Handle this more gracefully
       }
     }
@@ -129,7 +132,9 @@ public class PetriNet {
     return markingString;
   }
 
-  /** Updates the list of enabled transitions in the Petri net based on the current marking. */
+  /**
+   * Updates the list of enabled transitions in the Petri net based on the current marking.
+  */
   private void updateEnabledTransitions() {
     // Clear the enabledTransitions list to remove any previously stored transitions
     enabledTransitions.clear();
@@ -190,7 +195,6 @@ public class PetriNet {
   }
 
   /* Getters */
-
   public int[] getMarking() {
     return marking;
   }
