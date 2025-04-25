@@ -93,8 +93,7 @@ public class PetriNet {
     }
 
     logger.logTransition(transitionIndex);
-    logger.logCurrentMarking(
-        transitionIndex, getStringMarking());
+    logger.logCurrentMarking(transitionIndex, getStringMarking());
 
     if (transitionIndex == LAST_TRANSITION) {
       invariantsCount++;
@@ -132,9 +131,7 @@ public class PetriNet {
     return markingString;
   }
 
-  /**
-   * Updates the list of enabled transitions in the Petri net based on the current marking.
-  */
+  /** Updates the list of enabled transitions in the Petri net based on the current marking. */
   private void updateEnabledTransitions() {
     // Clear the enabledTransitions list to remove any previously stored transitions
     enabledTransitions.clear();

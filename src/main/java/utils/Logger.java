@@ -72,11 +72,9 @@ public class Logger {
    */
   public void logCurrentMarking(int transitionIndex, String marking) {
     String message =
-        String.format(
-            "Transition fired: {T%d} Marking: {%s}", transitionIndex, marking);
+        String.format("Transition fired: {T%d} Marking: {%s}", transitionIndex, marking);
     logger.info(message);
   }
-
 
   private synchronized void writeToFile(String message) {
     try {

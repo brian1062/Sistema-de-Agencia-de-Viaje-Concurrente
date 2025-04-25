@@ -144,11 +144,11 @@ public class Monitor implements MonitorInterface {
    */
   private boolean executeTransition(int transitionIndex) {
     try {
-      //if (petriNet.tryFireTransition(transitionIndex)) {
+      // if (petriNet.tryFireTransition(transitionIndex)) {
       //  logTransitionSuccess(transitionIndex);
       //  return true;
-      //}
-      //return false;
+      // }
+      // return false;
       return petriNet.tryFireTransition(transitionIndex);
     } catch (Exception e) {
       logger.error(e.getMessage());
@@ -208,7 +208,8 @@ public class Monitor implements MonitorInterface {
           return;
         }
 
-        // If the mutex is being requested by other threads, wait in the transitionsQueue to be called
+        // If the mutex is being requested by other threads, wait in the transitionsQueue to be
+        // called
         // by another thread already holding the mutex
         logger.info("Timed transition {" + transitionIndex + "} is waiting in the queue...");
         transitionsQueue[transition.getNumber()].acquire();
@@ -273,13 +274,14 @@ public class Monitor implements MonitorInterface {
    *
    * @param transitionIndex Index of transition that fired.
    */
-  //private void logTransitionSuccess(int transitionIndex) {
+  // private void logTransitionSuccess(int transitionIndex) {
   //  String message =
   //      String.format(
-  //          "Transition fired: {T%d} Marking: {%s}", transitionIndex, petriNet.getStringMarking());
+  //          "Transition fired: {T%d} Marking: {%s}", transitionIndex,
+  // petriNet.getStringMarking());
   //  logger.info(message);
   //  logger.logTransition(transitionIndex);
-  //}
+  // }
 
   /**
    * Checks if the Petri Net has reached its target number of invariants.
