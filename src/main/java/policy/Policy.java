@@ -71,7 +71,7 @@ public abstract class Policy {
    */
   public int getNextTransition(int[] enabledTransitions) {
     int randomTransition = getRandomEnabledIndex(enabledTransitions);
-    //int randomTransition = getHighestEnabledIndex(enabledTransitions);
+    // int randomTransition = getHighestEnabledIndex(enabledTransitions);
     if (randomTransition == -1) {
       return -1;
     }

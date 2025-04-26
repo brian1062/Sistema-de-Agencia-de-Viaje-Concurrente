@@ -91,7 +91,7 @@ public class Monitor implements MonitorInterface {
           }
 
           /* Since there are transitions enabled and waiting,
-            get the next one to fire based on the current policy */
+          get the next one to fire based on the current policy */
           int nextTransition = policy.getNextTransition(transitionsForPolicyToChooseFrom);
           if (nextTransition != -1) {
             logger.info("Transition received from policy: " + nextTransition);
@@ -246,7 +246,8 @@ public class Monitor implements MonitorInterface {
    *
    * @return true if target invariants achieved, false otherwise.
    */
-  public synchronized boolean petriNetHasFinished() { /* TODO: no me gusta estoooooo */
+  public synchronized boolean petriNetHasFinished() {
+    /* TODO: no me gusta estoooooo */
     return petriNet.petriNetHasFinished();
   }
 }

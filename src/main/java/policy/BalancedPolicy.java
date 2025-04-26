@@ -5,7 +5,7 @@ package policy;
  * only fire if it has fired more times or equal to the current transition.
  */
 public class BalancedPolicy extends Policy {
-  
+
   /**
    * Determines whether a balanced transition is allowed to fire based on its current proportion.
    *
