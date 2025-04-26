@@ -142,14 +142,6 @@ public class Monitor implements MonitorInterface {
    */
   private boolean executeTransition(int transitionIndex) {
     try {
-<<<<<<< HEAD
-      // if (petriNet.tryFireTransition(transitionIndex)) {
-      //  logTransitionSuccess(transitionIndex);
-      //  return true;
-      // }
-      // return false;
-=======
->>>>>>> fbe5858 (monitor is ready)
       return petriNet.tryFireTransition(transitionIndex);
     } catch (Exception e) {
       logger.error(e.getMessage());
