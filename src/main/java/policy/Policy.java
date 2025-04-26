@@ -5,21 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.Semaphore;
 import utils.Logger;
 
 /**
  * Abstract class that defines the structure of a policy to control the firing of transitions in the
- * Petri Net. Provides mutual exclusion using a semaphore to ensure that only one thread can fire a
- * transition at a time.
+ * Petri Net.
  */
 public abstract class Policy {
-  /**
-   * Semaphore to ensure thread-safe policy operations. Protects access to policy state during
-   * transition evaluation and firing.
-   */
-  protected final Semaphore policyMutex;
-
   /** Map to store transition pair counts. */
   protected final Map<Integer, Integer> transitionCounts = new HashMap<>();
 
@@ -37,23 +29,29 @@ public abstract class Policy {
 
   /** Constructor for the Policy class with synchronization mechanism. */
   protected Policy() {
-    this.policyMutex = new Semaphore(1, true);
+    for (int[] pair : PAIRS) {
+      transitionCounts.put(pair[0], 0);
+      transitionCounts.put(pair[1], 0);
+    }
   }
 
   /**
-   * Determines if a transition can be fired based on the policy rules.
+   * Determines if a transition can fire based on the policy rules.
    *
    * @param transitionIndex Index of the transition to evaluate.
    * @return true if the transition can be fired, false otherwise.
    */
-  public abstract boolean canFireTransition(int transitionIndex);
+  protected abstract boolean canFireTransition(int transitionIndex);
 
   /**
    * Updates the policy state after a transition has been fired.
    *
    * @param transitionIndex Index of the transition that was fired.
    */
-  public abstract void transitionFired(int transitionIndex);
+  public void transitionFired(int transitionIndex) {
+    // Update the count for the fired transition
+    transitionCounts.computeIfPresent(transitionIndex, (key, value) -> value + 1);
+  }
 
   /**
    * Checks if a given transition is one of the tracked transitions.
@@ -73,6 +71,7 @@ public abstract class Policy {
    */
   public int getNextTransition(int[] enabledTransitions) {
     int randomTransition = getRandomEnabledIndex(enabledTransitions);
+    //int randomTransition = getHighestEnabledIndex(enabledTransitions);
     if (randomTransition == -1) {
       return -1;
     }
@@ -126,6 +125,24 @@ public abstract class Policy {
     // Select a random index from the list of enabled indices
     Random random = new Random();
     return enabledIndices.get(random.nextInt(enabledIndices.size()));
+  }
+
+  /**
+   * Returns the index of the highest enabled transition.
+   *
+   * @param enabledTransitions The array of enabled transitions.
+   * @return The index of the highest enabled transition, or -1 if none are enabled.
+   */
+  protected int getHighestEnabledIndex(int[] enabledTransitions) {
+    int highestIndex = -1;
+    for (int i = 0; i < enabledTransitions.length; i++) {
+      if (enabledTransitions[i] == 1) {
+        if (highestIndex == -1 || i > highestIndex) {
+          highestIndex = i;
+        }
+      }
+    }
+    return highestIndex;
   }
 
   /**
