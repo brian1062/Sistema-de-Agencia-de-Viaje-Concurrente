@@ -32,14 +32,7 @@ public class Segments implements Runnable {
 
     while (!monitor.petriNetHasFinished()) {
       for (Transition t : sequence) {
-        // System.out.println("Firing transition: " + t.getNumber());
         monitor.fireTransition(t.getNumber());
-        // boolean result =
-        // if (result) {
-        //  // System.out.println("Transition " + t.getNumber() + " fired successfully.");
-        // } else {
-        //  // System.out.println("Failed to fire transition " + t.getNumber() + ".");
-        // }
       }
       // If the Petri net has finished, we stop the execution immediately
       if (monitor.petriNetHasFinished()) {
