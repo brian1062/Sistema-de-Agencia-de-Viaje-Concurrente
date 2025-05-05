@@ -175,16 +175,18 @@ public class Monitor implements MonitorInterface {
         logger.info("Timed transition {" + transitionIndex + "} woke up!");
 
         // Check if the mutex is being requested by other threads. If not, acquire it.
-        if (!mutex.hasQueuedThreads()) {
+        // if (!mutex.hasQueuedThreads()) {
           mutex.acquire();
-          return;
-        }
+        //   return;
+        // }
 
         // If the mutex is being requested by other threads, wait in the transitionsQueue to be
         // called
         // by another thread already holding the mutex
-        logger.info("Timed transition {" + transitionIndex + "} is waiting in the queue...");
-        transitionsQueue[transitionIndex].acquire();
+
+        //TODO: VER
+        // logger.info("Timed transition {" + transitionIndex + "} is waiting in the queue...");
+        // transitionsQueue[transitionIndex].acquire();
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         logger.error("Thread interrupted during timed transition: " + transition.getNumber());

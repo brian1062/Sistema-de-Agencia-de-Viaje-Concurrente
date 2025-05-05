@@ -69,16 +69,16 @@ public class PetriNetConf {
   /** Time delay (in minutes) for each transition. Index corresponds to the transition number. */
   private static final int[] TIME_TRANSITION = {
     0, // T0 (inmediate)
-    2, // T1 (2 minutes getting in the agency)
+    40, // T1 (2 minutes getting in the agency)
     0, // T2 (inmediate)
     0, // T3 (inmediate)
-    15, // T4 (15 minutes making the reservation)
-    15, // T5 (15 minutes making the reservation)
+    5, // T4 (15 minutes making the reservation)
+    5, // T5 (15 minutes making the reservation)
     0, // T6 (inmediate)
     0, // T7 (inmediate)
     5, // T8 (5 minutes receiving the cancellation)
     5, // T9 (5 minutes receiving confirmation of the reservation)
-    15, // T10 (15 minutes paying the reservation)
+    5, // T10 (15 minutes paying the reservation)
     0 // T11 (inmediate)
   };
 
@@ -86,15 +86,42 @@ public class PetriNetConf {
    * Transitions sequences for each thread in the Petri net. Each array represents a sequence of
    * transition for a specific thread.
    */
-  private static final int[][] TRANSITIONS_THREADS = {
+  // private static final int[][] TRANSITIONS_THREADS = {
+  //   {0, 1}, // Thread 0
+  //   {2, 5}, // Thread 1
+  //   {3, 4}, // Thread 2
+  //   {6, 9, 10}, // Thread 3
+  //   {7, 8}, // Thread 4
+  //   {11} // Thread 5
+  // };
+
+  // private static final int[][] TRANSITIONS_THREADS = {
+  //   {0},
+  //   {1}, // Thread 0
+  //   {2},
+  //   {5}, // Thread 1
+  //   {3},
+  //   {4}, // Thread 2
+  //   {6},
+  //   {9},
+  //   {10}, // Thread 3
+  //   {7},
+  //   {8}, // Thread 4
+  //   {11} // Thread 5
+  // };
+
+    private static final int[][] TRANSITIONS_THREADS = {
     {0, 1}, // Thread 0
-    {2, 5}, // Thread 1
-    {3, 4}, // Thread 2
-    {6, 9, 10}, // Thread 3
-    {7, 8}, // Thread 4
+    {2},
+    {5}, // Thread 1
+    {3},
+    {4}, // Thread 2
+    {9, 10}, // Thread 3
+    {6},
+    {7},
+    {8}, // Thread 4
     {11} // Thread 5
   };
-
   /**
    * Constructor for the PetriNetConf instance. Initializes the places and transitions based on the
    * configuration matrices.
