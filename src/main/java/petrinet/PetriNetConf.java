@@ -110,7 +110,7 @@ public class PetriNetConf {
   //   {11} // Thread 5
   // };
 
-    private static final int[][] TRANSITIONS_THREADS = {
+  private static final int[][] TRANSITIONS_THREADS = {
     {0, 1}, // Thread 0
     {2},
     {5}, // Thread 1
@@ -122,6 +122,7 @@ public class PetriNetConf {
     {8}, // Thread 4
     {11} // Thread 5
   };
+
   /**
    * Constructor for the PetriNetConf instance. Initializes the places and transitions based on the
    * configuration matrices.

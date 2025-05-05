@@ -176,7 +176,7 @@ public class Monitor implements MonitorInterface {
 
         // Check if the mutex is being requested by other threads. If not, acquire it.
         // if (!mutex.hasQueuedThreads()) {
-          mutex.acquire();
+        mutex.acquire();
         //   return;
         // }
 
@@ -184,7 +184,7 @@ public class Monitor implements MonitorInterface {
         // called
         // by another thread already holding the mutex
 
-        //TODO: VER
+        // TODO: VER
         // logger.info("Timed transition {" + transitionIndex + "} is waiting in the queue...");
         // transitionsQueue[transitionIndex].acquire();
       } catch (InterruptedException e) {
