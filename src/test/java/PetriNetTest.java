@@ -23,7 +23,8 @@ public class PetriNetTest {
             conf.getIncidenceMatrixIn(),
             conf.getPlacesInvariants(),
             conf.getInitialMarking(),
-            10);
+            10,
+            conf.getTimeTransitions());
   }
 
   @Test
