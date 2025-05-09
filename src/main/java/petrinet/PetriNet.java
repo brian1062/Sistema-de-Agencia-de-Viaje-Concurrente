@@ -24,6 +24,7 @@ public class PetriNet {
   private final int placesLength;
   private final int LAST_TRANSITION = 11;
   private static Logger logger = Logger.getLogger();
+  private TimeTransitions timeTransitions;
 
   /**
    * Constructor for the PetriNet class with the specified parameters.
@@ -43,7 +44,8 @@ public class PetriNet {
       int[][] incidenceMatrixIn,
       int[][] placesInvariants,
       int[] marking,
-      int invariantsCountTarget) {
+      int invariantsCountTarget,
+      long[] alphas) {
     this.transitions = transitions;
     this.places = places;
     this.incidenceMatrixOut = incidenceMatrixOut;
@@ -53,6 +55,7 @@ public class PetriNet {
     this.placesLength = places.size();
     this.invariantsCountTarget = invariantsCountTarget;
     updateEnabledTransitions(); // Initialize the enabled transitions
+    this.timeTransitions = new TimeTransitions(alphas, getEnabledTransitionsInBitsBooleans()); //TODO cambiar por lo que va
   }
 
   /**
@@ -63,6 +66,14 @@ public class PetriNet {
    */
   public boolean tryFireTransition(int transitionIndex) {
     if (!isTransitionEnabled(transitionIndex)) {
+      return false;
+    }
+
+    // Check if the time for the transition has elapsed
+    if (!timeTransitions.checkTime(transitionIndex)) {
+      //TODO: cambiar esto
+      // mutex.release();
+      // sleep(timeTransitions.getRemainingTime(transitionIndex));
       return false;
     }
 
@@ -103,9 +114,12 @@ public class PetriNet {
         System.exit(0); // TODO: Handle this more gracefully
       }
     }
-
     // Update the enabled transitions after firing the transition
     updateEnabledTransitions();
+
+    // update timeTransitions
+    timeTransitions.updateEnabledTransitionsTimer(getEnabledTransitionsInBitsBooleans());
+    // las nuevas sensibilizadas setele sistemtime
     return true;
   }
 
@@ -224,4 +238,13 @@ public class PetriNet {
     }
     return enabledTransitionsInBits;
   }
+
+  public boolean[] getEnabledTransitionsInBitsBooleans() {
+    boolean[] enabledTransitionsInBits = new boolean[transitions.size()];
+    for (int i = 0; i < transitions.size(); i++) {
+      enabledTransitionsInBits[i] = isTransitionEnabled(i);
+    }
+    return enabledTransitionsInBits;
+  }
+
 }

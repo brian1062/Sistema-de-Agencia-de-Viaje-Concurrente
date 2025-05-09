@@ -59,7 +59,8 @@ public class Main {
               rdPConf.getIncidenceMatrixIn(),
               rdPConf.getPlacesInvariants(),
               rdPConf.getInitialMarking(),
-              rdPConf.getTargetInvariants());
+              rdPConf.getTargetInvariants(),
+              rdPConf.getTimeTransitions());
 
       // Initialize monitor with the chosen policy
       Monitor monitor = Monitor.getMonitor(petriNet, policy);
