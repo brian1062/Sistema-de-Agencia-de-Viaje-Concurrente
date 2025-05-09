@@ -48,7 +48,7 @@ public class TimeTransitions {
 
   /**
    * Starts the timer only for the transitions that have been enabled and were not enabled before.
-   * 
+   *
    * @param enabledTransitions Array indicating which transitions are currently enabled.
    */
   public void updateEnabledTransitionsTimer(boolean[] enabledTransitions) {
@@ -57,11 +57,12 @@ public class TimeTransitions {
       if (!oldEnabledTransitions[i]
           && enabledTransitions[
               i]) { // 0 1 -> 1 1 (estaba desensibilizada, pasa a sensibilizada) timer tiene que
-                    // empezar
+        // empezar
         setSystemTime(i);
       } else if (oldEnabledTransitions[i]
           && !enabledTransitions[
-              i]) { // 1 0 (estaba sensibilizada, pasa a desensibilizada) timer tiene que ir a infinito (long.MAX_VALUE)
+              i]) { // 1 0 (estaba sensibilizada, pasa a desensibilizada) timer tiene que ir a
+                    // infinito (long.MAX_VALUE)
         systemTime[i] = Long.MAX_VALUE;
       }
     }
