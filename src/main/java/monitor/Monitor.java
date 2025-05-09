@@ -48,6 +48,14 @@ public class Monitor implements MonitorInterface {
     return monitor;
   }
 
+  public static Monitor getMonitor() {
+    return monitor;
+  }
+
+  public Semaphore getMutex() {
+    return mutex;
+  }
+
   /**
    * Attempts to fire a transition in the Petri Net. Handles both immediate and timed transitions
    * with proper synchronization.
@@ -56,7 +64,7 @@ public class Monitor implements MonitorInterface {
    * @return true if transition fired successfully, false otherwise.
    */
   @Override
-  public boolean fireTransition(int transitionIndex) {
+  public boolean fireTransition(int transitionIndex) { //todo B: es alpedo el return boolean
     try {
       // If the mutex is not available, waits for it in the mutex's queue
       mutex.acquire();
@@ -64,7 +72,7 @@ public class Monitor implements MonitorInterface {
 
       while (mutexAcquired) {
         // Check if the transition can be fired or needs to wait a certain time
-        handleTimedTransition(transitionIndex);
+        //  handleTimedTransition(transitionIndex);
 
         mutexAcquired = executeTransition(transitionIndex);
 
@@ -87,7 +95,7 @@ public class Monitor implements MonitorInterface {
           if (!containsOne(transitionsForPolicyToChooseFrom)) {
             logger.info("No waiting transitions are enabled, releasing mutex.");
             mutex.release();
-            return true;
+            return true; //TODO: SEGUN micolini aca pone mutexAcquired en false y dps libera el mutex
           }
 
           /* Since there are transitions enabled and waiting,
@@ -106,7 +114,7 @@ public class Monitor implements MonitorInterface {
           // Release the mutex if the transition could not be executed
           mutex.release();
           transitionsQueue[transitionIndex].acquire();
-          mutexAcquired = true;
+          mutexAcquired = true; //todo B: VER BIEN
         }
       }
     } catch (InterruptedException e) {

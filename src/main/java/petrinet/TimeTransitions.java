@@ -68,4 +68,9 @@ public class TimeTransitions {
     }
     oldEnabledTransitions = enabledTransitions.clone();
   }
+
+  public long getAlpha(int transitionIndex) {
+    return timeTransitions[transitionIndex];
+  }
+  
 }
