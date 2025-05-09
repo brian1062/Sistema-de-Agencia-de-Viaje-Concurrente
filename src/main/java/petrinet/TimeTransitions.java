@@ -4,15 +4,15 @@ public class TimeTransitions {
   long[] timeTransitions; // TODO: ver sino con un mapa alfa
   long[] systemTime;
   //   boolean[]
-  //       sensitizedTransition; // inicializar con getEnabledTransitionsInBits, ver si combiene
+  //       enabledTransitions; // inicializar con getEnabledTransitionsInBits, ver si combiene
   // cambiar
   //                             // de lugar esto
-  boolean[] oldSensitizedTransition;
+  boolean[] oldEnabledTransitions;
 
-  public TimeTransitions(long[] timeTransitions, boolean[] sensitizedTransition) {
-    // this.sensitizedTransition = sensitizedTransition;
-    // this.oldSensitizedTransition = new boolean[sensitizedTransition.length];
-    this.oldSensitizedTransition = sensitizedTransition.clone();
+  public TimeTransitions(long[] timeTransitions, boolean[] enabledTransitions) {
+    // this.enabledTransitions = enabledTransitions;
+    // this.oldEnabledTransitions = new boolean[enabledTransitions.length];
+    this.oldEnabledTransitions = enabledTransitions.clone();
     this.timeTransitions = timeTransitions;
     this.systemTime = new long[timeTransitions.length];
     // TODO inicializar tambien el contador de systemTime
@@ -48,21 +48,23 @@ public class TimeTransitions {
 
   /**
    * Starts the timer only for the transitions that have been enabled and were not enabled before.
+   * 
+   * @param enabledTransitions Array indicating which transitions are currently enabled.
    */
-  public void updateEnabledTransitionsTimer(boolean[] sensitizedTransition) {
+  public void updateEnabledTransitionsTimer(boolean[] enabledTransitions) {
     for (int i = 0; i < timeTransitions.length; i++) {
       // todo: AGREGAR caso de T inmediatas que no se le setea tiempo.
-      if (!oldSensitizedTransition[i]
-          && sensitizedTransition[
+      if (!oldEnabledTransitions[i]
+          && enabledTransitions[
               i]) { // 0 1 -> 1 1 (estaba desensibilizada, pasa a sensibilizada) timer tiene que
                     // empezar
         setSystemTime(i);
-      } else if (oldSensitizedTransition[i]
-          && !sensitizedTransition[
-              i]) { // 1 0 (estaba sensibilizada, pasa a desensibilizada) timer tiene que ir a 0
+      } else if (oldEnabledTransitions[i]
+          && !enabledTransitions[
+              i]) { // 1 0 (estaba sensibilizada, pasa a desensibilizada) timer tiene que ir a infinito (long.MAX_VALUE)
         systemTime[i] = Long.MAX_VALUE;
       }
     }
-    oldSensitizedTransition = sensitizedTransition.clone();
+    oldEnabledTransitions = enabledTransitions.clone();
   }
 }
