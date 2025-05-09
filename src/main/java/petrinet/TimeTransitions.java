@@ -11,14 +11,14 @@ public class TimeTransitions {
   //                             // de lugar esto
   boolean[] oldEnabledTransitions;
 
-  public TimeTransitions(long[] timeTransitions){//, boolean[] enabledTransitions) {
+  public TimeTransitions(long[] timeTransitions) { // , boolean[] enabledTransitions) {
     // this.enabledTransitions = enabledTransitions;
     // this.oldEnabledTransitions = new boolean[enabledTransitions.length];
 
     this.oldEnabledTransitions = new boolean[timeTransitions.length];
     this.systemTime = new long[timeTransitions.length];
     this.timeTransitions = timeTransitions;
-    
+
     Arrays.fill(systemTime, Long.MAX_VALUE);
     Arrays.fill(oldEnabledTransitions, false);
   }
@@ -57,10 +57,10 @@ public class TimeTransitions {
    * @param enabledTransitions Array indicating which transitions are currently enabled.
    */
   public void updateEnabledTransitionsTimer(boolean[] enabledTransitions) {
-    //imprimi el enabledTransitions y el oldEnabledTransitions
+    // imprimi el enabledTransitions y el oldEnabledTransitions
     System.out.println("Enabled transitions: " + Arrays.toString(enabledTransitions));
     System.out.println("Old enabled transitions: " + Arrays.toString(oldEnabledTransitions));
-    
+
     for (int i = 0; i < timeTransitions.length; i++) {
       // todo: AGREGAR caso de T inmediatas que no se le setea tiempo.
       if (!oldEnabledTransitions[i]
@@ -68,8 +68,7 @@ public class TimeTransitions {
               i]) { // 0 1 -> 1 1 (estaba desensibilizada, pasa a sensibilizada) timer tiene que
         // empezar
         setSystemTime(i);
-      } 
-      else if (oldEnabledTransitions[i]
+      } else if (oldEnabledTransitions[i]
           && !enabledTransitions[
               i]) { // 1 0 (estaba sensibilizada, pasa a desensibilizada) timer tiene que ir a
         // infinito (long.MAX_VALUE)

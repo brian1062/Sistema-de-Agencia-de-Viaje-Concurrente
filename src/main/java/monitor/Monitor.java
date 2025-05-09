@@ -96,7 +96,7 @@ public class Monitor implements MonitorInterface {
             logger.info("No waiting transitions are enabled, releasing mutex.");
             mutex.release();
             return true; // TODO: SEGUN micolini aca pone mutexAcquired en false y dps libera el
-                         // mutex
+            // mutex
           }
 
           /* Since there are transitions enabled and waiting,

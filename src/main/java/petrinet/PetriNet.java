@@ -1,7 +1,6 @@
 package petrinet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -59,7 +58,7 @@ public class PetriNet {
     updateEnabledTransitions(); // Initialize the enabled transitions
     this.timeTransitions =
         new TimeTransitions(
-            alphas);//, getEnabledTransitionsInBitsBooleans()); // TODO cambiar por lo que va
+            alphas); // , getEnabledTransitionsInBitsBooleans()); // TODO cambiar por lo que va
   }
 
   /**
@@ -113,11 +112,9 @@ public class PetriNet {
     }
     // Update the enabled transitions after firing the transition
     updateEnabledTransitions();
-    
 
     // update timeTransitions
     timeTransitions.updateEnabledTransitionsTimer(getEnabledTransitionsInBitsBooleans());
-
 
     // las nuevas sensibilizadas setele sistemtime
     return true;
@@ -279,6 +276,7 @@ public class PetriNet {
     }
     return enabledTransitionsInBits;
   }
+
   public boolean[] getEnabledTransitionsInBitsBooleans() {
     boolean[] enabledTransitionsInBits = new boolean[transitions.size()];
     for (int i = 0; i < transitions.size(); i++) {
