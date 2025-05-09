@@ -1,11 +1,10 @@
 package petrinet;
 
-import monitor.Monitor;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import monitor.Monitor;
 import utils.Logger;
 
 /**
@@ -69,7 +68,8 @@ public class PetriNet {
    * @return true if transition fired successfully, false otherwise.
    */
   public boolean tryFireTransition(int transitionIndex) {
-    if (!isTransitionEnabled(transitionIndex)) { // TODO B: este metodo hacer que sean sensibilizada en tiempo tmb
+    if (!isTransitionEnabled(
+        transitionIndex)) { // TODO B: este metodo hacer que sean sensibilizada en tiempo tmb
       return false;
     }
 
@@ -178,30 +178,28 @@ public class PetriNet {
   }
 
   /**
-   * Checks if a specific transition is enabled in the Petri net.
-   * A transition is enabled if all its input places have enough tokens and the transition is
-   * enabled in the time transitions.
+   * Checks if a specific transition is enabled in the Petri net. A transition is enabled if all its
+   * input places have enough tokens and the transition is enabled in the time transitions.
    *
    * @param transitionIndex Index of the transition to check.
    * @return true if the transition is enabled, false otherwise.
    */
   public boolean isTransitionEnabled(int transitionIndex) {
     validateTransitionIndex(transitionIndex);
-    if(!enabledTransitions.contains(transitions.get(transitionIndex))) {
+    if (!enabledTransitions.contains(transitions.get(transitionIndex))) {
       return false;
     }
     // Check if the transition is inmmediate
-    if(timeTransitions.getAlpha(transitionIndex) == 0) {
+    if (timeTransitions.getAlpha(transitionIndex) == 0) {
       return true;
     }
 
     boolean inWindow = timeTransitions.checkTime(transitionIndex);
 
-    if (inWindow){
-      timeTransitions.setSystemTime(transitionIndex);//TODO acomodar bien el tiempo aca
+    if (inWindow) {
+      timeTransitions.setSystemTime(transitionIndex); // TODO acomodar bien el tiempo aca
       return true;
-    }
-    else{
+    } else {
       Monitor.getMonitor().getMutex().release();
 
       long timeToWait = timeTransitions.getRemainingTime(transitionIndex);
@@ -209,22 +207,21 @@ public class PetriNet {
         Thread.sleep(timeToWait);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
-        throw new RuntimeException("Thread interrupted while waiting for transition to be enabled", e);
+        throw new RuntimeException(
+            "Thread interrupted while waiting for transition to be enabled", e);
       }
-      try{
+      try {
         Monitor.getMonitor().getMutex().acquire();
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         throw new RuntimeException("Thread interrupted while acquiring mutex", e);
       }
-      //check if the transition is enabled again after waiting
-      if(!enabledTransitions.contains(transitions.get(transitionIndex))) {
+      // check if the transition is enabled again after waiting
+      if (!enabledTransitions.contains(transitions.get(transitionIndex))) {
         return false;
       }
       return true;
-
     }
-
   }
 
   /**

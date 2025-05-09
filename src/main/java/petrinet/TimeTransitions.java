@@ -62,7 +62,7 @@ public class TimeTransitions {
       } else if (oldEnabledTransitions[i]
           && !enabledTransitions[
               i]) { // 1 0 (estaba sensibilizada, pasa a desensibilizada) timer tiene que ir a
-                    // infinito (long.MAX_VALUE)
+        // infinito (long.MAX_VALUE)
         systemTime[i] = Long.MAX_VALUE;
       }
     }
@@ -72,5 +72,4 @@ public class TimeTransitions {
   public long getAlpha(int transitionIndex) {
     return timeTransitions[transitionIndex];
   }
-  
 }
