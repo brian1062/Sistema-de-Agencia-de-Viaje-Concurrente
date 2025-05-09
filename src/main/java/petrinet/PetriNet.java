@@ -55,7 +55,9 @@ public class PetriNet {
     this.placesLength = places.size();
     this.invariantsCountTarget = invariantsCountTarget;
     updateEnabledTransitions(); // Initialize the enabled transitions
-    this.timeTransitions = new TimeTransitions(alphas, getEnabledTransitionsInBitsBooleans()); //TODO cambiar por lo que va
+    this.timeTransitions =
+        new TimeTransitions(
+            alphas, getEnabledTransitionsInBitsBooleans()); // TODO cambiar por lo que va
   }
 
   /**
@@ -71,7 +73,7 @@ public class PetriNet {
 
     // Check if the time for the transition has elapsed
     if (!timeTransitions.checkTime(transitionIndex)) {
-      //TODO: cambiar esto
+      // TODO: cambiar esto
       // mutex.release();
       // sleep(timeTransitions.getRemainingTime(transitionIndex));
       return false;
@@ -246,5 +248,4 @@ public class PetriNet {
     }
     return enabledTransitionsInBits;
   }
-
 }

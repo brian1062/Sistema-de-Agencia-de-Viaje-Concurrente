@@ -187,8 +187,8 @@ public class PetriNetConf {
   public int getTargetInvariants() {
     return TARGET_INVARIANTS;
   }
+
   public long[] getTimeTransitions() {
     return TIME_TRANSITION;
   }
-
 }
