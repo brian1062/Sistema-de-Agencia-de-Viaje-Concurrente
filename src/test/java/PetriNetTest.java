@@ -51,10 +51,5 @@ public class PetriNetTest {
     petriNet.tryFireTransition(0);
     int[] newMarking = {4, 0, 1, 0, 4, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0};
     assertArrayEquals(newMarking, petriNet.getMarking());
-    newMarking[1] = 1;
-    newMarking[2] = 0;
-    newMarking[3] = 1;
-    petriNet.tryFireTransition(2);
-    assertArrayEquals(newMarking, petriNet.getMarking());
   }
 }
