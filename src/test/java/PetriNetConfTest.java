@@ -80,6 +80,6 @@ class PetriNetConfTest {
   @Test
   void testNumberOfSequences() {
     int numberOfSequences = petriNetConf.getNumberOfSequences();
-    assertThat(numberOfSequences).isEqualTo(6); // 6 threads in TRANSITIONS_THREADS
+    assertThat(numberOfSequences).isEqualTo(10); // 10 threads in TRANSITIONS_THREADS
   }
 }

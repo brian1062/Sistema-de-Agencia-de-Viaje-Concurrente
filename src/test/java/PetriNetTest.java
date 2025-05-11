@@ -54,7 +54,7 @@ public class PetriNetTest {
     newMarking[1] = 1;
     newMarking[2] = 0;
     newMarking[3] = 1;
-    petriNet.tryFireTransition(1);
+    petriNet.tryFireTransition(2);
     assertArrayEquals(newMarking, petriNet.getMarking());
   }
 }
