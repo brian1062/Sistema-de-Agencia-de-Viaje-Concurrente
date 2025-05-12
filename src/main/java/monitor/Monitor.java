@@ -104,7 +104,7 @@ public class Monitor implements MonitorInterface {
           if (nextTransition != -1) {
             logger.info("Transition received from policy: " + nextTransition);
             // Wake up the next transition in the queue
-            logger.info("Transicion "+ transitionIndex +"Waking up transition " + nextTransition);
+            logger.info("Transicion " + transitionIndex + "Waking up transition " + nextTransition);
             transitionsQueue[nextTransition].release();
           }
 
