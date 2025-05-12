@@ -212,7 +212,9 @@ public class PetriNet {
               + timeToWait
               + " milliseconds.");
       try {
-        Thread.sleep(timeToWait);
+        if(timeToWait > 0){
+          Thread.sleep(timeToWait);
+        }
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         throw new RuntimeException(

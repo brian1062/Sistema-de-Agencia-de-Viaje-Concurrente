@@ -62,11 +62,10 @@ public class TimeTransitions {
    */
   public void updateEnabledTransitionsTimer(boolean[] enabledTransitions) {
     // imprimi el enabledTransitions y el oldEnabledTransitions
-    System.out.println("Enabled transitions: " + Arrays.toString(enabledTransitions));
     System.out.println("Old enabled transitions: " + Arrays.toString(oldEnabledTransitions));
+    System.out.println("Enabled transitions:     " + Arrays.toString(enabledTransitions));
 
     for (int i = 0; i < timeTransitions.length; i++) {
-      // todo: AGREGAR caso de T inmediatas que no se le setea tiempo.
       if (!oldEnabledTransitions[i]
           && enabledTransitions[
               i]) { // 0 1 -> 1 1 (estaba desensibilizada, pasa a sensibilizada) timer tiene que

@@ -159,51 +159,6 @@ public class Monitor implements MonitorInterface {
   }
 
   /**
-   * Handles timed transition by releasing the mutex, waiting the delay time, and re-acquiring the
-   * mutex.
-   *
-   * @param transitionIndex Index of the transition to handle.
-   * @throws InterruptedException if the thread is interrupted while sleeping.
-   * @throws RuntimeException if the transition index is invalid.
-   */
-  private void handleTimedTransition(int transitionIndex) {
-    Transition transition;
-    try {
-      transition = petriNet.getTransitionFromIndex(transitionIndex);
-    } catch (IllegalArgumentException e) {
-      logger.error(e.getMessage());
-      throw new RuntimeException("Invalid transition index: " + transitionIndex);
-    }
-
-    // Check if the transition is timed and enabled
-    if (transition.getDelayTime() > 0 && petriNet.isTransitionEnabled(transition.getNumber())) {
-      try {
-        logger.info("Timed transition {" + transitionIndex + "} is now sleeping...");
-        mutex.release();
-        Thread.sleep(transition.getDelayTime());
-        logger.info("Timed transition {" + transitionIndex + "} woke up!");
-
-        // Check if the mutex is being requested by other threads. If not, acquire it.
-        // if (!mutex.hasQueuedThreads()) {
-        mutex.acquire();
-        //   return;
-        // }
-
-        // If the mutex is being requested by other threads, wait in the transitionsQueue to be
-        // called
-        // by another thread already holding the mutex
-
-        // TODO: VER
-        // logger.info("Timed transition {" + transitionIndex + "} is waiting in the queue...");
-        // transitionsQueue[transitionIndex].acquire();
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        logger.error("Thread interrupted during timed transition: " + transition.getNumber());
-      }
-    }
-  }
-
-  /**
    * Returns an array of integers indicating whether there are transitions waiting for each
    * semaphore in the transitionsQueue.
    *
