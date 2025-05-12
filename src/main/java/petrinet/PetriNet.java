@@ -198,7 +198,8 @@ public class PetriNet {
     boolean inWindow = timeTransitions.checkTime(transitionIndex);
 
     if (inWindow) {
-      timeTransitions.setSystemTime(transitionIndex); // TODO acomodar bien el tiempo aca
+      // timeTransitions.setSystemTime(transitionIndex); // TODO acomodar bien el tiempo aca
+      // timeTransitions.setMaxTime(transitionIndex);
       return true;
     } else {
       Monitor.getMonitor().getMutex().release();
@@ -219,6 +220,7 @@ public class PetriNet {
       }
       try {
         Monitor.getMonitor().getMutex().acquire();
+        logger.info("Transicion " + transitionIndex + " is now enabled.");
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         throw new RuntimeException("Thread interrupted while acquiring mutex", e);

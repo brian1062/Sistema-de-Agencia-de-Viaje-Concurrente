@@ -96,7 +96,6 @@ public class Monitor implements MonitorInterface {
             logger.info("No waiting transitions are enabled, releasing mutex.");
             mutex.release();
             return true; // TODO: SEGUN micolini aca pone mutexAcquired en false y dps libera el
-            // mutex
           }
 
           /* Since there are transitions enabled and waiting,
@@ -105,6 +104,7 @@ public class Monitor implements MonitorInterface {
           if (nextTransition != -1) {
             logger.info("Transition received from policy: " + nextTransition);
             // Wake up the next transition in the queue
+            logger.info("Transicion "+ transitionIndex +"Waking up transition " + nextTransition);
             transitionsQueue[nextTransition].release();
           }
 
@@ -115,7 +115,7 @@ public class Monitor implements MonitorInterface {
           // Release the mutex if the transition could not be executed
           mutex.release();
           transitionsQueue[transitionIndex].acquire();
-          mutexAcquired = true; // todo B: VER BIEN
+          mutexAcquired = true; // TODO B: VER BIEN
         }
       }
     } catch (InterruptedException e) {

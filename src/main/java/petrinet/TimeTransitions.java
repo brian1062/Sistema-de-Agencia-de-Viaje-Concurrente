@@ -26,6 +26,9 @@ public class TimeTransitions {
   public void setSystemTime(int transitionIndex) {
     systemTime[transitionIndex] = System.currentTimeMillis();
   }
+  public void setMaxTime(int transitionIndex) {
+    systemTime[transitionIndex] = Long.MAX_VALUE;
+  }
 
   /**
    * Checks if the time for a specific transition has elapsed.
