@@ -2,7 +2,6 @@ package monitor;
 
 import java.util.concurrent.Semaphore;
 import petrinet.PetriNet;
-import petrinet.Transition;
 import policy.Policy;
 import utils.Logger;
 
