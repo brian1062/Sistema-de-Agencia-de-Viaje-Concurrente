@@ -56,9 +56,7 @@ public class PetriNet {
     this.placesLength = places.size();
     this.invariantsCountTarget = invariantsCountTarget;
     updateEnabledTransitions(); // Initialize the enabled transitions
-    this.timeTransitions =
-        new TimeTransitions(
-            alphas); 
+    this.timeTransitions = new TimeTransitions(alphas);
   }
 
   /**
@@ -68,8 +66,7 @@ public class PetriNet {
    * @return true if transition fired successfully, false otherwise.
    */
   public boolean tryFireTransition(int transitionIndex) {
-    if (!isTransitionEnabled(
-        transitionIndex)) { 
+    if (!isTransitionEnabled(transitionIndex)) {
       return false;
     }
 
