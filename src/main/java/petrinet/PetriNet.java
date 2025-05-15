@@ -58,7 +58,7 @@ public class PetriNet {
     updateEnabledTransitions(); // Initialize the enabled transitions
     this.timeTransitions =
         new TimeTransitions(
-            alphas); // , getEnabledTransitionsInBitsBooleans()); // TODO cambiar por lo que va
+            alphas); 
   }
 
   /**
@@ -69,7 +69,7 @@ public class PetriNet {
    */
   public boolean tryFireTransition(int transitionIndex) {
     if (!isTransitionEnabled(
-        transitionIndex)) { // TODO B: este metodo hacer que sean sensibilizada en tiempo tmb
+        transitionIndex)) { 
       return false;
     }
 
@@ -198,8 +198,6 @@ public class PetriNet {
     boolean inWindow = timeTransitions.checkTime(transitionIndex);
 
     if (inWindow) {
-      // timeTransitions.setSystemTime(transitionIndex); // TODO acomodar bien el tiempo aca
-      // timeTransitions.setMaxTime(transitionIndex);
       return true;
     } else {
       Monitor.getMonitor().getMutex().release();
