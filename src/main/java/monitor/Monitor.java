@@ -2,7 +2,6 @@ package monitor;
 
 import java.util.concurrent.Semaphore;
 import petrinet.PetriNet;
-import petrinet.Transition;
 import policy.Policy;
 import utils.Logger;
 
@@ -15,6 +14,7 @@ public class Monitor implements MonitorInterface {
   private static Logger logger = Logger.getLogger();
   private final PetriNet petriNet;
   private final Semaphore mutex;
+  private final Semaphore[] transitionsQueue;
   private final Policy policy;
 
   /**
@@ -27,6 +27,10 @@ public class Monitor implements MonitorInterface {
     this.mutex = new Semaphore(1, true);
     this.petriNet = petriNet;
     this.policy = policy;
+    this.transitionsQueue = new Semaphore[petriNet.getNumberOfTransitions()];
+    for (int i = 0; i < petriNet.getNumberOfTransitions(); i++) {
+      transitionsQueue[i] = new Semaphore(0, true);
+    }
   }
 
   /**
@@ -43,6 +47,14 @@ public class Monitor implements MonitorInterface {
     return monitor;
   }
 
+  public static Monitor getMonitor() {
+    return monitor;
+  }
+
+  public Semaphore getMutex() {
+    return mutex;
+  }
+
   /**
    * Attempts to fire a transition in the Petri Net. Handles both immediate and timed transitions
    * with proper synchronization.
@@ -51,36 +63,83 @@ public class Monitor implements MonitorInterface {
    * @return true if transition fired successfully, false otherwise.
    */
   @Override
-  public boolean fireTransition(int transitionIndex) {
-    // Check if the transition can fire according to the policy
-    if (!policy.canFireTransition(transitionIndex)) return false;
-
-    Transition transition;
+  public boolean fireTransition(int transitionIndex) { // todo B: es alpedo el return boolean
     try {
-      transition = petriNet.getTransitionFromIndex(transitionIndex);
-    } catch (IllegalArgumentException e) {
-      logger.error(e.getMessage());
-      return false;
-    }
-
-    try {
+      // If the mutex is not available, waits for it in the mutex's queue
       mutex.acquire();
-      if (!handleTimedTransition(transition)) return false;
+      boolean mutexAcquired = true;
 
-      // If the transition fires successfully, update the policy
-      if (executeTransition(transitionIndex)) {
-        policy.transitionFired(transitionIndex);
-        return true;
+      while (mutexAcquired) {
+
+        mutexAcquired = executeTransition(transitionIndex);
+
+        if (mutexAcquired) {
+          // Update the policy
+          policy.transitionFired(transitionIndex);
+
+          int[] transitionsForPolicyToChooseFrom =
+              bitwiseAnd(petriNet.getEnabledTransitionsInBits(), getWaitingTransitions());
+
+          System.out.println("Enabled transitions in the Petri net: ");
+          printArray(petriNet.getEnabledTransitionsInBits());
+          System.out.println("Waiting transitions in transitionsQueue: ");
+          printArray(getWaitingTransitions());
+          System.out.println("AND Operation between enabled and waiting: ");
+          printArray(transitionsForPolicyToChooseFrom);
+
+          // If the Petri net has finished, then release the waiting threads
+          if (petriNet.petriNetHasFinished()) {
+            transitionsForPolicyToChooseFrom = getWaitingTransitions();
+          }
+          // If no waiting transitions are enabled, release the mutex and return
+          if (!containsOne(transitionsForPolicyToChooseFrom)) {
+            mutex.release();
+            return true;
+          }
+
+          /* Since there are transitions enabled and waiting,
+          get the next one to fire based on the current policy */
+          int nextTransition = policy.getNextTransition(transitionsForPolicyToChooseFrom);
+          if (nextTransition != -1) {
+            logger.info("Transition received from policy: " + nextTransition);
+            // Wake up the next transition in the queue
+            logger.info("Transicion " + transitionIndex + "Waking up transition " + nextTransition);
+            transitionsQueue[nextTransition].release();
+          }
+
+          // Exit the monitor with a successful transition firing
+          return true;
+        } else {
+          logger.info("Transition " + transitionIndex + " could not be executed.");
+          // Release the mutex if the transition could not be executed
+          mutex.release();
+          transitionsQueue[transitionIndex].acquire();
+          mutexAcquired = true;
+        }
       }
-      return false;
-
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       logger.error("Thread interrupted while acquiring mutex: " + transitionIndex);
-      return false;
-    } finally {
-      mutex.release();
     }
+    return false; // Transition could not be executed
+  }
+
+  /**
+   * Prints the elements of an integer array in the format: {0, 1, 0, 1, 1, 0, 3, 1}.
+   *
+   * @param array The integer array to print.
+   */
+  public void printArray(int[] array) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("{");
+    for (int i = 0; i < array.length; i++) {
+      sb.append(array[i]);
+      if (i < array.length - 1) {
+        sb.append(", ");
+      }
+    }
+    sb.append("}");
+    System.out.println(sb.toString());
   }
 
   /**
@@ -91,11 +150,7 @@ public class Monitor implements MonitorInterface {
    */
   private boolean executeTransition(int transitionIndex) {
     try {
-      if (petriNet.tryFireTransition(transitionIndex)) {
-        logTransitionSuccess(transitionIndex);
-        return true;
-      }
-      return false;
+      return petriNet.tryFireTransition(transitionIndex);
     } catch (Exception e) {
       logger.error(e.getMessage());
       return false;
@@ -103,45 +158,52 @@ public class Monitor implements MonitorInterface {
   }
 
   /**
-   * Handles timed transition by releasing the mutex, waiting the delay time, and re-acquiring the
-   * mutex.
+   * Returns an array of integers indicating whether there are transitions waiting for each
+   * semaphore in the transitionsQueue.
    *
-   * @param transition Transition to handle.
-   * @return true if successful, false otherwise.
+   * @return An array of integers where 1 indicates transitions are waiting, and 0 otherwise.
    */
-  private boolean handleTimedTransition(Transition transition) {
-    if (transition.getDelayTime() > 0 && petriNet.isTransitionEnabled(transition.getNumber())) {
-      try {
-        mutex.release();
-        Thread.sleep(transition.getDelayTime());
-        try {
-          mutex.acquire();
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          logger.error("Thread interrupted while acquiring mutex: " + transition.getNumber());
-          return false;
-        }
-        return true;
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        logger.error("Thread interrupted during timed transition: " + transition.getNumber());
-        return false;
-      }
+  public int[] getWaitingTransitions() {
+    int[] waitingTransitions = new int[transitionsQueue.length];
+    for (int i = 0; i < transitionsQueue.length; i++) {
+      waitingTransitions[i] = transitionsQueue[i].hasQueuedThreads() ? 1 : 0;
     }
-    return true;
+    return waitingTransitions;
   }
 
   /**
-   * Logs the successful firing of a transition.
+   * Performs a bitwise AND operation on two integer arrays.
    *
-   * @param transitionIndex Index of transition that fired.
+   * @param array1 The first integer array.
+   * @param array2 The second integer array.
+   * @return An array containing the result of the bitwise AND operation.
+   * @throws IllegalArgumentException if the arrays have different lengths.
    */
-  private void logTransitionSuccess(int transitionIndex) {
-    String message =
-        String.format(
-            "Transition fired: {T%d} Marking: {%s}", transitionIndex, petriNet.getStringMarking());
-    logger.info(message);
-    logger.logTransition(transitionIndex);
+  public int[] bitwiseAnd(int[] array1, int[] array2) {
+    if (array1.length != array2.length) {
+      throw new IllegalArgumentException("[ERROR] Arrays must have the same length");
+    }
+
+    int[] result = new int[array1.length];
+    for (int i = 0; i < array1.length; i++) {
+      result[i] = array1[i] & array2[i]; // Perform bitwise AND
+    }
+    return result;
+  }
+
+  /**
+   * Checks if the array contains at least one 1.
+   *
+   * @param array The array to check.
+   * @return true if the array contains at least one 1, false otherwise.
+   */
+  public boolean containsOne(int[] array) {
+    for (int value : array) {
+      if (value == 1) {
+        return true; // Found a 1, no need to check further
+      }
+    }
+    return false; // No 1 found
   }
 
   /**
@@ -149,7 +211,7 @@ public class Monitor implements MonitorInterface {
    *
    * @return true if target invariants achieved, false otherwise.
    */
-  public synchronized boolean petriNetHasFinished() {
+  public boolean petriNetHasFinished() {
     return petriNet.petriNetHasFinished();
   }
 }

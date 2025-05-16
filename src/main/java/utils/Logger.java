@@ -64,6 +64,18 @@ public class Logger {
     }
   }
 
+  /**
+   * Logs the firing of a transition and the current marking of the Petri net.
+   *
+   * @param transitionIndex Index of transition that fired.
+   * @param marking Current marking of the Petri net.
+   */
+  public void logCurrentMarking(int transitionIndex, String marking) {
+    String message =
+        String.format("Transition fired: {T%d} Marking: {%s}", transitionIndex, marking);
+    logger.info(message);
+  }
+
   private synchronized void writeToFile(String message) {
     try {
       writer.write(message);

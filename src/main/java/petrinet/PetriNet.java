@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import monitor.Monitor;
+import utils.Logger;
 
 /**
  * Represents a Petri Net structure with places, transitions. Manages the state of the Petri Net
@@ -22,6 +24,8 @@ public class PetriNet {
   private int[] marking;
   private final int placesLength;
   private final int LAST_TRANSITION = 11;
+  private static Logger logger = Logger.getLogger();
+  private TimeTransitions timeTransitions;
 
   /**
    * Constructor for the PetriNet class with the specified parameters.
@@ -41,7 +45,8 @@ public class PetriNet {
       int[][] incidenceMatrixIn,
       int[][] placesInvariants,
       int[] marking,
-      int invariantsCountTarget) {
+      int invariantsCountTarget,
+      long[] alphas) {
     this.transitions = transitions;
     this.places = places;
     this.incidenceMatrixOut = incidenceMatrixOut;
@@ -51,6 +56,7 @@ public class PetriNet {
     this.placesLength = places.size();
     this.invariantsCountTarget = invariantsCountTarget;
     updateEnabledTransitions(); // Initialize the enabled transitions
+    this.timeTransitions = new TimeTransitions(alphas);
   }
 
   /**
@@ -60,6 +66,11 @@ public class PetriNet {
    * @return true if transition fired successfully, false otherwise.
    */
   public boolean tryFireTransition(int transitionIndex) {
+    if (petriNetHasFinished()) {
+      // Return true so that the waiting threads can finish
+      return true;
+    }
+
     if (!isTransitionEnabled(transitionIndex)) {
       return false;
     }
@@ -90,15 +101,23 @@ public class PetriNet {
       throw new RuntimeException(e.getMessage());
     }
 
+    logger.logTransition(transitionIndex);
+    logger.logCurrentMarking(transitionIndex, getStringMarking());
+
     if (transitionIndex == LAST_TRANSITION) {
       invariantsCount++;
       if (invariantsCount == invariantsCountTarget) {
         invariantsTargetAchieved = true;
+        System.out.println("[SUCCESS] Invariants target achieved. Terminating program.");
       }
     }
-
     // Update the enabled transitions after firing the transition
     updateEnabledTransitions();
+
+    // update timeTransitions
+    timeTransitions.updateEnabledTransitionsTimer(getEnabledTransitionsInBitsBooleans());
+
+    // las nuevas sensibilizadas setele sistemtime
     return true;
   }
 
@@ -161,15 +180,58 @@ public class PetriNet {
   }
 
   /**
-   * Check if the transition is currently enabled.
+   * Checks if a specific transition is enabled in the Petri net. A transition is enabled if all its
+   * input places have enough tokens and the transition is enabled in the time transitions.
    *
    * @param transitionIndex Index of the transition to check.
    * @return true if the transition is enabled, false otherwise.
    */
   public boolean isTransitionEnabled(int transitionIndex) {
     validateTransitionIndex(transitionIndex);
+    if (!enabledTransitions.contains(transitions.get(transitionIndex))) {
+      return false;
+    }
+    // Check if the transition is inmmediate
+    if (timeTransitions.getAlpha(transitionIndex) == 0) {
+      return true;
+    }
 
-    return enabledTransitions.contains(transitions.get(transitionIndex));
+    boolean inWindow = timeTransitions.checkTime(transitionIndex);
+
+    if (inWindow) {
+      return true;
+    } else {
+      Monitor.getMonitor().getMutex().release();
+
+      long timeToWait = timeTransitions.getRemainingTime(transitionIndex);
+      System.out.println(
+          "Waiting for transition "
+              + transitionIndex
+              + " to be enabled for "
+              + timeToWait
+              + " milliseconds.");
+      try {
+        if (timeToWait > 0) {
+          Thread.sleep(timeToWait);
+        }
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new RuntimeException(
+            "Thread interrupted while waiting for transition to be enabled", e);
+      }
+      try {
+        Monitor.getMonitor().getMutex().acquire();
+        logger.info("Transicion " + transitionIndex + " is now enabled.");
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new RuntimeException("Thread interrupted while acquiring mutex", e);
+      }
+      // check if the transition is enabled again after waiting
+      if (!enabledTransitions.contains(transitions.get(transitionIndex))) {
+        return false;
+      }
+      return true;
+    }
   }
 
   /**
@@ -185,7 +247,6 @@ public class PetriNet {
   }
 
   /* Getters */
-
   public int[] getMarking() {
     return marking;
   }
@@ -201,5 +262,29 @@ public class PetriNet {
   public Transition getTransitionFromIndex(int transitionIndex) {
     validateTransitionIndex(transitionIndex);
     return transitions.get(transitionIndex);
+  }
+
+  public int getNumberOfTransitions() {
+    return transitions.size();
+  }
+
+  public int getPlacesLength() {
+    return placesLength;
+  }
+
+  public int[] getEnabledTransitionsInBits() {
+    int[] enabledTransitionsInBits = new int[transitions.size()];
+    for (int i = 0; i < transitions.size(); i++) {
+      enabledTransitionsInBits[i] = enabledTransitions.contains(transitions.get(i)) ? 1 : 0;
+    }
+    return enabledTransitionsInBits;
+  }
+
+  public boolean[] getEnabledTransitionsInBitsBooleans() {
+    boolean[] enabledTransitionsInBits = new boolean[transitions.size()];
+    for (int i = 0; i < transitions.size(); i++) {
+      enabledTransitionsInBits[i] = enabledTransitions.contains(transitions.get(i));
+    }
+    return enabledTransitionsInBits;
   }
 }

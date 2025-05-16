@@ -55,7 +55,6 @@ class PetriNetConfTest {
     assertThat(transitions.get(0).getNumber()).isEqualTo(0);
     assertThat(transitions.get(0).getDelayTime()).isEqualTo(0);
     assertThat(transitions.get(1).getNumber()).isEqualTo(1);
-    assertThat(transitions.get(1).getDelayTime()).isEqualTo(2);
   }
 
   @Test
@@ -72,7 +71,7 @@ class PetriNetConfTest {
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Index for TRANSITIONS_THREADS invalid");
 
-    assertThatThrownBy(() -> petriNetConf.getTransitionSequence(6))
+    assertThatThrownBy(() -> petriNetConf.getTransitionSequence(15))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Index for TRANSITIONS_THREADS invalid");
   }
@@ -80,6 +79,6 @@ class PetriNetConfTest {
   @Test
   void testNumberOfSequences() {
     int numberOfSequences = petriNetConf.getNumberOfSequences();
-    assertThat(numberOfSequences).isEqualTo(6); // 6 threads in TRANSITIONS_THREADS
+    assertThat(numberOfSequences).isEqualTo(10); // 10 threads in TRANSITIONS_THREADS
   }
 }
