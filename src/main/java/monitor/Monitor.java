@@ -70,8 +70,6 @@ public class Monitor implements MonitorInterface {
       boolean mutexAcquired = true;
 
       while (mutexAcquired) {
-        // Check if the transition can be fired or needs to wait a certain time
-        //  handleTimedTransition(transitionIndex);
 
         mutexAcquired = executeTransition(transitionIndex);
 
@@ -82,7 +80,6 @@ public class Monitor implements MonitorInterface {
           int[] transitionsForPolicyToChooseFrom =
               bitwiseAnd(petriNet.getEnabledTransitionsInBits(), getWaitingTransitions());
 
-          /* LOGS FOR DEBUGGING // TODO delete later */
           System.out.println("Enabled transitions in the Petri net: ");
           printArray(petriNet.getEnabledTransitionsInBits());
           System.out.println("Waiting transitions in transitionsQueue: ");
@@ -90,11 +87,14 @@ public class Monitor implements MonitorInterface {
           System.out.println("AND Operation between enabled and waiting: ");
           printArray(transitionsForPolicyToChooseFrom);
 
+          //If the Petri net has finished, then release the waiting threads
+          if(petriNet.petriNetHasFinished()){
+            transitionsForPolicyToChooseFrom=getWaitingTransitions();
+          }
           // If no waiting transitions are enabled, release the mutex and return
           if (!containsOne(transitionsForPolicyToChooseFrom)) {
-            logger.info("No waiting transitions are enabled, releasing mutex.");
             mutex.release();
-            return true; // TODO: SEGUN micolini aca pone mutexAcquired en false y dps libera el
+            return true;
           }
 
           /* Since there are transitions enabled and waiting,
@@ -114,7 +114,7 @@ public class Monitor implements MonitorInterface {
           // Release the mutex if the transition could not be executed
           mutex.release();
           transitionsQueue[transitionIndex].acquire();
-          mutexAcquired = true; // TODO B: VER BIEN
+          mutexAcquired = true; 
         }
       }
     } catch (InterruptedException e) {
@@ -211,8 +211,7 @@ public class Monitor implements MonitorInterface {
    *
    * @return true if target invariants achieved, false otherwise.
    */
-  public synchronized boolean petriNetHasFinished() {
-    /* TODO: no me gusta estoooooo */
+  public boolean petriNetHasFinished() {
     return petriNet.petriNetHasFinished();
   }
 }

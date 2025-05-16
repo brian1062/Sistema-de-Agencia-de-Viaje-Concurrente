@@ -66,6 +66,11 @@ public class PetriNet {
    * @return true if transition fired successfully, false otherwise.
    */
   public boolean tryFireTransition(int transitionIndex) {
+    if(petriNetHasFinished()){
+      //Return true so that the waiting threads can finish
+      return true;
+    }
+    
     if (!isTransitionEnabled(transitionIndex)) {
       return false;
     }
@@ -104,7 +109,6 @@ public class PetriNet {
       if (invariantsCount == invariantsCountTarget) {
         invariantsTargetAchieved = true;
         System.out.println("[SUCCESS] Invariants target achieved. Terminating program.");
-        System.exit(0); // TODO: Handle this more gracefully
       }
     }
     // Update the enabled transitions after firing the transition
