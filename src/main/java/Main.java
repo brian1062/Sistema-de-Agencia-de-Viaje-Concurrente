@@ -1,7 +1,6 @@
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
-
 import monitor.Monitor;
 import petrinet.PetriNet;
 import petrinet.PetriNetConf;
@@ -74,13 +73,17 @@ public class Main {
       CountDownLatch latch = new CountDownLatch(numThreads);
 
       // Create and start threads
-      Arrays.setAll(threads, i -> new Thread(() -> {
-          try {
-              new Segments(rdPConf.getTransitionSequence(i), monitor).run();
-          } finally {
-              latch.countDown(); // Each thread signals when it finishes
-          }
-      }));
+      Arrays.setAll(
+          threads,
+          i ->
+              new Thread(
+                  () -> {
+                    try {
+                      new Segments(rdPConf.getTransitionSequence(i), monitor).run();
+                    } finally {
+                      latch.countDown(); // Each thread signals when it finishes
+                    }
+                  }));
 
       logger.info("Starting Petri net execution...");
       logger.info("Initial marking: {" + petriNet.getStringMarking() + "}");

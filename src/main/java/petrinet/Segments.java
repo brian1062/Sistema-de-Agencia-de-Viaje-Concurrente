@@ -35,9 +35,9 @@ public class Segments implements Runnable {
     while (!finished) {
       for (Transition t : sequence) {
         monitor.fireTransition(t.getNumber());
-        
+
         // Check if the Petri Net has finished after firing the transition
-        if(monitor.petriNetHasFinished()) {
+        if (monitor.petriNetHasFinished()) {
           System.out.println("Thread " + Thread.currentThread().getName() + " has finished.");
           finished = true;
           break;

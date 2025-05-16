@@ -87,9 +87,9 @@ public class Monitor implements MonitorInterface {
           System.out.println("AND Operation between enabled and waiting: ");
           printArray(transitionsForPolicyToChooseFrom);
 
-          //If the Petri net has finished, then release the waiting threads
-          if(petriNet.petriNetHasFinished()){
-            transitionsForPolicyToChooseFrom=getWaitingTransitions();
+          // If the Petri net has finished, then release the waiting threads
+          if (petriNet.petriNetHasFinished()) {
+            transitionsForPolicyToChooseFrom = getWaitingTransitions();
           }
           // If no waiting transitions are enabled, release the mutex and return
           if (!containsOne(transitionsForPolicyToChooseFrom)) {
@@ -114,7 +114,7 @@ public class Monitor implements MonitorInterface {
           // Release the mutex if the transition could not be executed
           mutex.release();
           transitionsQueue[transitionIndex].acquire();
-          mutexAcquired = true; 
+          mutexAcquired = true;
         }
       }
     } catch (InterruptedException e) {
