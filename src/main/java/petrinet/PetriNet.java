@@ -267,7 +267,6 @@ public class PetriNet {
     return placesLength;
   }
 
-
   public boolean[] getEnabledTransitionsInBits() {
     boolean[] enabledTransitionsInBits = new boolean[transitions.size()];
     for (int i = 0; i < transitions.size(); i++) {

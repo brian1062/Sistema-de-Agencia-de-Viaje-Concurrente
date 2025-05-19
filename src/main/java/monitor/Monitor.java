@@ -80,7 +80,6 @@ public class Monitor implements MonitorInterface {
           boolean[] transitionsForPolicyToChooseFrom =
               bitwiseAnd(petriNet.getEnabledTransitionsInBits(), getWaitingTransitions());
 
-
           // If the Petri net has finished, then release the waiting threads
           if (petriNet.petriNetHasFinished()) {
             transitionsForPolicyToChooseFrom = getWaitingTransitions();
@@ -151,11 +150,11 @@ public class Monitor implements MonitorInterface {
     }
   }
 
-/**
- * Returns a boolean array indicating which transitions are currently waiting in their semaphores.
- *
- * @return true at index i if transition i is waiting; false otherwise.
- */
+  /**
+   * Returns a boolean array indicating which transitions are currently waiting in their semaphores.
+   *
+   * @return true at index i if transition i is waiting; false otherwise.
+   */
   public boolean[] getWaitingTransitions() {
     boolean[] waitingTransitions = new boolean[transitionsQueue.length];
     for (int i = 0; i < transitionsQueue.length; i++) {
