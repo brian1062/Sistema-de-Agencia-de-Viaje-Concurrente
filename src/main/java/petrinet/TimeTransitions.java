@@ -2,19 +2,28 @@ package petrinet;
 
 import java.util.Arrays;
 
+/**
+ * Manages timing constraints for time transitions in the Petri net.
+ * Keeps track of the activation time of transitions and determines whether a transition's required waiting time (alpha) has elapsed.
+ */
 public class TimeTransitions {
-  long[] timeTransitions; // TODO: ver sino con un mapa alfa
+  /** Array storing the required waiting time (alpha) for each transition, in milliseconds. */
+  long[] timeTransitions;
+   /** Array storing the system timestamp when each transition was last enabled. */ 
   long[] systemTime;
-  //   boolean[]
-  //       enabledTransitions; // inicializar con getEnabledTransitionsInBits, ver si combiene
-  // cambiar
-  //                             // de lugar esto
+
+  /**
+   * Array that stores the previous state of enabled transitions to detect changes in sensitivity.
+   * Used to determine when to start or reset a transition's timer.
+   */
   boolean[] oldEnabledTransitions;
 
-  public TimeTransitions(long[] timeTransitions) { // , boolean[] enabledTransitions) {
-    // this.enabledTransitions = enabledTransitions;
-    // this.oldEnabledTransitions = new boolean[enabledTransitions.length];
-
+  /**
+   * Constructs a new {TimeTransitions} instance with the specified waiting times per transition.
+   * 
+   * @param timeTransitions Array representing the waiting time (alpha) for each transition.
+   */
+  public TimeTransitions(long[] timeTransitions) { 
     this.oldEnabledTransitions = new boolean[timeTransitions.length];
     this.systemTime = new long[timeTransitions.length];
     this.timeTransitions = timeTransitions;
@@ -23,10 +32,21 @@ public class TimeTransitions {
     Arrays.fill(oldEnabledTransitions, false);
   }
 
+  /**
+   * Sets the system time for the specified transition to the current time.
+   *
+   * @param transitionIndex Index of the transition to update.
+   */
   public void setSystemTime(int transitionIndex) {
     systemTime[transitionIndex] = System.currentTimeMillis();
   }
 
+  /**
+   * Sets the system time of the specified transition to the maximum possible value.
+   * Used to indicate that the transition is currently not sensitive.
+   *
+   * @param transitionIndex Index of the transition to reset.
+   */
   public void setMaxTime(int transitionIndex) {
     systemTime[transitionIndex] = Long.MAX_VALUE;
   }
@@ -56,31 +76,35 @@ public class TimeTransitions {
   }
 
   /**
-   * Starts the timer only for the transitions that have been enabled and were not enabled before.
+   * Updates the timing logic based on the newly enabled transitions.
+   * Starts the timer for newly enabled transitions and resets the timer for transitions that were disabled.
    *
-   * @param enabledTransitions Array indicating which transitions are currently enabled.
+   * @param enabledTransitions Boolean array indicating currently enabled transitions.
    */
   public void updateEnabledTransitionsTimer(boolean[] enabledTransitions) {
-    // imprimi el enabledTransitions y el oldEnabledTransitions
-    System.out.println("Old enabled transitions: " + Arrays.toString(oldEnabledTransitions));
-    System.out.println("Enabled transitions:     " + Arrays.toString(enabledTransitions));
 
     for (int i = 0; i < timeTransitions.length; i++) {
       if (!oldEnabledTransitions[i]
           && enabledTransitions[
-              i]) { // 0 1 -> 1 1 (estaba desensibilizada, pasa a sensibilizada) timer tiene que
-        // empezar
+              i]) { 
+        // 0 1 -> 1 1 // Transition just became enabled — start timer
         setSystemTime(i);
       } else if (oldEnabledTransitions[i]
           && !enabledTransitions[
-              i]) { // 1 0 (estaba sensibilizada, pasa a desensibilizada) timer tiene que ir a
-        // infinito (long.MAX_VALUE)
+              i]) {
+        // Transition just became disabled — reset timer
         systemTime[i] = Long.MAX_VALUE;
       }
     }
     oldEnabledTransitions = enabledTransitions.clone();
   }
 
+  /**
+   * Returns the alpha value (waiting time) for a specific transition.
+   *
+   * @param transitionIndex Index of the transition.
+   * @return The alpha value in milliseconds.
+   */
   public long getAlpha(int transitionIndex) {
     return timeTransitions[transitionIndex];
   }

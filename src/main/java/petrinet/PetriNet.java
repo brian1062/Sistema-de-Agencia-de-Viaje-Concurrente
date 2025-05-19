@@ -115,7 +115,7 @@ public class PetriNet {
     updateEnabledTransitions();
 
     // update timeTransitions
-    timeTransitions.updateEnabledTransitionsTimer(getEnabledTransitionsInBitsBooleans());
+    timeTransitions.updateEnabledTransitionsTimer(getEnabledTransitionsInBits());
 
     // las nuevas sensibilizadas setele sistemtime
     return true;
@@ -204,12 +204,7 @@ public class PetriNet {
       Monitor.getMonitor().getMutex().release();
 
       long timeToWait = timeTransitions.getRemainingTime(transitionIndex);
-      System.out.println(
-          "Waiting for transition "
-              + transitionIndex
-              + " to be enabled for "
-              + timeToWait
-              + " milliseconds.");
+
       try {
         if (timeToWait > 0) {
           Thread.sleep(timeToWait);
@@ -272,15 +267,8 @@ public class PetriNet {
     return placesLength;
   }
 
-  public int[] getEnabledTransitionsInBits() {
-    int[] enabledTransitionsInBits = new int[transitions.size()];
-    for (int i = 0; i < transitions.size(); i++) {
-      enabledTransitionsInBits[i] = enabledTransitions.contains(transitions.get(i)) ? 1 : 0;
-    }
-    return enabledTransitionsInBits;
-  }
 
-  public boolean[] getEnabledTransitionsInBitsBooleans() {
+  public boolean[] getEnabledTransitionsInBits() {
     boolean[] enabledTransitionsInBits = new boolean[transitions.size()];
     for (int i = 0; i < transitions.size(); i++) {
       enabledTransitionsInBits[i] = enabledTransitions.contains(transitions.get(i));

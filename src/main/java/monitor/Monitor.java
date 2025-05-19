@@ -77,15 +77,9 @@ public class Monitor implements MonitorInterface {
           // Update the policy
           policy.transitionFired(transitionIndex);
 
-          int[] transitionsForPolicyToChooseFrom =
+          boolean[] transitionsForPolicyToChooseFrom =
               bitwiseAnd(petriNet.getEnabledTransitionsInBits(), getWaitingTransitions());
 
-          System.out.println("Enabled transitions in the Petri net: ");
-          printArray(petriNet.getEnabledTransitionsInBits());
-          System.out.println("Waiting transitions in transitionsQueue: ");
-          printArray(getWaitingTransitions());
-          System.out.println("AND Operation between enabled and waiting: ");
-          printArray(transitionsForPolicyToChooseFrom);
 
           // If the Petri net has finished, then release the waiting threads
           if (petriNet.petriNetHasFinished()) {
@@ -157,34 +151,33 @@ public class Monitor implements MonitorInterface {
     }
   }
 
-  /**
-   * Returns an array of integers indicating whether there are transitions waiting for each
-   * semaphore in the transitionsQueue.
-   *
-   * @return An array of integers where 1 indicates transitions are waiting, and 0 otherwise.
-   */
-  public int[] getWaitingTransitions() {
-    int[] waitingTransitions = new int[transitionsQueue.length];
+/**
+ * Returns a boolean array indicating which transitions are currently waiting in their semaphores.
+ *
+ * @return true at index i if transition i is waiting; false otherwise.
+ */
+  public boolean[] getWaitingTransitions() {
+    boolean[] waitingTransitions = new boolean[transitionsQueue.length];
     for (int i = 0; i < transitionsQueue.length; i++) {
-      waitingTransitions[i] = transitionsQueue[i].hasQueuedThreads() ? 1 : 0;
+      waitingTransitions[i] = transitionsQueue[i].hasQueuedThreads() ? true : false;
     }
     return waitingTransitions;
   }
 
   /**
-   * Performs a bitwise AND operation on two integer arrays.
+   * Performs a bitwise AND operation on two boolean arrays.
    *
-   * @param array1 The first integer array.
-   * @param array2 The second integer array.
+   * @param array1 The first boolean array.
+   * @param array2 The second boolean array.
    * @return An array containing the result of the bitwise AND operation.
    * @throws IllegalArgumentException if the arrays have different lengths.
    */
-  public int[] bitwiseAnd(int[] array1, int[] array2) {
+  public boolean[] bitwiseAnd(boolean[] array1, boolean[] array2) {
     if (array1.length != array2.length) {
       throw new IllegalArgumentException("[ERROR] Arrays must have the same length");
     }
 
-    int[] result = new int[array1.length];
+    boolean[] result = new boolean[array1.length];
     for (int i = 0; i < array1.length; i++) {
       result[i] = array1[i] & array2[i]; // Perform bitwise AND
     }
@@ -192,14 +185,14 @@ public class Monitor implements MonitorInterface {
   }
 
   /**
-   * Checks if the array contains at least one 1.
+   * Checks if the array contains at least one true value.
    *
    * @param array The array to check.
-   * @return true if the array contains at least one 1, false otherwise.
+   * @return true if the array contains at least one true, false otherwise.
    */
-  public boolean containsOne(int[] array) {
-    for (int value : array) {
-      if (value == 1) {
+  public boolean containsOne(boolean[] array) {
+    for (boolean value : array) {
+      if (value) {
         return true; // Found a 1, no need to check further
       }
     }

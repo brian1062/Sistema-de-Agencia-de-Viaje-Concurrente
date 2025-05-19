@@ -69,7 +69,7 @@ public abstract class Policy {
    * @param enabledTransitions List of currently enabled transitions.
    * @return Index of the next transition to fire.
    */
-  public int getNextTransition(int[] enabledTransitions) {
+  public int getNextTransition(boolean[] enabledTransitions) {
     int randomTransition = getRandomEnabledIndex(enabledTransitions);
     // int randomTransition = getHighestEnabledIndex(enabledTransitions);
     if (randomTransition == -1) {
@@ -87,7 +87,7 @@ public abstract class Policy {
     }
 
     // Check if the paired transition is enabled
-    if (enabledTransitions[pairedTransition] == 1) {
+    if (enabledTransitions[pairedTransition]) {
       // Check against the policy which one to fire
       if (canFireTransition(randomTransition)) {
         return randomTransition;
@@ -99,17 +99,17 @@ public abstract class Policy {
   }
 
   /**
-   * Selects a random index from the array where the value is 1.
+   * Selects a random index from the array where the value is true.
    *
    * @param bitwiseAndResult The array resulting from the bitwise AND operation.
-   * @return A random index where the value is 1, or -1 if no such index exists.
+   * @return A random index where the value is true, or -1 if no such index exists.
    */
-  protected int getRandomEnabledIndex(int[] bitwiseAndResult) {
+  protected int getRandomEnabledIndex(boolean[] bitwiseAndResult) {
     List<Integer> enabledIndices = new ArrayList<>();
 
     // Collect indices where the value is 1
     for (int i = 0; i < bitwiseAndResult.length; i++) {
-      if (bitwiseAndResult[i] == 1) {
+      if (bitwiseAndResult[i]) {
         enabledIndices.add(i);
       }
     }
