@@ -71,7 +71,7 @@ public class PetriNet {
 
     if (petriNetHasFinished()) {
       // Return true so that the waiting threads can finish executing
-      return true; // TODO: check if this is correct
+      return true;
     }
 
     // Can't fire the transition if it is not enabled
@@ -98,7 +98,6 @@ public class PetriNet {
     // Update timeTransitions
     timeTransitions.updateEnabledTransitionsTimer(getEnabledTransitionsInBits());
 
-    // las nuevas sensibilizadas setele sistemtime // TODO: ??
     return true;
   }
 
