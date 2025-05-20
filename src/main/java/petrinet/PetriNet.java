@@ -173,6 +173,7 @@ public class PetriNet {
       }
     }
   }
+
   /**
    * Checks if a specific transition is enabled in the Petri net. A transition is enabled if all its
    * input places have enough tokens and the transition is enabled in the time transitions.
@@ -187,7 +188,8 @@ public class PetriNet {
     }
 
     // If the transition has no time constraint or is within the time window, it can be fired
-    if (timeTransitions.getAlpha(transitionIndex) == 0 || timeTransitions.checkTime(transitionIndex)) {
+    if (timeTransitions.getAlpha(transitionIndex) == 0
+        || timeTransitions.checkTime(transitionIndex)) {
       return true;
     }
 
@@ -261,17 +263,17 @@ public class PetriNet {
    */
   private void updateMarking(int transitionIndex) {
     IntStream.range(0, places.size())
-      .forEach(
-        placeIndex -> {
-          // If there is an input arc from the place to the transition
-          if (incidenceMatrixIn[placeIndex][transitionIndex] > 0) {
-            marking[placeIndex] -= incidenceMatrixIn[placeIndex][transitionIndex];
-          }
-          // If there is an output arc from the transition to the place
-          if (incidenceMatrixOut[placeIndex][transitionIndex] > 0) {
-            marking[placeIndex] += incidenceMatrixOut[placeIndex][transitionIndex];
-          }
-        });
+        .forEach(
+            placeIndex -> {
+              // If there is an input arc from the place to the transition
+              if (incidenceMatrixIn[placeIndex][transitionIndex] > 0) {
+                marking[placeIndex] -= incidenceMatrixIn[placeIndex][transitionIndex];
+              }
+              // If there is an output arc from the transition to the place
+              if (incidenceMatrixOut[placeIndex][transitionIndex] > 0) {
+                marking[placeIndex] += incidenceMatrixOut[placeIndex][transitionIndex];
+              }
+            });
   }
 
   /**

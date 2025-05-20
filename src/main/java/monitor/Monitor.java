@@ -82,7 +82,8 @@ public class Monitor implements MonitorInterface {
 
           // If the Petri net has finished, then release the waiting threads
           if (petriNet.petriNetHasFinished()) {
-            transitionsForPolicyToChooseFrom = getWaitingTransitions(); // TODO: ?? I don't understand this
+            transitionsForPolicyToChooseFrom =
+                getWaitingTransitions(); // TODO: ?? I don't understand this
           }
 
           // If no waiting transitions are enabled, release the mutex and return
@@ -97,7 +98,8 @@ public class Monitor implements MonitorInterface {
           if (nextTransition != -1) {
             logger.info("Transition received from policy: " + nextTransition);
             // Wake up the next transition in the queue
-            logger.info("Transition " + transitionIndex + " is waking up the transition " + nextTransition);
+            logger.info(
+                "Transition " + transitionIndex + " is waking up the transition " + nextTransition);
             transitionsQueue[nextTransition].release();
           }
 
