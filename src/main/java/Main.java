@@ -69,6 +69,9 @@ public class Main {
       // Initialize threads array
       Thread[] threads = new Thread[rdPConf.getNumberOfSequences()];
 
+      // Create a CountDownLatch to wait for all threads to finish
+      // The number of threads is equal to the number of sequences
+      // in the configuration
       int numThreads = rdPConf.getNumberOfSequences();
       CountDownLatch latch = new CountDownLatch(numThreads);
 
@@ -79,7 +82,7 @@ public class Main {
               new Thread(
                   () -> {
                     try {
-                      new Segments(rdPConf.getTransitionSequence(i), monitor).run();
+                      new Segments(rdPConf.getTransitionSequence(i), monitor, petriNet).run();
                     } finally {
                       latch.countDown(); // Each thread signals when it finishes
                     }

@@ -53,7 +53,7 @@ public class Monitor implements MonitorInterface {
 
   public Semaphore getMutex() {
     return mutex;
-  }
+  } // TODO: fireTransition is no the only public method
 
   /**
    * Attempts to fire a transition in the Petri Net. Handles both immediate and timed transitions
@@ -63,7 +63,7 @@ public class Monitor implements MonitorInterface {
    * @return true if transition fired successfully, false otherwise.
    */
   @Override
-  public boolean fireTransition(int transitionIndex) { // todo B: es alpedo el return boolean
+  public boolean fireTransition(int transitionIndex) { // TODO: no need to return boolean
     try {
       // If the mutex is not available, waits for it in the mutex's queue
       mutex.acquire();
@@ -82,8 +82,10 @@ public class Monitor implements MonitorInterface {
 
           // If the Petri net has finished, then release the waiting threads
           if (petriNet.petriNetHasFinished()) {
-            transitionsForPolicyToChooseFrom = getWaitingTransitions();
+            transitionsForPolicyToChooseFrom =
+                getWaitingTransitions(); // TODO: ?? I don't understand this
           }
+
           // If no waiting transitions are enabled, release the mutex and return
           if (!containsOne(transitionsForPolicyToChooseFrom)) {
             mutex.release();
@@ -96,12 +98,14 @@ public class Monitor implements MonitorInterface {
           if (nextTransition != -1) {
             logger.info("Transition received from policy: " + nextTransition);
             // Wake up the next transition in the queue
-            logger.info("Transicion " + transitionIndex + "Waking up transition " + nextTransition);
+            logger.info(
+                "Transition " + transitionIndex + " is waking up the transition " + nextTransition);
             transitionsQueue[nextTransition].release();
           }
 
           // Exit the monitor with a successful transition firing
           return true;
+
         } else {
           logger.info("Transition " + transitionIndex + " could not be executed.");
           // Release the mutex if the transition could not be executed
@@ -115,24 +119,6 @@ public class Monitor implements MonitorInterface {
       logger.error("Thread interrupted while acquiring mutex: " + transitionIndex);
     }
     return false; // Transition could not be executed
-  }
-
-  /**
-   * Prints the elements of an integer array in the format: {0, 1, 0, 1, 1, 0, 3, 1}.
-   *
-   * @param array The integer array to print.
-   */
-  public void printArray(int[] array) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("{");
-    for (int i = 0; i < array.length; i++) {
-      sb.append(array[i]);
-      if (i < array.length - 1) {
-        sb.append(", ");
-      }
-    }
-    sb.append("}");
-    System.out.println(sb.toString());
   }
 
   /**
@@ -155,7 +141,7 @@ public class Monitor implements MonitorInterface {
    *
    * @return true at index i if transition i is waiting; false otherwise.
    */
-  public boolean[] getWaitingTransitions() {
+  private boolean[] getWaitingTransitions() {
     boolean[] waitingTransitions = new boolean[transitionsQueue.length];
     for (int i = 0; i < transitionsQueue.length; i++) {
       waitingTransitions[i] = transitionsQueue[i].hasQueuedThreads() ? true : false;
@@ -171,7 +157,7 @@ public class Monitor implements MonitorInterface {
    * @return An array containing the result of the bitwise AND operation.
    * @throws IllegalArgumentException if the arrays have different lengths.
    */
-  public boolean[] bitwiseAnd(boolean[] array1, boolean[] array2) {
+  private boolean[] bitwiseAnd(boolean[] array1, boolean[] array2) {
     if (array1.length != array2.length) {
       throw new IllegalArgumentException("[ERROR] Arrays must have the same length");
     }
@@ -189,22 +175,13 @@ public class Monitor implements MonitorInterface {
    * @param array The array to check.
    * @return true if the array contains at least one true, false otherwise.
    */
-  public boolean containsOne(boolean[] array) {
+  private boolean containsOne(boolean[] array) {
     for (boolean value : array) {
       if (value) {
         return true; // Found a 1, no need to check further
       }
     }
     return false; // No 1 found
-  }
-
-  /**
-   * Checks if the Petri Net has reached its target number of invariants.
-   *
-   * @return true if target invariants achieved, false otherwise.
-   */
-  public boolean petriNetHasFinished() {
-    return petriNet.petriNetHasFinished();
   }
 }
 

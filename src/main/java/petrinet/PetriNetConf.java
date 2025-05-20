@@ -69,16 +69,16 @@ public class PetriNetConf {
   /** Time delay (in minutes) for each transition. Index corresponds to the transition number. */
   private static final long[] TIME_TRANSITION = {
     0, // T0 (inmediate)
-    3, // T1 (2 minutes getting in the agency)
+    2, // T1 (2 minutes getting in the agency)
     0, // T2 (inmediate)
     0, // T3 (inmediate)
-    5, // T4 (15 minutes making the reservation)
-    5, // T5 (15 minutes making the reservation)
+    15, // T4 (15 minutes making the reservation)
+    15, // T5 (15 minutes making the reservation)
     0, // T6 (inmediate)
     0, // T7 (inmediate)
     5, // T8 (5 minutes receiving the cancellation)
     5, // T9 (5 minutes receiving confirmation of the reservation)
-    5, // T10 (15 minutes paying the reservation)
+    15, // T10 (15 minutes paying the reservation)
     0 // T11 (inmediate)
   };
 
