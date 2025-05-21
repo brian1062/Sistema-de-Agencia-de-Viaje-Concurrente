@@ -82,8 +82,7 @@ public class Monitor implements MonitorInterface {
 
           // If the Petri net has finished, then release the waiting threads
           if (petriNet.petriNetHasFinished()) {
-            transitionsForPolicyToChooseFrom =
-                getWaitingTransitions();
+            transitionsForPolicyToChooseFrom = getWaitingTransitions();
           }
 
           // If no waiting transitions are enabled, release the mutex and return
