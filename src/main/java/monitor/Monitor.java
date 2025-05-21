@@ -53,7 +53,7 @@ public class Monitor implements MonitorInterface {
 
   public Semaphore getMutex() {
     return mutex;
-  } // TODO: fireTransition is no the only public method
+  }
 
   /**
    * Attempts to fire a transition in the Petri Net. Handles both immediate and timed transitions
@@ -63,7 +63,7 @@ public class Monitor implements MonitorInterface {
    * @return true if transition fired successfully, false otherwise.
    */
   @Override
-  public boolean fireTransition(int transitionIndex) { // TODO: no need to return boolean
+  public boolean fireTransition(int transitionIndex) {
     try {
       // If the mutex is not available, waits for it in the mutex's queue
       mutex.acquire();
@@ -83,7 +83,7 @@ public class Monitor implements MonitorInterface {
           // If the Petri net has finished, then release the waiting threads
           if (petriNet.petriNetHasFinished()) {
             transitionsForPolicyToChooseFrom =
-                getWaitingTransitions(); // TODO: ?? I don't understand this
+                getWaitingTransitions();
           }
 
           // If no waiting transitions are enabled, release the mutex and return
