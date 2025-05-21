@@ -156,7 +156,7 @@ public class Main {
       default -> {
         logger.error("Invalid policy selection: " + policyArg);
         System.exit(1);
-        yield null; // This line will never be reached
+        yield null; // This line won't be reached
       }
     };
   }
