@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
 import monitor.Monitor;
 import petrinet.PetriNet;
 import petrinet.PetriNetConf;
@@ -59,7 +60,8 @@ public class Main {
               rdPConf.getIncidenceMatrixIn(),
               rdPConf.getPlacesInvariants(),
               rdPConf.getInitialMarking(),
-              rdPConf.getTargetInvariants());
+              rdPConf.getTargetInvariants(),
+              rdPConf.getTimeTransitions());
 
       // Initialize monitor with the chosen policy
       Monitor monitor = Monitor.getMonitor(petriNet, policy);
@@ -67,17 +69,31 @@ public class Main {
       // Initialize threads array
       Thread[] threads = new Thread[rdPConf.getNumberOfSequences()];
 
+      // Create a CountDownLatch to wait for all threads to finish
+      // The number of threads is equal to the number of sequences
+      // in the configuration
+      int numThreads = rdPConf.getNumberOfSequences();
+      CountDownLatch latch = new CountDownLatch(numThreads);
+
       // Create and start threads
       Arrays.setAll(
-          threads, i -> new Thread(new Segments(rdPConf.getTransitionSequence(i), monitor)));
+          threads,
+          i ->
+              new Thread(
+                  () -> {
+                    try {
+                      new Segments(rdPConf.getTransitionSequence(i), monitor, petriNet).run();
+                    } finally {
+                      latch.countDown(); // Each thread signals when it finishes
+                    }
+                  }));
 
       logger.info("Starting Petri net execution...");
+      logger.info("Initial marking: {" + petriNet.getStringMarking() + "}");
       Arrays.stream(threads).forEach(Thread::start);
 
-      // Wait for all threads to complete
-      for (Thread thread : threads) {
-        thread.join();
-      }
+      logger.info("Waiting for all threads to finish...");
+      latch.await();
 
       logger.info("Petri net execution completed successfully");
 
@@ -140,7 +156,7 @@ public class Main {
       default -> {
         logger.error("Invalid policy selection: " + policyArg);
         System.exit(1);
-        yield null; // This line will never be reached
+        yield null; // This line won't be reached
       }
     };
   }

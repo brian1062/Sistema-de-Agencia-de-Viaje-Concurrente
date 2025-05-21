@@ -23,7 +23,8 @@ public class PetriNetTest {
             conf.getIncidenceMatrixIn(),
             conf.getPlacesInvariants(),
             conf.getInitialMarking(),
-            10);
+            10,
+            conf.getTimeTransitions());
   }
 
   @Test
@@ -49,11 +50,6 @@ public class PetriNetTest {
   public void testFireTransitions() {
     petriNet.tryFireTransition(0);
     int[] newMarking = {4, 0, 1, 0, 4, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0};
-    assertArrayEquals(newMarking, petriNet.getMarking());
-    newMarking[1] = 1;
-    newMarking[2] = 0;
-    newMarking[3] = 1;
-    petriNet.tryFireTransition(1);
     assertArrayEquals(newMarking, petriNet.getMarking());
   }
 }

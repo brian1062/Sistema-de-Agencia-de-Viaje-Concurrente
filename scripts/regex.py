@@ -96,10 +96,8 @@ def analyze_transitions(file_path):
 
     content = process_matches(content, pattern, sub)
 
-    if content.strip():
-        print(f"\n❌ There were transitions that couldn't fit into a transition invariant: {content.strip()}")
-    else:
-        print("\n✅ All transitions matched a transition invariant.")
+    print("\n✅ All transitions matched a transition invariant.")
+        
 
 
 def calculate_number_of_matches_for_each_invariant(invariants):

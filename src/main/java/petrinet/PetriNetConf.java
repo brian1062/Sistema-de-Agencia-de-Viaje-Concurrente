@@ -67,7 +67,7 @@ public class PetriNetConf {
   };
 
   /** Time delay (in minutes) for each transition. Index corresponds to the transition number. */
-  private static final int[] TIME_TRANSITION = {
+  private static final long[] TIME_TRANSITION = {
     0, // T0 (inmediate)
     2, // T1 (2 minutes getting in the agency)
     0, // T2 (inmediate)
@@ -82,17 +82,44 @@ public class PetriNetConf {
     0 // T11 (inmediate)
   };
 
-  /**
-   * Transitions sequences for each thread in the Petri net. Each array represents a sequence of
-   * transition for a specific thread.
-   */
+  // Threads recommended by algorithm
+  // private static final int[][] TRANSITIONS_THREADS = {
+  //   {0, 1}, // Thread 0
+  //   {2, 5}, // Thread 1
+  //   {3, 4}, // Thread 2
+  //   {6, 9, 10}, // Thread 3
+  //   {7, 8}, // Thread 4
+  //   {11} // Thread 5
+  // };
+
+  // One thread per transition
+  // private static final int[][] TRANSITIONS_THREADS = {
+  //   {0}, // Thread 0
+  //   {1}, // Thread 1
+  //   {2}, // Thread 2
+  //   {5}, // Thread 3
+  //   {3}, // Thread 4
+  //   {4}, // Thread 5
+  //   {6}, // Thread 6
+  //   {9}, // Thread 7
+  //   {10}, // Thread 8
+  //   {7}, // Thread 9
+  //   {8}, // Thread 10
+  //   {11} // Thread 11
+  // };
+
+  // Add threads on conflicts
   private static final int[][] TRANSITIONS_THREADS = {
     {0, 1}, // Thread 0
-    {2, 5}, // Thread 1
-    {3, 4}, // Thread 2
-    {6, 9, 10}, // Thread 3
-    {7, 8}, // Thread 4
-    {11} // Thread 5
+    {2}, // Thread 1
+    {5}, // Thread 2
+    {3}, // Thread 3
+    {4}, // Thread 4
+    {9, 10}, // Thread 5
+    {6}, // Thread 6
+    {7}, // Thread 7
+    {8}, // Thread 8
+    {11} // Thread 9
   };
 
   /**
@@ -158,5 +185,9 @@ public class PetriNetConf {
 
   public int getTargetInvariants() {
     return TARGET_INVARIANTS;
+  }
+
+  public long[] getTimeTransitions() {
+    return TIME_TRANSITION;
   }
 }
