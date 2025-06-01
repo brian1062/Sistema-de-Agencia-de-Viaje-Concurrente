@@ -63,9 +63,9 @@ public class Monitor implements MonitorInterface {
     try {
       // If the mutex is not available, waits for it in the mutex's queue
       mutex.acquire();
-      boolean mutexAcquired = true;
+      boolean k = true;
 
-      while (mutexAcquired) {
+      while (k) {
         logger.info("Transition " + transitionIndex + " is trying to fire.");
         // Handle timing constraints within the monitor
         if (!handleTimingConstraints(transitionIndex)) {
@@ -73,9 +73,9 @@ public class Monitor implements MonitorInterface {
           return false;
         }
 
-        mutexAcquired = executeTransition(transitionIndex);
+        k = executeTransition(transitionIndex);
 
-        if (mutexAcquired) {
+        if (k) {
           // Update the policy
           policy.transitionFired(transitionIndex);
 
@@ -112,7 +112,7 @@ public class Monitor implements MonitorInterface {
           // Release the mutex if the transition could not be executed
           mutex.release();
           transitionsQueue[transitionIndex].acquire();
-          mutexAcquired = true;
+          k = true;
         }
       }
     } catch (InterruptedException e) {
