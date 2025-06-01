@@ -51,10 +51,6 @@ public class Monitor implements MonitorInterface {
     return monitor;
   }
 
-  public Semaphore getMutex() {
-    return mutex;
-  }
-
   /**
    * Attempts to fire a transition in the Petri Net. Handles both immediate and timed transitions
    * with proper synchronization.
@@ -70,6 +66,12 @@ public class Monitor implements MonitorInterface {
       boolean mutexAcquired = true;
 
       while (mutexAcquired) {
+        logger.info("Transition " + transitionIndex + " is trying to fire.");
+        // Handle timing constraints within the monitor
+        if (!handleTimingConstraints(transitionIndex)) {
+          mutex.release();
+          return false;
+        }
 
         mutexAcquired = executeTransition(transitionIndex);
 
@@ -118,6 +120,41 @@ public class Monitor implements MonitorInterface {
       logger.error("Thread interrupted while acquiring mutex: " + transitionIndex);
     }
     return false; // Transition could not be executed
+  }
+
+  /**
+   * Handles timing constraints for a transition. This method encapsulates the timing logic
+   * and manages the mutex release/acquire cycle for timed transitions.
+   *
+   * @param transitionIndex Index of the transition to check timing for.
+   * @return true if the transition can proceed, false if the thread is interrupted.
+   */
+  private boolean handleTimingConstraints(int transitionIndex) {
+    // Check if the transition has timing constraints and is enabled
+    if (petriNet.hasTimingConstraints(transitionIndex) && 
+        petriNet.isTransitionEnabledByTokens(transitionIndex)) {
+
+      long waitTime = petriNet.getRemainingWaitTime(transitionIndex);
+      
+      if (waitTime > 0) {
+        try {
+          // Release mutex before waiting
+          mutex.release();
+          logger.info("Transition " + transitionIndex + " waiting for " + waitTime + " ms");
+          Thread.sleep(waitTime);
+          
+          // Reacquire mutex after waiting
+          mutex.acquire();
+
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          logger.error("Thread interrupted while waiting for transition time: " + transitionIndex);
+          return false;
+        }
+      }
+    }
+    
+    return true;
   }
 
   /**
