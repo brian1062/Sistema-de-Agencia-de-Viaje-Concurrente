@@ -123,26 +123,26 @@ public class Monitor implements MonitorInterface {
   }
 
   /**
-   * Handles timing constraints for a transition. This method encapsulates the timing logic
-   * and manages the mutex release/acquire cycle for timed transitions.
+   * Handles timing constraints for a transition. This method encapsulates the timing logic and
+   * manages the mutex release/acquire cycle for timed transitions.
    *
    * @param transitionIndex Index of the transition to check timing for.
    * @return true if the transition can proceed, false if the thread is interrupted.
    */
   private boolean handleTimingConstraints(int transitionIndex) {
     // Check if the transition has timing constraints and is enabled
-    if (petriNet.hasTimingConstraints(transitionIndex) && 
-        petriNet.isTransitionEnabledByTokens(transitionIndex)) {
+    if (petriNet.hasTimingConstraints(transitionIndex)
+        && petriNet.isTransitionEnabledByTokens(transitionIndex)) {
 
       long waitTime = petriNet.getRemainingWaitTime(transitionIndex);
-      
+
       if (waitTime > 0) {
         try {
           // Release mutex before waiting
           mutex.release();
           logger.info("Transition " + transitionIndex + " waiting for " + waitTime + " ms");
           Thread.sleep(waitTime);
-          
+
           // Reacquire mutex after waiting
           mutex.acquire();
 
@@ -153,7 +153,7 @@ public class Monitor implements MonitorInterface {
         }
       }
     }
-    
+
     return true;
   }
 

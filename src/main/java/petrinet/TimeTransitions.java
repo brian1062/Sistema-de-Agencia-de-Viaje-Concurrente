@@ -1,6 +1,7 @@
 package petrinet;
 
 import java.util.Arrays;
+
 /**
  * Manages timing constraints for time transitions in the Petri net. Keeps track of the activation
  * time of transitions and determines whether a transition's required waiting time (alpha) has
@@ -59,7 +60,8 @@ public class TimeTransitions {
    * @return true if the time has elapsed, false otherwise.
    */
   public boolean checkTime(int transitionIndex) {
-    return System.currentTimeMillis() - systemTime[transitionIndex] >= timeTransitions[transitionIndex];
+    return System.currentTimeMillis() - systemTime[transitionIndex]
+        >= timeTransitions[transitionIndex];
   }
 
   /**
@@ -69,7 +71,8 @@ public class TimeTransitions {
    * @return Remaining time in milliseconds.
    */
   public long getRemainingTime(int transitionIndex) {
-    return timeTransitions[transitionIndex] - (System.currentTimeMillis() - systemTime[transitionIndex]);
+    return timeTransitions[transitionIndex]
+        - (System.currentTimeMillis() - systemTime[transitionIndex]);
   }
 
   /**

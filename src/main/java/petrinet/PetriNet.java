@@ -133,8 +133,8 @@ public class PetriNet {
   }
 
   /**
-   * Checks if a transition is basically enabled (without considering timing constraints).
-   * This method only checks if the transition has enough tokens in input places.
+   * Checks if a transition is basically enabled (without considering timing constraints). This
+   * method only checks if the transition has enough tokens in input places.
    *
    * @param transitionIndex Index of the transition to check.
    * @return true if the transition is basically enabled, false otherwise.
