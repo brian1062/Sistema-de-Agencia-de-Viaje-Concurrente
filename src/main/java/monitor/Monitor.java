@@ -47,10 +47,6 @@ public class Monitor implements MonitorInterface {
     return monitor;
   }
 
-  public static Monitor getMonitor() {
-    return monitor;
-  }
-
   /**
    * Attempts to fire a transition in the Petri Net. Handles both immediate and timed transitions
    * with proper synchronization.
