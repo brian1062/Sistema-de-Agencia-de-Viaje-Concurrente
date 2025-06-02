@@ -78,11 +78,6 @@ public class PetriNet {
       return false;
     }
 
-    // For timed transitions, check if the time constraint is satisfied
-    if (hasTimingConstraints(transitionIndex) && !timeTransitions.checkTime(transitionIndex)) {
-      return false;
-    }
-
     // Update the marking of the Petri net
     updateMarking(transitionIndex);
 
