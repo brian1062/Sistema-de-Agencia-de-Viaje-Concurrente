@@ -62,7 +62,6 @@ public class Monitor implements MonitorInterface {
       boolean k = true;
 
       while (k) {
-        logger.info("Transition " + transitionIndex + " is trying to fire.");
         // Handle timing constraints within the monitor
         if (!handleTimingConstraints(transitionIndex)) {
           mutex.release();
