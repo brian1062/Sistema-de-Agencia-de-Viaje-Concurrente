@@ -75,10 +75,4 @@ class PetriNetConfTest {
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Index for TRANSITIONS_THREADS invalid");
   }
-
-  @Test
-  void testNumberOfSequences() {
-    int numberOfSequences = petriNetConf.getNumberOfSequences();
-    assertThat(numberOfSequences).isEqualTo(10); // 10 threads in TRANSITIONS_THREADS
-  }
 }

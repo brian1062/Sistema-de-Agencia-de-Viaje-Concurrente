@@ -1,0 +1,100 @@
+sequenceDiagram
+    participant Main
+    participant PetriNetConf
+    participant PetriNet
+    participant TimeTransitions
+    participant Policy
+    participant Monitor
+    participant Logger
+    participant Thread1
+    participant Thread2
+    participant ThreadN
+    participant CountDownLatch
+    
+    Main->>Logger: getLogger()
+    activate Logger
+    Logger-->>Main: logger instance
+    
+    Main->>+PetriNetConf: new PetriNetConf()
+    PetriNetConf->>PetriNetConf: initialize matrices
+    PetriNetConf->>PetriNetConf: initialize places
+    PetriNetConf->>PetriNetConf: initialize transitions
+    PetriNetConf->>PetriNetConf: configure TIME_TRANSITION array
+    PetriNetConf-->>-Main: conf instance
+    
+    Main->>+PetriNet: new PetriNet(transitions, places, incMatrixOut, incMatrixIn, placesInvariants, initialMarking, targetInvariants, alphas)
+    PetriNet->>PetriNet: initialize state
+    PetriNet->>+TimeTransitions: new TimeTransitions(alphas)
+    TimeTransitions->>TimeTransitions: initialize oldEnabledTransitions[]
+    TimeTransitions->>TimeTransitions: initialize systemTime[]
+    TimeTransitions->>TimeTransitions: initialize timeTransitions[]
+    TimeTransitions-->>-PetriNet: timeTransitions instance
+    PetriNet->>PetriNet: updateEnabledTransitions()
+    PetriNet-->>-Main: petriNet instance
+    
+    alt Policy from command line
+        Main->>Main: selectPolicy(args[0])
+    else Policy from console
+        Main->>Main: getPolicyFromConsole()
+    end
+    
+    Main->>+Policy: new Policy()
+    Policy->>Policy: initialize transition counts map
+    Policy->>Policy: initialize PAIRS configuration
+    Policy-->>-Main: policy instance
+    
+    Main->>+Monitor: getMonitor(petriNet, policy)
+    Monitor->>Monitor: create singleton instance
+    Monitor->>Monitor: initialize mutex semaphore
+    Monitor->>Monitor: initialize transitionsQueue[] semaphores
+    Monitor-->>-Main: monitor instance
+    
+    Main->>+CountDownLatch: new CountDownLatch(numThreads)
+    CountDownLatch-->>-Main: latch instance
+    
+    loop For each sequence
+        Main->>PetriNetConf: getTransitionSequence(i)
+        PetriNetConf-->>Main: sequence
+        Main->>+Thread1: new Thread(Segments, monitor, petriNet, latch)
+        Note over Thread1: new Segments(sequence, monitor, petriNet).run() + latch.countDown()
+        Thread1-->>-Main: thread instance
+    end
+    
+    loop
+        Main->>Thread: start() [For each thread]
+    end
+
+    par Parallel Thread Execution
+        Note over Thread1: Thread 1 executes Segments.run()
+        Note over Thread1: Loops through transition sequence
+        critical Monitor Access
+            Thread1->>Monitor: fireTransition()
+            Note over Monitor: Mutex synchronization
+            Monitor-->>Thread1: result
+        end
+        Thread1->>CountDownLatch: countDown() [when finished]
+    and
+        Note over Thread2: Thread 2 executes Segments.run()
+        Note over Thread2: Loops through transition sequence
+        critical Monitor Access
+            Thread2->>Monitor: fireTransition()
+            Note over Monitor: Mutex synchronization
+            Monitor-->>Thread2: result
+        end
+        Thread2->>CountDownLatch: countDown() [when finished]
+    and
+        Note over ThreadN: Thread N executes Segments.run()
+        Note over ThreadN: Loops through transition sequence
+        critical Monitor Access
+            ThreadN->>Monitor: fireTransition()
+            Note over Monitor: Mutex synchronization
+            Monitor-->>ThreadN: result
+        end
+        ThreadN->>CountDownLatch: countDown() [when finished]
+    end
+    
+    Main->>+CountDownLatch: await()
+    Note over CountDownLatch: Blocks until all threads call countDown()
+    CountDownLatch-->>-Main: void
+    
+    Note over Main: System execution completed

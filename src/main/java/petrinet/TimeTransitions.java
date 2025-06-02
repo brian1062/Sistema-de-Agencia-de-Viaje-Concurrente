@@ -60,9 +60,8 @@ public class TimeTransitions {
    * @return true if the time has elapsed, false otherwise.
    */
   public boolean checkTime(int transitionIndex) {
-    long currentTime = System.currentTimeMillis();
-    long elapsedTime = currentTime - systemTime[transitionIndex];
-    return elapsedTime >= timeTransitions[transitionIndex];
+    return System.currentTimeMillis() - systemTime[transitionIndex]
+        >= timeTransitions[transitionIndex];
   }
 
   /**
@@ -72,9 +71,8 @@ public class TimeTransitions {
    * @return Remaining time in milliseconds.
    */
   public long getRemainingTime(int transitionIndex) {
-    long currentTime = System.currentTimeMillis();
-    long elapsedTime = currentTime - systemTime[transitionIndex];
-    return timeTransitions[transitionIndex] - elapsedTime;
+    return timeTransitions[transitionIndex]
+        - (System.currentTimeMillis() - systemTime[transitionIndex]);
   }
 
   /**

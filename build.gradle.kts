@@ -34,6 +34,7 @@ tasks.jar {
 }
 
 tasks.named<JavaExec>("run") {
+  dependsOn(tasks.compileJava)
   standardInput = System.`in`
   args = project.findProperty("args")?.toString()?.split(" ") ?: emptyList()
 }

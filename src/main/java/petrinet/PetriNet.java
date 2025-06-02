@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import monitor.Monitor;
 import utils.Logger;
 
 /**
@@ -74,8 +73,8 @@ public class PetriNet {
       return true;
     }
 
-    // Can't fire the transition if it is not enabled
-    if (!isTransitionEnabled(transitionIndex)) {
+    // Can't fire the transition if it is not enabled (basic check without timing)
+    if (!isTransitionEnabledByTokens(transitionIndex)) {
       return false;
     }
 
@@ -99,6 +98,45 @@ public class PetriNet {
     timeTransitions.updateEnabledTransitionsTimer(getEnabledTransitionsInBits());
 
     return true;
+  }
+
+  /**
+   * Checks if a transition has timing constraints (non-zero alpha).
+   *
+   * @param transitionIndex Index of the transition to check.
+   * @return true if the transition has timing constraints, false otherwise.
+   */
+  public boolean hasTimingConstraints(int transitionIndex) {
+    return timeTransitions.getAlpha(transitionIndex) > 0;
+  }
+
+  /**
+   * Gets the remaining wait time for a transition.
+   *
+   * @param transitionIndex Index of the transition.
+   * @return Remaining wait time in milliseconds, 0 if no wait is needed.
+   */
+  public long getRemainingWaitTime(int transitionIndex) {
+    validateTransitionIndex(transitionIndex);
+
+    if (!hasTimingConstraints(transitionIndex)) {
+      return 0;
+    }
+
+    long remainingTime = timeTransitions.getRemainingTime(transitionIndex);
+    return Math.max(0, remainingTime);
+  }
+
+  /**
+   * Checks if a transition is basically enabled (without considering timing constraints). This
+   * method only checks if the transition has enough tokens in input places.
+   *
+   * @param transitionIndex Index of the transition to check.
+   * @return true if the transition is basically enabled, false otherwise.
+   */
+  public boolean isTransitionEnabledByTokens(int transitionIndex) {
+    validateTransitionIndex(transitionIndex);
+    return enabledTransitions.contains(transitions.get(transitionIndex));
   }
 
   /**
@@ -170,61 +208,6 @@ public class PetriNet {
         String msgEx = "Negative tokens in marking: " + getStringMarking();
         throw new Exception(msgEx);
       }
-    }
-  }
-
-  /**
-   * Checks if a specific transition is enabled in the Petri net. A transition is enabled if all its
-   * input places have enough tokens and the transition is enabled in the time transitions.
-   *
-   * @param transitionIndex Index of the transition to check.
-   * @return true if the transition is enabled, false otherwise.
-   */
-  public boolean isTransitionEnabled(int transitionIndex) {
-    // Check if the transition is enabled in the incidence matrix
-    if (!enabledTransitions.contains(transitions.get(transitionIndex))) {
-      return false;
-    }
-
-    // If the transition has no time constraint or is within the time window, it can be fired
-    if (timeTransitions.getAlpha(transitionIndex) == 0
-        || timeTransitions.checkTime(transitionIndex)) {
-      return true;
-    }
-
-    // If the transition is not enabled due to time, wait for the time to elapse
-    waitForTransitionTime(transitionIndex);
-
-    // Check again if the transition is enabled after waiting
-    return enabledTransitions.contains(transitions.get(transitionIndex));
-  }
-
-  /**
-   * Waits for the time constraint of a transition to elapse.
-   *
-   * @param transitionIndex The index of the transition to wait for.
-   */
-  private void waitForTransitionTime(int transitionIndex) {
-    Monitor.getMonitor().getMutex().release();
-
-    long timeToWait = timeTransitions.getRemainingTime(transitionIndex);
-
-    try {
-      if (timeToWait > 0) {
-        Thread.sleep(timeToWait);
-      }
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new RuntimeException("Thread interrupted while waiting for transition time", e);
-    }
-
-    // Reacquire the mutex after waiting
-    try {
-      Monitor.getMonitor().getMutex().acquire();
-      logger.info("Transition " + transitionIndex + " has been awaken after waiting.");
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new RuntimeException("Thread interrupted while acquiring mutex", e);
     }
   }
 
