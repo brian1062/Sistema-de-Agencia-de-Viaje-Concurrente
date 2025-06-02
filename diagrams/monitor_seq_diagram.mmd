@@ -1,0 +1,146 @@
+sequenceDiagram
+    participant Thread as Thread (Segments)
+    participant Monitor
+    participant PetriNet
+    participant TimeTransitions
+    participant Policy
+
+    activate Thread
+    
+    Note over Thread: Thread attempts to fire transition
+    
+    Thread->>+Monitor: fireTransition(transitionIndex)
+    
+    Note over Monitor: Acquire main mutex (blocking)
+    Monitor->>Monitor: mutex.acquire()
+    Monitor->>Monitor: k = true
+    activate Monitor
+    
+    loop While k == true
+        Note over Monitor: Handle timing constraints within monitor
+        Monitor->>+Monitor: handleTimingConstraints(transitionIndex)
+        
+        Monitor->>+PetriNet: hasTimingConstraints(transitionIndex)
+        PetriNet->>+TimeTransitions: getAlpha(transitionIndex) > 0
+        TimeTransitions-->>-PetriNet: boolean
+        PetriNet-->>-Monitor: hasTimingConstraints
+        
+        alt Has timing constraints
+            Monitor->>+PetriNet: isTransitionEnabledByTokens(transitionIndex)
+            PetriNet-->>-Monitor: isEnabled
+            
+            alt Is enabled by tokens
+                Monitor->>+PetriNet: getRemainingWaitTime(transitionIndex)
+                PetriNet->>+TimeTransitions: getRemainingTime(transitionIndex)
+                TimeTransitions->>TimeTransitions: calculate remaining time
+                TimeTransitions-->>-PetriNet: remainingTime
+                PetriNet-->>-Monitor: waitTime
+                
+                alt waitTime > 0
+                    Note over Monitor: Release mutex before waiting
+                    Monitor->>Monitor: mutex.release()
+                    Monitor->>Monitor: sleep(waitTime)
+                    Note over Monitor: Reacquire mutex after waiting
+                    Monitor->>Monitor: mutex.acquire()
+                else waitTime <= 0
+                    Note over Monitor: No wait needed
+                end
+            end
+        end
+        
+        Monitor-->>-Monitor: constraints handled
+        
+        Note over Monitor: Attempt to execute transition
+        Monitor->>+PetriNet: k = !tryFireTransition(transitionIndex)
+        
+        Note over PetriNet: Check if transition is enabled by tokens
+        PetriNet->>PetriNet: isTransitionEnabledByTokens(transitionIndex)
+        
+        alt Transition not in enabledTransitions list
+            PetriNet-->>Monitor: false (k = true)
+        else Transition in enabledTransitions list
+            Note over PetriNet: Execute transition firing
+            PetriNet->>PetriNet: updateMarking(transitionIndex)
+            Note over PetriNet: Checks Place Invariants and for Negative Tokens
+            PetriNet->>PetriNet: verifyMarking()
+            
+            alt Marking verification fails
+                PetriNet-->>Monitor: throw RuntimeException
+            else Marking valid
+                PetriNet->>PetriNet: updateEnabledTransitions()
+                
+                Note over PetriNet: Update timing for enabled transitions
+                PetriNet->>+TimeTransitions: updateEnabledTransitionsTimer(enabledTransitionsInBits)
+                
+                Note over TimeTransitions: Check each transition timing state
+                loop For each transition in the array                    
+                    alt Transition just became enabled (0->1)
+                        Note over TimeTransitions: Start timer for newly enabled transition
+                        TimeTransitions->>TimeTransitions: systemTime[transitionIndex] = currentTimeMillis()                        
+                    else Transition just became disabled (1->0)
+                        Note over TimeTransitions: Reset timer for disabled transition
+                        TimeTransitions->>TimeTransitions: systemTime[transitionIndex] = Long.MAX_VALUE()
+                    end
+                end
+                
+                TimeTransitions->>TimeTransitions: oldEnabledTransitions = enabledTransitions.clone()
+                TimeTransitions-->>-PetriNet: void 
+                PetriNet-->>Monitor: true (k = false)
+            end
+            
+        end
+        
+        alt k == false (transition executed successfully)
+            Note over Monitor: Continue to policy handling
+            Monitor->>Policy: transitionFired(transitionIndex)
+            Policy->>Policy: update transition counts
+            
+            Monitor->>Monitor: getWaitingTransitions()
+            Monitor->>PetriNet: getEnabledTransitionsInBits()
+            PetriNet-->>Monitor: enabledTransitions[]
+            Monitor->>Monitor: bitwiseAnd(enabled, waiting)
+            Note over Monitor: Find intersection of enabled and waiting transitions
+            
+            alt No waiting enabled transitions AND PetriNet not finished
+                Monitor->>Monitor: mutex.release()
+                Monitor-->>Thread: true
+            else Has waiting enabled transitions OR PetriNet finished
+                activate Policy
+                Monitor->>Policy: getNextTransition(transitionsForPolicyToChooseFrom)
+                
+                Policy->>Policy: getRandomEnabledIndex(transitionsArray)
+                Note over Policy: Select random transition from available options
+                
+                alt Selected transition is tracked by policy
+                    Policy->>Policy: getPairedTransition(randomTransition)
+                    Policy->>Policy: canFireTransition(randomTransition)
+                    
+                    alt Policy allows random transition
+                        Policy-->>Monitor: randomTransition
+                    else Policy prefers paired transition
+                        Policy-->>Monitor: pairedTransition
+                    end
+                else Selected transition not tracked
+                    Policy-->>Monitor: randomTransition
+                end
+                deactivate Policy
+                
+                alt Valid next transition returned
+                    Monitor->>Monitor: transitionsQueue[nextTransition].release()
+                    Note over Monitor: Wake up specific waiting thread
+                end
+                
+                Monitor-->>Thread: true
+            end
+        else k == true (transition could not be executed)
+            Note over Monitor: Transition could not be executed
+            Monitor->>Monitor: mutex.release()
+            Monitor->>Monitor: transitionsQueue[transitionIndex].acquire()
+            Note over Monitor: Thread waits in transition-specific queue
+            Note over Monitor: Once the thread has been awaken, continue at the start of the loop     
+        end
+        deactivate PetriNet
+    end
+    
+    deactivate Monitor
+    deactivate Thread
