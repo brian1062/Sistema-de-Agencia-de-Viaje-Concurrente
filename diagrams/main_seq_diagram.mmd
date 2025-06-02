@@ -55,16 +55,15 @@ sequenceDiagram
     loop For each sequence
         Main->>PetriNetConf: getTransitionSequence(i)
         PetriNetConf-->>Main: sequence
-        Main->>+Thread1: new Thread(lambda with Segments, monitor, petriNet, latch)
-        Note over Thread1: Lambda: new Segments(sequence, monitor, petriNet).run() + latch.countDown()
+        Main->>+Thread1: new Thread(Segments, monitor, petriNet, latch)
+        Note over Thread1: new Segments(sequence, monitor, petriNet).run() + latch.countDown()
         Thread1-->>-Main: thread instance
     end
     
-    Main->>+PetriNet: getStringMarking()
-    PetriNet-->>-Main: initial marking string
-    
-    Main->>Thread: start() [for all threads]
-    
+    loop
+        Main->>Thread: start() [For each thread]
+    end
+
     par Parallel Thread Execution
         Note over Thread1: Thread 1 executes Segments.run()
         Note over Thread1: Loops through transition sequence

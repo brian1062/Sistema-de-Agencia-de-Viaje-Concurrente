@@ -101,10 +101,10 @@ sequenceDiagram
             Monitor->>Monitor: bitwiseAnd(enabled, waiting)
             Note over Monitor: Find intersection of enabled and waiting transitions
             
-            alt No waiting enabled transitions AND PetriNet not finished
+            alt No waiting enabled transitions
                 Monitor->>Monitor: mutex.release()
                 Monitor-->>Thread: true
-            else Has waiting enabled transitions OR PetriNet finished
+            else Has waiting enabled transitions
                 activate Policy
                 Monitor->>Policy: getNextTransition(transitionsForPolicyToChooseFrom)
                 
